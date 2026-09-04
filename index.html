@@ -274,8 +274,7 @@
       .toolbar h2{font-size:21px}
     }
 
-
-    /* ===== Recursos novos: mobile, privacidade, filtros, OCR e tema ===== */
+    /* ===== Recursos mobile, privacidade, filtros, OCR e tema ===== */
     .dashboard-months{display:flex;gap:8px;overflow:auto;padding:2px 1px 12px;margin:-6px 0 18px;scrollbar-width:thin}
     .month-chip{border:1px solid var(--border);background:var(--card);color:var(--muted);border-radius:999px;padding:9px 13px;white-space:nowrap;font-size:12px;font-weight:750}
     .month-chip.active{background:var(--green);border-color:var(--green);color:#fff}
@@ -306,7 +305,7 @@
     .drawer-head .logo{background:var(--green);color:#fff}
     .drawer-head h3{margin:0;font-size:16px;color:var(--green)}
     .drawer-head small{color:var(--muted);font-size:11px}
-    .drawer-close{margin-left:auto;border:0;background:var(--bg);border-radius:9px;width:32px;height:32px;color:var(--text)}
+    .drawer-close{margin-left:auto;border:0;background:var(--bg);border-radius:99px;width:32px;height:32px;color:var(--text)}
     .drawer-email{font-size:12px;color:var(--muted);margin:16px 0 14px;padding:10px 12px;background:var(--bg);border-radius:10px;word-break:break-all}
     .drawer-section{border-top:1px solid var(--border);margin-top:14px;padding-top:14px;display:flex;flex-direction:column;gap:8px}
     .drawer .btn{width:100%;justify-content:center;display:flex;align-items:center;gap:8px}
@@ -379,7 +378,6 @@
       .ai-row{flex-wrap:wrap}.ai-input{flex-basis:100%!important}.ai-send{flex:1}.ai-mic{flex:0 0 48px}
       .ai-preview-grid{grid-template-columns:1fr 1fr}
     }
-
   </style>
 </head>
 
@@ -460,7 +458,7 @@
     <div class="toolbar">
       <div>
         <h2 id="pageTitle">Visão geral</h2>
-        <p id="monthLabel"></p><p style="font-size:11px;color:var(--muted);margin-top:3px">Use os meses acima para navegar pelo histórico. Os lançamentos antigos sem data aparecem em “Data não informada”.</p>
+        <p id="monthLabel"></p><p style="font-size:11px;color:var(--muted);margin-top:3px">Use os meses acima para navegar pelo histórico.</p>
       </div>
       <div class="actions">
         <button class="btn" onclick="exportCSV()">Exportar CSV</button>
@@ -468,42 +466,41 @@
       </div>
     </div>
 
-
-      <div class="card section ai-assistant">
-        <div class="section-title">
-          <h3>✨ Assistente financeiro</h3>
-          <span>Gemini + voz • sem chave de API</span>
+    <div class="card section ai-assistant">
+      <div class="section-title">
+        <h3>✨ Assistente financeiro</h3>
+        <span>Gemini + voz</span>
+      </div>
+      <div class="ai-assistant-sub">A IA analisa seus lançamentos para registrar gastos, responder perguntas e resumir finanças.</div>
+      <div class="ai-row">
+        <input id="aiInput" class="ai-input" type="text" autocomplete="off" placeholder="Ex.: gastei 50 reais de gasolina">
+        <button id="aiMic" class="ai-mic" type="button" title="Falar">🎙️</button>
+        <button id="aiSend" class="btn ai-send" type="button">Perguntar</button>
+      </div>
+      <div id="aiStatus" class="ai-status"></div>
+      <div id="aiAnswer" class="ai-answer"></div>
+      <div id="aiPreview" class="ai-preview">
+        <strong>Confira o lançamento</strong>
+        <div id="aiPreviewText" style="font-size:12px;color:var(--muted);margin-top:3px"></div>
+        <div class="ai-preview-grid">
+          <div class="ai-preview-item"><div class="ai-preview-label">Tipo</div><div id="aiPType" class="ai-preview-value"></div></div>
+          <div class="ai-preview-item"><div class="ai-preview-label">Valor</div><div id="aiPAmount" class="ai-preview-value"></div></div>
+          <div class="ai-preview-item"><div class="ai-preview-label">Categoria</div><div id="aiPCat" class="ai-preview-value"></div></div>
+          <div class="ai-preview-item"><div class="ai-preview-label">Responsável</div><div id="aiPResp" class="ai-preview-value"></div></div>
+          <div class="ai-preview-item"><div class="ai-preview-label">Data</div><div id="aiPDate" class="ai-preview-value"></div></div>
+          <div class="ai-preview-item"><div class="ai-preview-label">Canal</div><div id="aiPChannel" class="ai-preview-value"></div></div>
         </div>
-        <div class="ai-assistant-sub">A IA usa seus lançamentos do Firebase para registrar gastos, responder perguntas, comparar meses e encontrar oportunidades de economia.</div>
-        <div class="ai-row">
-          <input id="aiInput" class="ai-input" type="text" autocomplete="off" placeholder="Ex.: gastei 50 reais de gasolina">
-          <button id="aiMic" class="ai-mic" type="button" title="Falar">🎙️</button>
-          <button id="aiSend" class="btn ai-send" type="button">Perguntar</button>
-        </div>
-        <div id="aiStatus" class="ai-status"></div>
-        <div id="aiAnswer" class="ai-answer"></div>
-        <div id="aiPreview" class="ai-preview">
-          <strong>Confira o lançamento</strong>
-          <div id="aiPreviewText" style="font-size:12px;color:var(--muted);margin-top:3px"></div>
-          <div class="ai-preview-grid">
-            <div class="ai-preview-item"><div class="ai-preview-label">Tipo</div><div id="aiPType" class="ai-preview-value"></div></div>
-            <div class="ai-preview-item"><div class="ai-preview-label">Valor</div><div id="aiPAmount" class="ai-preview-value"></div></div>
-            <div class="ai-preview-item"><div class="ai-preview-label">Categoria</div><div id="aiPCat" class="ai-preview-value"></div></div>
-            <div class="ai-preview-item"><div class="ai-preview-label">Responsável</div><div id="aiPResp" class="ai-preview-value"></div></div>
-            <div class="ai-preview-item"><div class="ai-preview-label">Data</div><div id="aiPDate" class="ai-preview-value"></div></div>
-            <div class="ai-preview-item"><div class="ai-preview-label">Canal</div><div id="aiPChannel" class="ai-preview-value"></div></div>
-          </div>
-          <div class="form-actions">
-            <button id="aiCancel" type="button" class="btn">Cancelar</button>
-            <button id="aiConfirm" type="button" class="btn btn-primary">✓ Salvar lançamento</button>
-          </div>
-        </div>
-        <div class="ai-examples">
-          <button class="ai-example" type="button" data-ai-example="gastei 50 reais de gasolina hoje">Registrar gasto</button>
-          <button class="ai-example" type="button" data-ai-example="quanto gastamos este mês?">Resumo do mês</button>
-          <button class="ai-example" type="button" data-ai-example="quanto gastamos com Uber este mês?">Gasto com Uber</button>
+        <div class="form-actions">
+          <button id="aiCancel" type="button" class="btn">Cancelar</button>
+          <button id="aiConfirm" type="button" class="btn btn-primary">✓ Salvar lançamento</button>
         </div>
       </div>
+      <div class="ai-examples">
+        <button class="ai-example" type="button" data-ai-example="gastei 50 reais de gasolina hoje">Registrar gasto</button>
+        <button class="ai-example" type="button" data-ai-example="quanto gastamos este mês?">Resumo do mês</button>
+        <button class="ai-example" type="button" data-ai-example="quanto gastamos com Uber este mês?">Gasto com Uber</button>
+      </div>
+    </div>
 
     <div class="tabs">
       <button class="tab active" data-view="dashboard">Dashboard</button>
@@ -800,19 +797,11 @@
 
 <div id="toast" class="toast"></div>
 
-
+<!-- SDKs Firebase -->
 <script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore-compat.js"></script>
 <script>
-/*
-  ============================================================
-  FIREBASE - PREENCHA APENAS ESTE BLOCO
-  Depois de criar seu projeto no Firebase:
-  Firebase Console > Configurações do projeto > Seus apps > Web
-  copie os valores para dentro de firebaseConfig.
-  ============================================================
-*/
 const firebaseConfig = {
   apiKey: "AIzaSyC9flYMuPBKmjkFZJ7zwNN6Qx9EIFDSneQ",
   authDomain: "financas-a-dois-81ea9.firebaseapp.com",
@@ -827,59 +816,18 @@ const firebaseAuth = firebase.auth();
 const firebaseDb = firebase.firestore();
 </script>
 
-
 <script type="module">
-/*
-  FIREBASE AI LOGIC + GEMINI
-  Sem chave Gemini no código. O Firebase AI Logic funciona como
-  intermediário entre o app e a Gemini Developer API.
-*/
 import { initializeApp as initializeModularApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
 import { getAI, getGenerativeModel, GoogleAIBackend } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-ai.js";
-import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app-check.js";
 
 const AI_MODEL_NAME = "gemini-2.5-flash-lite";
-/* Cole aqui a chave pública do reCAPTCHA v3 do Firebase App Check. */
-const FIREBASE_APPCHECK_SITE_KEY = "6LeR56gtAAAAAAnowFCmkVP5aQQO0axF9w0xkZMc";
 
 try {
   const aiFirebaseApp = initializeModularApp(firebaseConfig, "financasAI");
-
-  if (FIREBASE_APPCHECK_SITE_KEY) {
-    initializeAppCheck(aiFirebaseApp, {
-      provider: new ReCaptchaEnterpriseProvider(FIREBASE_APPCHECK_SITE_KEY),
-      isTokenAutoRefreshEnabled: true
-    });
-  }
-
   const ai = getAI(aiFirebaseApp, { backend: new GoogleAIBackend() });
   const model = getGenerativeModel(ai, {
     model: AI_MODEL_NAME,
-    generationConfig: { temperature: 0.2, maxOutputTokens: 900 },
-    systemInstruction: {
-      parts: [{
-        text: `
-Você é o assistente financeiro do aplicativo Finanças a Dois.
-Responda em português do Brasil e use SOMENTE os dados financeiros enviados pelo aplicativo.
-
-Quando o usuário quiser registrar um lançamento, retorne SOMENTE JSON válido:
-{"action":"transaction","type":"expense|income","amount":0,"date":"YYYY-MM-DD","description":"","category":"","responsible":"Danillo|Patricia","channel":"","details":""}
-
-Quando o usuário fizer uma pergunta/análise, retorne SOMENTE JSON válido:
-{"action":"answer","answer":"resposta em português"}
-
-Regras:
-- Nunca invente valores ou lançamentos.
-- Valores são números positivos; o tipo define receita ou despesa.
-- Categorias válidas: Alimentação, Cartão de crédito, Compras, Cuidados pessoais, Dívidas, Financiamento, Lazer, Moradia, Outros, Saúde, Transporte.
-- Responsáveis válidos: Danillo ou Patricia.
-- Resolva "hoje", "ontem" e datas relativas usando a data atual enviada no prompt.
-- Você pode resumir, comparar meses, encontrar maiores gastos, tendências e oportunidades de economia.
-- Se algo não puder ser concluído com os dados recebidos, diga isso.
-- Nunca diga que salvou um lançamento. O aplicativo só salva após a confirmação do usuário.
-        `.trim()
-      }]
-    }
+    generationConfig: { temperature: 0.1, maxOutputTokens: 900 }
   });
 
   window.financasGemini = {
@@ -890,971 +838,601 @@ Regras:
       return result.response.text();
     }
   };
-  console.info("Firebase AI Logic pronto:", AI_MODEL_NAME);
 } catch (error) {
-  console.error("Firebase AI Logic não iniciou:", error);
-  window.financasGemini = { ready:false, error, modelName:AI_MODEL_NAME };
+  console.warn("Firebase AI inicializado com modo fallback:", error);
+  window.financasGemini = { ready: false, error, modelName: AI_MODEL_NAME };
 }
 </script>
+
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
 <script>
 (() => {
   const STORAGE_KEY = "financas-a-dois-v2";
   const categories = ["Alimentação", "Cartão de crédito", "Compras", "Cuidados pessoais", "Dívidas", "Financiamento", "Lazer", "Moradia", "Outros", "Saúde", "Transporte"];
 
-  const importedAugust = [{"id": "ago2026-1", "type": "expense", "date": "", "month": "2026-08", "description": "Ifood", "category": "Alimentação", "amount": 123.34, "responsible": "Patricia", "details": "Comida", "channel": "Ifood", "essential": null}, {"id": "ago2026-2", "type": "expense", "date": "", "month": "2026-08", "description": "Farmácia", "category": "Saúde", "amount": 97.3, "responsible": "Patricia", "details": "Leite Gael", "channel": "Ifood", "essential": null}, {"id": "ago2026-3", "type": "expense", "date": "", "month": "2026-08", "description": "Outros", "category": "Outros", "amount": 366.99, "responsible": "Patricia", "details": "Utensílios", "channel": "shopee", "essential": null}, {"id": "ago2026-4", "type": "expense", "date": "", "month": "2026-08", "description": "Aluguel", "category": "Moradia", "amount": 2183.34, "responsible": "Patricia", "details": "Moradia", "channel": "Quinto Andar", "essential": null}, {"id": "ago2026-5", "type": "expense", "date": "", "month": "2026-08", "description": "Conta Luz", "category": "Moradia", "amount": 371.9, "responsible": "Patricia", "details": "Moradia", "channel": "Enel", "essential": null}, {"id": "ago2026-6", "type": "expense", "date": "", "month": "2026-08", "description": "Mercado", "category": "Alimentação", "amount": 52.97, "responsible": "Patricia", "details": "Shampoo, condicionar e chocolate", "channel": "Americanas", "essential": null}, {"id": "ago2026-7", "type": "expense", "date": "", "month": "2026-08", "description": "Mercado", "category": "Alimentação", "amount": 18.56, "responsible": "Danillo", "details": "Miojo, água e Chiclete", "channel": "Lojinha", "essential": null}, {"id": "ago2026-8", "type": "expense", "date": "", "month": "2026-08", "description": "Farmácia", "category": "Saúde", "amount": 27.48, "responsible": "Danillo", "details": "Remédio", "channel": "Drogasil", "essential": null}, {"id": "ago2026-9", "type": "expense", "date": "", "month": "2026-08", "description": "Mecado", "category": "Alimentação", "amount": 48.19, "responsible": "Danillo", "details": "Hortifruit", "channel": "Hortifruit", "essential": null}, {"id": "ago2026-10", "type": "expense", "date": "", "month": "2026-08", "description": "Almoço", "category": "Alimentação", "amount": 29.99, "responsible": "Danillo", "details": "Comida", "channel": "Ifood", "essential": null}, {"id": "ago2026-11", "type": "expense", "date": "", "month": "2026-08", "description": "Gasolina", "category": "Transporte", "amount": 100.0, "responsible": "Patricia", "details": "Gasoina", "channel": "Posto", "essential": null}, {"id": "ago2026-12", "type": "expense", "date": "", "month": "2026-08", "description": "Mercado", "category": "Alimentação", "amount": 122.91, "responsible": "Patricia", "details": "Comida", "channel": "Andorinha", "essential": null}, {"id": "ago2026-13", "type": "expense", "date": "", "month": "2026-08", "description": "Mercado", "category": "Alimentação", "amount": 217.99, "responsible": "Patricia", "details": "Comida", "channel": "Sams Club", "essential": null}, {"id": "ago2026-14", "type": "expense", "date": "", "month": "2026-08", "description": "Cabeleireiro", "category": "Cuidados pessoais", "amount": 100.0, "responsible": "Patricia", "details": "Cabeleireiro", "channel": "Barbeiro", "essential": null}, {"id": "ago2026-15", "type": "expense", "date": "", "month": "2026-08", "description": "Mercado", "category": "Alimentação", "amount": 717.0, "responsible": "Patricia", "details": "Comida", "channel": "Sams Club", "essential": null}, {"id": "ago2026-16", "type": "expense", "date": "", "month": "2026-08", "description": "Utensílios", "category": "Compras", "amount": 19.0, "responsible": "Danillo", "details": "Pulseira Relógio", "channel": "Mercado Livre", "essential": null}, {"id": "ago2026-17", "type": "expense", "date": "", "month": "2026-08", "description": "Comida", "category": "Alimentação", "amount": 25.0, "responsible": "Danillo", "details": "Salgado e café", "channel": "Padaria", "essential": null}, {"id": "ago2026-18", "type": "expense", "date": "", "month": "2026-08", "description": "faxina", "category": "Moradia", "amount": 240.0, "responsible": "Patricia", "details": "Faxina", "channel": "Faxineira", "essential": null}, {"id": "ago2026-19", "type": "expense", "date": "", "month": "2026-08", "description": "Conta de gás", "category": "Moradia", "amount": 606.44, "responsible": "Patricia", "details": "Moradia", "channel": "Comgas", "essential": null}, {"id": "ago2026-20", "type": "expense", "date": "", "month": "2026-08", "description": "Lazer", "category": "Lazer", "amount": 277.0, "responsible": "Patricia", "details": "Comida", "channel": "Restaurante Lelui", "essential": null}, {"id": "ago2026-21", "type": "expense", "date": "", "month": "2026-08", "description": "Utensílios", "category": "Compras", "amount": 27.0, "responsible": "Patricia", "details": "Película Relógio", "channel": "Shopee", "essential": null}, {"id": "ago2026-22", "type": "expense", "date": "", "month": "2026-08", "description": "Gasolina", "category": "Transporte", "amount": 200.0, "responsible": "Patricia", "details": "Gasolina", "channel": "Posto", "essential": null}, {"id": "ago2026-23", "type": "expense", "date": "", "month": "2026-08", "description": "Comida", "category": "Alimentação", "amount": 8.99, "responsible": "Danillo", "details": "Comida", "channel": "Mecado", "essential": null}, {"id": "ago2026-24", "type": "expense", "date": "", "month": "2026-08", "description": "Cabeleireiro", "category": "Cuidados pessoais", "amount": 120.0, "responsible": "Danillo", "details": "Cabeleireiro", "channel": "Barbeiro", "essential": null}, {"id": "ago2026-25", "type": "expense", "date": "", "month": "2026-08", "description": "Lazer", "category": "Lazer", "amount": 219.15, "responsible": "Danillo", "details": "Comida", "channel": "Saint Tropet", "essential": null}, {"id": "ago2026-26", "type": "expense", "date": "", "month": "2026-08", "description": "Dízimo", "category": "Outros", "amount": 2087.0, "responsible": "Danillo", "details": "Dízimo", "channel": "Lagoinha", "essential": null}, {"id": "ago2026-27", "type": "expense", "date": "", "month": "2026-08", "description": "Mercado", "category": "Alimentação", "amount": 27.39, "responsible": "Danillo", "details": "Comida", "channel": "Mercado", "essential": null}, {"id": "ago2026-28", "type": "expense", "date": "", "month": "2026-08", "description": "Dívida Cidão", "category": "Dívidas", "amount": 400.0, "responsible": "Danillo", "details": "Dívida Cidão", "channel": "Dívida Cidão", "essential": null}, {"id": "ago2026-29", "type": "expense", "date": "", "month": "2026-08", "description": "Mercado", "category": "Alimentação", "amount": 15.5, "responsible": "Patricia", "details": "Café e Chocolate", "channel": "Mercado", "essential": null}, {"id": "ago2026-30", "type": "expense", "date": "", "month": "2026-08", "description": "Estacionamento", "category": "Transporte", "amount": 37.0, "responsible": "Patricia", "details": "Estacionamento", "channel": "Estacionamento", "essential": null}, {"id": "ago2026-31", "type": "expense", "date": "", "month": "2026-08", "description": "Plano de Saúde", "category": "Saúde", "amount": 1410.18, "responsible": "Patricia", "details": "Plano de Saúde", "channel": "Amil", "essential": null}, {"id": "ago2026-32", "type": "expense", "date": "", "month": "2026-08", "description": "Condomínio", "category": "Moradia", "amount": 900.0, "responsible": "Danillo", "details": "Condomínio", "channel": "Condomínio", "essential": null}, {"id": "ago2026-33", "type": "expense", "date": "", "month": "2026-08", "description": "Condomínio", "category": "Moradia", "amount": 308.7, "responsible": "Patricia", "details": "Condomínio", "channel": "Condomínio", "essential": null}, {"id": "ago2026-34", "type": "expense", "date": "", "month": "2026-08", "description": "Consórcio", "category": "Financiamento", "amount": 337.3, "responsible": "Danillo", "details": "Consórcio", "channel": "Consórcio", "essential": null}, {"id": "ago2026-35", "type": "expense", "date": "", "month": "2026-08", "description": "Almoço", "category": "Alimentação", "amount": 26.9, "responsible": "Danillo", "details": "Comida", "channel": "Ifood", "essential": null}, {"id": "ago2026-36", "type": "expense", "date": "", "month": "2026-08", "description": "Compra eletrodoméstico", "category": "Compras", "amount": 600.0, "responsible": "Patricia", "details": "Arcondicionado", "channel": "Cartão de crédito", "essential": null}, {"id": "ago2026-37", "type": "expense", "date": "", "month": "2026-08", "description": "Roupas Gael", "category": "Compras", "amount": 130.0, "responsible": "Patricia", "details": "Roupas", "channel": "C&A", "essential": null}, {"id": "ago2026-38", "type": "expense", "date": "", "month": "2026-08", "description": "Mercado", "category": "Alimentação", "amount": 400.0, "responsible": "Patricia", "details": "Comida", "channel": "Andorinha", "essential": null}, {"id": "ago2026-39", "type": "expense", "date": "", "month": "2026-08", "description": "Mercado", "category": "Alimentação", "amount": 179.98, "responsible": "Patricia", "details": "Comida", "channel": "Cartão de crédito", "essential": null}, {"id": "ago2026-40", "type": "expense", "date": "", "month": "2026-08", "description": "Leite Gael", "category": "Alimentação", "amount": 65.15, "responsible": "Patricia", "details": "Leite Gael", "channel": "Cartão de crédito", "essential": null}, {"id": "ago2026-41", "type": "expense", "date": "", "month": "2026-08", "description": "Leite Gael", "category": "Alimentação", "amount": 87.7, "responsible": "Patricia", "details": "Leite Gael", "channel": "Cartão de crédito", "essential": null}, {"id": "ago2026-42", "type": "expense", "date": "", "month": "2026-08", "description": "Saque", "category": "Outros", "amount": 276.88, "responsible": "Patricia", "details": "Maquininha", "channel": "Cartão de crédito", "essential": null}, {"id": "ago2026-43", "type": "expense", "date": "", "month": "2026-08", "description": "Roupas Danillo", "category": "Compras", "amount": 182.0, "responsible": "Patricia", "details": "Roupas", "channel": "Cartão de crédito", "essential": null}, {"id": "ago2026-44", "type": "expense", "date": "", "month": "2026-08", "description": "Roupas Danillo", "category": "Compras", "amount": 60.91, "responsible": "Patricia", "details": "Roupas", "channel": "Cartão de crédito", "essential": null}, {"id": "ago2026-45", "type": "expense", "date": "", "month": "2026-08", "description": "Mercado", "category": "Alimentação", "amount": 603.35, "responsible": "Patricia", "details": "Comida", "channel": "Andorinha", "essential": null}, {"id": "ago2026-46", "type": "expense", "date": "", "month": "2026-08", "description": "Gasolina", "category": "Transporte", "amount": 55.06, "responsible": "Danillo", "details": "Gasolina", "channel": "Posto", "essential": null}, {"id": "ago2026-47", "type": "expense", "date": "", "month": "2026-08", "description": "Almoço", "category": "Alimentação", "amount": 48.0, "responsible": "Danillo", "details": "Almoço", "channel": "Ifood", "essential": null}, {"id": "ago2026-48", "type": "expense", "date": "", "month": "2026-08", "description": "Mercado", "category": "Alimentação", "amount": 13.0, "responsible": "Patricia", "details": "Energético", "channel": "Mercado", "essential": null}, {"id": "ago2026-49", "type": "expense", "date": "", "month": "2026-08", "description": "Almoço", "category": "Alimentação", "amount": 37.9, "responsible": "Danillo", "details": "Almoço", "channel": "Ifood", "essential": null}, {"id": "ago2026-50", "type": "expense", "date": "", "month": "2026-08", "description": "Café da manhã", "category": "Alimentação", "amount": 12.9, "responsible": "Danillo", "details": "Café da manhã", "channel": "Ifood", "essential": null}, {"id": "ago2026-51", "type": "expense", "date": "", "month": "2026-08", "description": "Café da manhã", "category": "Alimentação", "amount": 3.49, "responsible": "Danillo", "details": "Café da manhã", "channel": "Ifood", "essential": null}, {"id": "ago2026-52", "type": "expense", "date": "", "month": "2026-08", "description": "Utensílios", "category": "Compras", "amount": 85.9, "responsible": "Danillo", "details": "Aniversário Gael", "channel": "Shopee", "essential": null}, {"id": "ago2026-53", "type": "expense", "date": "", "month": "2026-08", "description": "Mercado", "category": "Alimentação", "amount": 11.98, "responsible": "Danillo", "details": "Chocolate", "channel": "Ifood", "essential": null}, {"id": "ago2026-54", "type": "expense", "date": "", "month": "2026-08", "description": "Aniversário", "category": "Lazer", "amount": 389.46, "responsible": "Patricia", "details": "Aniversário Isa e Gael", "channel": "", "essential": null}, {"id": "ago2026-55", "type": "expense", "date": "", "month": "2026-08", "description": "Mercado", "category": "Alimentação", "amount": 23.48, "responsible": "Danillo", "details": "Mercado", "channel": "Ifood", "essential": null}, {"id": "ago2026-56", "type": "expense", "date": "", "month": "2026-08", "description": "gasolina", "category": "Transporte", "amount": 100.0, "responsible": "Patricia", "details": "gasolina", "channel": "Posto", "essential": null}, {"id": "ago2026-57", "type": "expense", "date": "", "month": "2026-08", "description": "Roupas Patricia", "category": "Compras", "amount": 99.58, "responsible": "Patricia", "details": "Roupas", "channel": "Shein", "essential": null}, {"id": "ago2026-58", "type": "expense", "date": "", "month": "2026-08", "description": "Roupas Patricia", "category": "Compras", "amount": 111.56, "responsible": "Patricia", "details": "Roupas", "channel": "Shein", "essential": null}, {"id": "ago2026-59", "type": "expense", "date": "", "month": "2026-08", "description": "Roupas Gael e Lucca", "category": "Compras", "amount": 221.78, "responsible": "Patricia", "details": "Roupas Gael e Lucca", "channel": "Riachuelo", "essential": null}, {"id": "ago2026-60", "type": "expense", "date": "", "month": "2026-08", "description": "Roupas Gael e Lucca", "category": "Compras", "amount": 273.89, "responsible": "Patricia", "details": "Roupas Gael e Lucca", "channel": "Riachuelo", "essential": null}, {"id": "ago2026-61", "type": "expense", "date": "", "month": "2026-08", "description": "Mercado", "category": "Alimentação", "amount": 39.18, "responsible": "Danillo", "details": "Comida", "channel": "Ifood", "essential": null}, {"id": "ago2026-62", "type": "expense", "date": "", "month": "2026-08", "description": "Mercado", "category": "Alimentação", "amount": 3.66, "responsible": "Danillo", "details": "Comida", "channel": "Ifood", "essential": null}, {"id": "ago2026-63", "type": "expense", "date": "", "month": "2026-08", "description": "Mercado", "category": "Alimentação", "amount": 10.9, "responsible": "Danillo", "details": "Comida", "channel": "Ifood", "essential": null}, {"id": "ago2026-64", "type": "expense", "date": "", "month": "2026-08", "description": "Gasolina", "category": "Transporte", "amount": 55.39, "responsible": "Danillo", "details": "gasolina", "channel": "Posto", "essential": null}, {"id": "ago2026-65", "type": "expense", "date": "", "month": "2026-08", "description": "Lazer", "category": "Lazer", "amount": 311.09, "responsible": "Patricia", "details": "Comida", "channel": "Venda Seu Joaquim", "essential": null}, {"id": "ago2026-66", "type": "expense", "date": "", "month": "2026-08", "description": "Lavagem carro", "category": "Transporte", "amount": 65.0, "responsible": "Patricia", "details": "Lavagem carro", "channel": "Lava Rápido", "essential": null}, {"id": "ago2026-67", "type": "expense", "date": "", "month": "2026-08", "description": "Farmácia", "category": "Saúde", "amount": 74.74, "responsible": "Danillo", "details": "Remédio", "channel": "Farmácia", "essential": null}, {"id": "ago2026-68", "type": "expense", "date": "", "month": "2026-08", "description": "Mercado", "category": "Alimentação", "amount": 10.9, "responsible": "Danillo", "details": "Comida", "channel": "Ifood", "essential": null}, {"id": "ago2026-69", "type": "expense", "date": "", "month": "2026-08", "description": "Mercado", "category": "Alimentação", "amount": 7.28, "responsible": "Danillo", "details": "Comida", "channel": "Ifood", "essential": null}, {"id": "ago2026-70", "type": "expense", "date": "", "month": "2026-08", "description": "gasolina", "category": "Transporte", "amount": 100.0, "responsible": "Patricia", "details": "gasolina", "channel": "Posto", "essential": null}, {"id": "ago2026-71", "type": "expense", "date": "", "month": "2026-08", "description": "Estacionamento", "category": "Transporte", "amount": 50.0, "responsible": "Patricia", "details": "Estacionamento", "channel": "Estacionamento", "essential": null}, {"id": "ago2026-72", "type": "expense", "date": "", "month": "2026-08", "description": "Leite Gael", "category": "Alimentação", "amount": 130.0, "responsible": "Danillo", "details": "Leite Gael", "channel": "Farmácia", "essential": null}, {"id": "ago2026-73", "type": "expense", "date": "", "month": "2026-08", "description": "Vacina Gael", "category": "Saúde", "amount": 296.34, "responsible": "Patricia", "details": "Vacina Gael", "channel": "Beep", "essential": null}, {"id": "ago2026-74", "type": "expense", "date": "", "month": "2026-08", "description": "Mercado", "category": "Alimentação", "amount": 10.99, "responsible": "Patricia", "details": "Comida", "channel": "Mercado", "essential": null}, {"id": "ago2026-75", "type": "expense", "date": "", "month": "2026-08", "description": "Lazer", "category": "Lazer", "amount": 101.26, "responsible": "Patricia", "details": "Quarentena saudável", "channel": "Quarentena saudável", "essential": null}, {"id": "ago2026-76", "type": "expense", "date": "", "month": "2026-08", "description": "Mercado", "category": "Alimentação", "amount": 37.45, "responsible": "Patricia", "details": "Mercado", "channel": "Mercado", "essential": null}, {"id": "ago2026-77", "type": "expense", "date": "", "month": "2026-08", "description": "gasolina", "category": "Transporte", "amount": 100.0, "responsible": "Patricia", "details": "gasolina", "channel": "Posto", "essential": null}, {"id": "ago2026-78", "type": "expense", "date": "", "month": "2026-08", "description": "Comida", "category": "Alimentação", "amount": 30.59, "responsible": "Patricia", "details": "Comida", "channel": "Ifood", "essential": null}, {"id": "ago2026-79", "type": "expense", "date": "", "month": "2026-08", "description": "Lavagem carro", "category": "Transporte", "amount": 70.0, "responsible": "Patricia", "details": "Lavagem carro", "channel": "Lava Rápido", "essential": null}, {"id": "ago2026-80", "type": "expense", "date": "", "month": "2026-08", "description": "Mercado", "category": "Alimentação", "amount": 127.69, "responsible": "Patricia", "details": "Comida", "channel": "Andorinha", "essential": null}, {"id": "ago2026-81", "type": "expense", "date": "", "month": "2026-08", "description": "Aluguel", "category": "Moradia", "amount": 373.05, "responsible": "Patricia", "details": "Aluguel", "channel": "Quinto Andar", "essential": null}, {"id": "ago2026-82", "type": "expense", "date": "", "month": "2026-08", "description": "Documento moto", "category": "Transporte", "amount": 276.66, "responsible": "Patricia", "details": "Documento moto", "channel": "Yamaha", "essential": null}, {"id": "ago2026-83", "type": "expense", "date": "", "month": "2026-08", "description": "Almoço", "category": "Alimentação", "amount": 67.15, "responsible": "Danillo", "details": "Comida", "channel": "Ifood", "essential": null}, {"id": "ago2026-84", "type": "expense", "date": "", "month": "2026-08", "description": "Lazer", "category": "Lazer", "amount": 82.76, "responsible": "Patricia", "details": "Comida", "channel": "Ifood", "essential": null}, {"id": "ago2026-85", "type": "expense", "date": "", "month": "2026-08", "description": "Lazer", "category": "Lazer", "amount": 198.0, "responsible": "Patricia", "details": "Lazer", "channel": "Festival", "essential": null}, {"id": "ago2026-86", "type": "expense", "date": "", "month": "2026-08", "description": "Cabeleireiro", "category": "Cuidados pessoais", "amount": 1100.0, "responsible": "Patricia", "details": "Cabeleireiro", "channel": "Paollo", "essential": null}, {"id": "ago2026-87", "type": "expense", "date": "", "month": "2026-08", "description": "Padaria", "category": "Alimentação", "amount": 18.5, "responsible": "Patricia", "details": "Comida", "channel": "Ifood", "essential": null}, {"id": "ago2026-88", "type": "expense", "date": "", "month": "2026-08", "description": "Gasolina", "category": "Transporte", "amount": 50.0, "responsible": "Danillo", "details": "gasolina", "channel": "Posto", "essential": null}, {"id": "ago2026-89", "type": "expense", "date": "", "month": "2026-08", "description": "Mercado", "category": "Alimentação", "amount": 18.27, "responsible": "Danillo", "details": "Comida", "channel": "Ifood", "essential": null}, {"id": "ago2026-90", "type": "expense", "date": "", "month": "2026-08", "description": "Mercado", "category": "Alimentação", "amount": 109.86, "responsible": "Danillo", "details": "Flor e energético", "channel": "Ifood", "essential": null}, {"id": "ago2026-91", "type": "expense", "date": "", "month": "2026-08", "description": "Almoço", "category": "Alimentação", "amount": 35.3, "responsible": "Danillo", "details": "Comida", "channel": "Ifood", "essential": null}, {"id": "ago2026-92", "type": "expense", "date": "", "month": "2026-08", "description": "Uber", "category": "Transporte", "amount": 22.4, "responsible": "Patricia", "details": "Uber", "channel": "Uber", "essential": null}, {"id": "ago2026-93", "type": "expense", "date": "", "month": "2026-08", "description": "Uber", "category": "Transporte", "amount": 18.0, "responsible": "Patricia", "details": "Uber", "channel": "Uber", "essential": null}, {"id": "ago2026-94", "type": "expense", "date": "", "month": "2026-08", "description": "Uber", "category": "Transporte", "amount": 21.9, "responsible": "Patricia", "details": "Uber", "channel": "Uber", "essential": null}, {"id": "ago2026-95", "type": "expense", "date": "", "month": "2026-08", "description": "Uber", "category": "Transporte", "amount": 12.7, "responsible": "Patricia", "details": "Uber", "channel": "Uber", "essential": null}, {"id": "ago2026-96", "type": "expense", "date": "", "month": "2026-08", "description": "Uber", "category": "Transporte", "amount": 19.6, "responsible": "Patricia", "details": "Uber", "channel": "Uber", "essential": null}, {"id": "ago2026-97", "type": "expense", "date": "", "month": "2026-08", "description": "Uber", "category": "Transporte", "amount": 16.9, "responsible": "Patricia", "details": "Uber", "channel": "Uber", "essential": null}, {"id": "ago2026-98", "type": "expense", "date": "", "month": "2026-08", "description": "Uber", "category": "Transporte", "amount": 22.4, "responsible": "Patricia", "details": "Uber", "channel": "Uber", "essential": null}, {"id": "ago2026-99", "type": "expense", "date": "", "month": "2026-08", "description": "Uber", "category": "Transporte", "amount": 17.0, "responsible": "Patricia", "details": "Uber", "channel": "Uber", "essential": null}, {"id": "ago2026-100", "type": "expense", "date": "", "month": "2026-08", "description": "Uber", "category": "Transporte", "amount": 24.7, "responsible": "Patricia", "details": "Uber", "channel": "Uber", "essential": null}, {"id": "ago2026-101", "type": "expense", "date": "", "month": "2026-08", "description": "Uber", "category": "Transporte", "amount": 18.6, "responsible": "Patricia", "details": "Uber", "channel": "Uber", "essential": null}, {"id": "ago2026-102", "type": "expense", "date": "", "month": "2026-08", "description": "Uber", "category": "Transporte", "amount": 19.2, "responsible": "Patricia", "details": "Uber", "channel": "Uber", "essential": null}, {"id": "ago2026-103", "type": "expense", "date": "", "month": "2026-08", "description": "Uber", "category": "Transporte", "amount": 24.2, "responsible": "Patricia", "details": "Uber", "channel": "Uber", "essential": null}, {"id": "ago2026-104", "type": "expense", "date": "", "month": "2026-08", "description": "Uber", "category": "Transporte", "amount": 18.7, "responsible": "Patricia", "details": "Uber", "channel": "Uber", "essential": null}, {"id": "ago2026-105", "type": "expense", "date": "", "month": "2026-08", "description": "Uber", "category": "Transporte", "amount": 16.9, "responsible": "Patricia", "details": "Uber", "channel": "Uber", "essential": null}, {"id": "ago2026-106", "type": "expense", "date": "", "month": "2026-08", "description": "Uber", "category": "Transporte", "amount": 15.29, "responsible": "Patricia", "details": "Uber", "channel": "Uber", "essential": null}, {"id": "ago2026-107", "type": "expense", "date": "", "month": "2026-08", "description": "Uber", "category": "Transporte", "amount": 18.96, "responsible": "Patricia", "details": "Uber", "channel": "Uber", "essential": null}, {"id": "ago2026-108", "type": "expense", "date": "", "month": "2026-08", "description": "Uber", "category": "Transporte", "amount": 26.7, "responsible": "Patricia", "details": "Uber", "channel": "Uber", "essential": null}, {"id": "ago2026-109", "type": "expense", "date": "", "month": "2026-08", "description": "Sem Parar", "category": "Transporte", "amount": 22.0, "responsible": "Patricia", "details": "Sem Parar", "channel": "Sem Parar", "essential": null}, {"id": "ago2026-110", "type": "expense", "date": "", "month": "2026-08", "description": "Sem Parar", "category": "Transporte", "amount": 22.0, "responsible": "Patricia", "details": "Sem Parar", "channel": "Sem Parar", "essential": null}, {"id": "ago2026-111", "type": "expense", "date": "", "month": "2026-08", "description": "Sem Parar", "category": "Transporte", "amount": 3.99, "responsible": "Patricia", "details": "Sem Parar", "channel": "Sem Parar", "essential": null}, {"id": "ago2026-112", "type": "expense", "date": "", "month": "2026-08", "description": "Sem Parar", "category": "Transporte", "amount": 3.99, "responsible": "Patricia", "details": "Sem Parar", "channel": "Sem Parar", "essential": null}, {"id": "ago2026-113", "type": "expense", "date": "", "month": "2026-08", "description": "Sem Parar", "category": "Transporte", "amount": 3.99, "responsible": "Patricia", "details": "Sem Parar", "channel": "Sem Parar", "essential": null}, {"id": "ago2026-114", "type": "expense", "date": "", "month": "2026-08", "description": "Sem Parar", "category": "Transporte", "amount": 3.99, "responsible": "Patricia", "details": "Sem Parar", "channel": "Sem Parar", "essential": null}, {"id": "ago2026-115", "type": "expense", "date": "", "month": "2026-08", "description": "Sem Parar", "category": "Transporte", "amount": 3.99, "responsible": "Patricia", "details": "Sem Parar", "channel": "Sem Parar", "essential": null}, {"id": "ago2026-116", "type": "expense", "date": "", "month": "2026-08", "description": "Sem Parar", "category": "Transporte", "amount": 3.99, "responsible": "Patricia", "details": "Sem Parar", "channel": "Sem Parar", "essential": null}, {"id": "ago2026-117", "type": "expense", "date": "", "month": "2026-08", "description": "Sem Parar", "category": "Transporte", "amount": 3.99, "responsible": "Patricia", "details": "Sem Parar", "channel": "Sem Parar", "essential": null}, {"id": "ago2026-118", "type": "expense", "date": "", "month": "2026-08", "description": "Sem Parar", "category": "Transporte", "amount": 3.99, "responsible": "Patricia", "details": "Sem Parar", "channel": "Sem Parar", "essential": null}, {"id": "ago2026-119", "type": "expense", "date": "", "month": "2026-08", "description": "Sem Parar", "category": "Transporte", "amount": 14.5, "responsible": "Patricia", "details": "Sem Parar", "channel": "Sem Parar", "essential": null}, {"id": "ago2026-120", "type": "expense", "date": "", "month": "2026-08", "description": "Sem Parar", "category": "Transporte", "amount": 14.3, "responsible": "Patricia", "details": "Sem Parar", "channel": "Sem Parar", "essential": null}, {"id": "ago2026-121", "type": "expense", "date": "", "month": "2026-08", "description": "Sem Parar", "category": "Transporte", "amount": 14.3, "responsible": "Patricia", "details": "Sem Parar", "channel": "Sem Parar", "essential": null}, {"id": "ago2026-122", "type": "expense", "date": "", "month": "2026-08", "description": "Sem Parar", "category": "Transporte", "amount": 14.5, "responsible": "Patricia", "details": "Sem Parar", "channel": "Sem Parar", "essential": null}, {"id": "ago2026-123", "type": "expense", "date": "", "month": "2026-08", "description": "Sem Parar", "category": "Transporte", "amount": 3.99, "responsible": "Patricia", "details": "Sem Parar", "channel": "Sem Parar", "essential": null}, {"id": "ago2026-124", "type": "expense", "date": "", "month": "2026-08", "description": "Sem Parar", "category": "Transporte", "amount": 3.99, "responsible": "Patricia", "details": "Sem Parar", "channel": "Sem Parar", "essential": null}, {"id": "ago2026-125", "type": "expense", "date": "", "month": "2026-08", "description": "Sem Parar", "category": "Transporte", "amount": 3.99, "responsible": "Patricia", "details": "Sem Parar", "channel": "Sem Parar", "essential": null}, {"id": "ago2026-126", "type": "expense", "date": "", "month": "2026-08", "description": "Sem Parar", "category": "Transporte", "amount": 3.99, "responsible": "Patricia", "details": "Sem Parar", "channel": "Sem Parar", "essential": null}, {"id": "ago2026-127", "type": "expense", "date": "", "month": "2026-08", "description": "Sem Parar", "category": "Transporte", "amount": 3.99, "responsible": "Patricia", "details": "Sem Parar", "channel": "Sem Parar", "essential": null}, {"id": "ago2026-128", "type": "expense", "date": "", "month": "2026-08", "description": "Sem Parar", "category": "Transporte", "amount": 3.99, "responsible": "Patricia", "details": "Sem Parar", "channel": "Sem Parar", "essential": null}, {"id": "ago2026-129", "type": "expense", "date": "", "month": "2026-08", "description": "Gasolina", "category": "Transporte", "amount": 240.0, "responsible": "Patricia", "details": "gasolina", "channel": "Posto", "essential": null}, {"id": "ago2026-130", "type": "expense", "date": "", "month": "2026-08", "description": "Unha Patricia", "category": "Cuidados pessoais", "amount": 127.5, "responsible": "Patricia", "details": "Unha Patricia", "channel": "Salão", "essential": null}, {"id": "ago2026-131", "type": "expense", "date": "", "month": "2026-08", "description": "Lazer", "category": "Lazer", "amount": 47.0, "responsible": "Danillo", "details": "Comida", "channel": "Festival", "essential": null}, {"id": "ago2026-132", "type": "expense", "date": "", "month": "2026-08", "description": "Café da manhã", "category": "Alimentação", "amount": 11.25, "responsible": "Patricia", "details": "Comida", "channel": "Ifood", "essential": null}, {"id": "ago2026-133", "type": "expense", "date": "", "month": "2026-08", "description": "Lazer", "category": "Lazer", "amount": 31.46, "responsible": "Danillo", "details": "Chocolate", "channel": "Serra", "essential": null}, {"id": "ago2026-134", "type": "expense", "date": "", "month": "2026-08", "description": "Lazer", "category": "Lazer", "amount": 273.7, "responsible": "Danillo", "details": "Comida", "channel": "Serra", "essential": null}, {"id": "ago2026-135", "type": "expense", "date": "", "month": "2026-08", "description": "Estacionamento", "category": "Transporte", "amount": 49.0, "responsible": "Patricia", "details": "Estacionamento", "channel": "Festival", "essential": null}, {"id": "ago2026-136", "type": "expense", "date": "", "month": "2026-08", "description": "Lazer", "category": "Lazer", "amount": 65.0, "responsible": "Patricia", "details": "Doce", "channel": "Festival", "essential": null}, {"id": "ago2026-137", "type": "expense", "date": "", "month": "2026-08", "description": "Mercado", "category": "Alimentação", "amount": 51.72, "responsible": "Patricia", "details": "Comida", "channel": "Sams Club", "essential": null}, {"id": "ago2026-138", "type": "expense", "date": "", "month": "2026-08", "description": "Mercado", "category": "Alimentação", "amount": 447.31, "responsible": "Danillo", "details": "Comida", "channel": "Sams Club", "essential": null}, {"id": "ago2026-139", "type": "expense", "date": "", "month": "2026-08", "description": "Mercado", "category": "Alimentação", "amount": 17.97, "responsible": "Danillo", "details": "Comida", "channel": "Mercado", "essential": null}, {"id": "ago2026-140", "type": "expense", "date": "", "month": "2026-08", "description": "Carro", "category": "Financiamento", "amount": 2600.0, "responsible": "Patricia", "details": "Parcela do carro", "channel": "Carro", "essential": null}, {"id": "ago2026-141", "type": "expense", "date": "", "month": "2026-08", "description": "Gasolina", "category": "Transporte", "amount": 50.0, "responsible": "Danillo", "details": "gasolina", "channel": "Posto", "essential": null}, {"id": "ago2026-142", "type": "expense", "date": "", "month": "2026-08", "description": "Almoço", "category": "Alimentação", "amount": 25.9, "responsible": "Danillo", "details": "Comida", "channel": "Ifood", "essential": null}, {"id": "ago2026-143", "type": "expense", "date": "", "month": "2026-08", "description": "Dízimo", "category": "Outros", "amount": 330.0, "responsible": "Danillo", "details": "Dízimo", "channel": "Dízimo", "essential": null}, {"id": "ago2026-144", "type": "expense", "date": "", "month": "2026-08", "description": "Outros", "category": "Outros", "amount": 50.0, "responsible": "Danillo", "details": "Rateio Presente Supervisora", "channel": "Rateio Presente Supervisora", "essential": null}, {"id": "ago2026-145", "type": "expense", "date": "", "month": "2026-08", "description": "Parcela Moto", "category": "Financiamento", "amount": 980.14, "responsible": "Danillo", "details": "Parcela Moto", "channel": "Yamaha", "essential": null}, {"id": "ago2026-146", "type": "expense", "date": "", "month": "2026-08", "description": "Comida", "category": "Alimentação", "amount": 15.0, "responsible": "Danillo", "details": "Bolo", "channel": "Ifood", "essential": null}, {"id": "ago2026-147", "type": "expense", "date": "", "month": "2026-08", "description": "Uber", "category": "Transporte", "amount": 14.6, "responsible": "Patricia", "details": "Uber", "channel": "Uber", "essential": null}, {"id": "ago2026-148", "type": "expense", "date": "", "month": "2026-08", "description": "Uber", "category": "Transporte", "amount": 9.0, "responsible": "Patricia", "details": "Uber", "channel": "Uber", "essential": null}, {"id": "ago2026-149", "type": "expense", "date": "", "month": "2026-08", "description": "Uber", "category": "Transporte", "amount": 9.0, "responsible": "Patricia", "details": "Uber", "channel": "Uber", "essential": null}, {"id": "ago2026-150", "type": "expense", "date": "", "month": "2026-08", "description": "Cartão de crédito", "category": "Cartão de crédito", "amount": 9795.21, "responsible": "Patricia", "details": "Cartão de crédito", "channel": "Cartão de crédito", "essential": null}, {"id": "ago2026-151", "type": "expense", "date": "", "month": "2026-08", "description": "Roupas Patricia", "category": "Compras", "amount": 1195.89, "responsible": "Patricia", "details": "Roupas Patricia", "channel": "Riachuelo", "essential": null}, {"id": "ago2026-152", "type": "expense", "date": "", "month": "2026-08", "description": "Roupas Patricia", "category": "Compras", "amount": 249.08, "responsible": "Patricia", "details": "Roupas Patricia", "channel": "Riachuelo", "essential": null}];
-
-  let state = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null") || {
-    transactions: importedAugust,
+  // Estrutura de dados principal
+  let appData = {
+    transactions: [],
     budgets: {},
     goals: [],
     wealth: []
   };
 
+  let currentMonth = new Date().toISOString().slice(0, 7);
   let currentUser = null;
-  let cloudReady = false;
-  let loadingCloud = false;
-  let savingCloud = false;
+  let pendingAiTransaction = null;
 
-  const now = new Date();
-  let selectedMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}`;
-
-  const $ = id => document.getElementById(id);
-  const money = n => new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(Number(n)||0);
-  const monthName = ym => {
-    const [y,m] = ym.split("-").map(Number);
-    return new Intl.DateTimeFormat("pt-BR",{month:"long",year:"numeric"}).format(new Date(y,m-1,1));
+  // Utilitários
+  const formatCurrency = (val) => Number(val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const formatDate = (d) => {
+    if (!d) return 'Sem data';
+    const [y, m, day] = d.split('-');
+    return `${day}/${m}/${y}`;
   };
-  const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-  function save(){
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    render();
-    if(currentUser && cloudReady && !loadingCloud) saveCloudState();
-  }
+  const showToast = (msg) => {
+    const t = document.getElementById('toast');
+    t.innerText = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  };
 
-  function userRef(){
-    return firebaseDb.collection("users").doc(currentUser.uid);
-  }
-
-  async function saveCloudState(){
-    if(!currentUser || !cloudReady || savingCloud) return;
-    savingCloud = true;
-    try{
-      await userRef().collection("settings").doc("main").set({
-        budgets: state.budgets || {},
-        goals: state.goals || [],
-        wealth: state.wealth || [],
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-      }, {merge:true});
-    }catch(err){
-      console.error(err);
-      toast("Não foi possível salvar na nuvem.");
-    }finally{
-      savingCloud = false;
-    }
-  }
-
-  async function saveTransactionCloud(tx){
-    await userRef().collection("transactions").doc(tx.id).set(tx);
-  }
-
-  async function deleteTransactionCloud(id){
-    await userRef().collection("transactions").doc(id).delete();
-  }
-
-  async function loadCloudData(){
-    if(!currentUser) return;
-    loadingCloud = true;
-    cloudReady = false;
-    setFirebaseStatus("Sincronizando dados…");
-    try{
-      const txSnap = await userRef().collection("transactions").get();
-      const settingsSnap = await userRef().collection("settings").doc("main").get();
-
-      const localRaw = localStorage.getItem(STORAGE_KEY);
-      const localState = localRaw ? JSON.parse(localRaw) : null;
-
-      if(txSnap.empty){
-        const source = (localState && Array.isArray(localState.transactions) && localState.transactions.length)
-          ? localState
-          : {transactions: importedAugust, budgets:{}, goals:[], wealth:[]};
-
-        // Primeira entrada: envia os dados que já existiam no navegador.
-        const batch = firebaseDb.batch();
-        source.transactions.forEach(tx => {
-          const ref = userRef().collection("transactions").doc(tx.id || firebaseDb.collection("_").doc().id);
-          batch.set(ref, {...tx, amount:Number(tx.amount)||0});
-        });
-        await batch.commit();
-
-        state = {
-          transactions: source.transactions,
-          budgets: source.budgets || {},
-          goals: source.goals || [],
-          wealth: source.wealth || []
-        };
-        await userRef().collection("settings").doc("main").set({
-          budgets: state.budgets,
-          goals: state.goals,
-          wealth: state.wealth,
-          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        }, {merge:true});
-      }else{
-        state.transactions = txSnap.docs.map(d => ({id:d.id, ...d.data()}));
-        const settings = settingsSnap.exists ? settingsSnap.data() : {};
-        state.budgets = settings.budgets || {};
-        state.goals = settings.goals || [];
-        state.wealth = settings.wealth || [];
+  // Inicialização e Auth
+  function init() {
+    setupCategoriesSelect();
+    setupMonthSelector();
+    setupEventListeners();
+    
+    firebaseAuth.onAuthStateChanged(user => {
+      currentUser = user;
+      const authGate = document.getElementById('authGate');
+      if (user) {
+        authGate.classList.add('hidden');
+        document.getElementById('authUser').innerText = user.email;
+        document.getElementById('drawerEmail').innerText = user.email;
+        document.getElementById('logoutBtn').style.display = 'inline-block';
+        loadUserData();
+      } else {
+        authGate.classList.remove('hidden');
       }
-
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-      cloudReady = true;
-      render();
-      setFirebaseStatus("✓ Dados sincronizados");
-      setTimeout(()=>setFirebaseStatus(""),1800);
-    }catch(err){
-      console.error(err);
-      cloudReady = false;
-      setFirebaseStatus("Erro ao sincronizar. Verifique Firebase.");
-      toast("Erro ao carregar os dados da nuvem.");
-    }finally{
-      loadingCloud = false;
-    }
-  }
-
-  function setFirebaseStatus(msg){
-    const el=$("firebaseStatus");
-    el.textContent=msg;
-    el.style.display=msg ? "block" : "none";
-  }
-
-  function authError(err){
-    const messages = {
-      "auth/invalid-email":"Digite um e-mail válido.",
-      "auth/user-not-found":"Usuário não encontrado.",
-      "auth/wrong-password":"Senha incorreta.",
-      "auth/invalid-credential":"E-mail ou senha incorretos.",
-      "auth/email-already-in-use":"Este e-mail já possui uma conta.",
-      "auth/weak-password":"A senha precisa ter pelo menos 6 caracteres.",
-      "auth/too-many-requests":"Muitas tentativas. Aguarde alguns minutos."
-    };
-    return messages[err.code] || ("Erro: " + (err.message || "não foi possível concluir a operação."));
-  }
-
-  function showAuthError(msg){
-    const el=$("authError"); el.textContent=msg; el.classList.add("show");
-  }
-  function clearAuthError(){ $("authError").classList.remove("show"); }
-
-  $("loginBtn").addEventListener("click", async()=>{
-    clearAuthError();
-    try{
-      await firebaseAuth.signInWithEmailAndPassword($("authEmail").value.trim(), $("authPassword").value);
-    }catch(err){ showAuthError(authError(err)); }
-  });
-
-  $("signupBtn").addEventListener("click", async()=>{
-    clearAuthError();
-    try{
-      await firebaseAuth.createUserWithEmailAndPassword($("authEmail").value.trim(), $("authPassword").value);
-    }catch(err){ showAuthError(authError(err)); }
-  });
-
-  $("resetBtn").addEventListener("click", async()=>{
-    clearAuthError();
-    const email=$("authEmail").value.trim();
-    if(!email){ showAuthError("Digite seu e-mail primeiro."); return; }
-    try{
-      await firebaseAuth.sendPasswordResetEmail(email);
-      showAuthError("Enviamos um link de redefinição para seu e-mail.");
-    }catch(err){ showAuthError(authError(err)); }
-  });
-
-  $("logoutBtn").addEventListener("click",()=>firebaseAuth.signOut());
-
-  function openDrawer(){
-    $("sideDrawer").classList.add("open");
-    $("drawerBackdrop").classList.add("open");
-    $("brandMenuBtn").setAttribute("aria-expanded","true");
-  }
-  function closeDrawer(){
-    $("sideDrawer").classList.remove("open");
-    $("drawerBackdrop").classList.remove("open");
-    $("brandMenuBtn").setAttribute("aria-expanded","false");
-  }
-  $("brandMenuBtn").addEventListener("click",openDrawer);
-  $("drawerCloseBtn").addEventListener("click",closeDrawer);
-  $("drawerBackdrop").addEventListener("click",closeDrawer);
-  $("drawerLogoutBtn").addEventListener("click",()=>{closeDrawer();firebaseAuth.signOut();});
-  $("drawerPrivacyBtn").addEventListener("click",()=>$("privacyBtn").click());
-  $("drawerThemeBtn").addEventListener("click",()=>$("themeBtn").click());
-
-  firebaseAuth.onAuthStateChanged(async(user)=>{
-    currentUser=user;
-    if(user){
-      $("authGate").classList.add("hidden");
-      $("authUser").textContent=user.email || "";
-      $("logoutBtn").style.display="inline-flex";
-      $("drawerEmail").textContent=user.email || "";
-      await loadCloudData();
-    }else{
-      cloudReady=false;
-      $("authGate").classList.remove("hidden");
-      $("authUser").textContent="";
-      $("logoutBtn").style.display="none";
-      $("drawerEmail").textContent="";
-      closeDrawer();
-    }
-  });
-
-  function transactionsForMonth(ym){
-    return state.transactions.filter(t => (t.month || (t.date ? t.date.slice(0,7) : "")) === ym);
-  }
-
-  function totals(ym){
-    return transactionsForMonth(ym).reduce((a,t) => {
-      if(t.type === "income") a.income += t.amount;
-      else a.expense += t.amount;
-      return a;
-    },{income:0,expense:0});
-  }
-
-  function render(){
-    $("monthLabel").textContent = monthName(selectedMonth);
-    $("monthSelect").value = selectedMonth;
-    document.querySelectorAll(".month-chip").forEach(b=>b.classList.toggle("active",b.dataset.month===selectedMonth));
-    const t = totals(selectedMonth);
-    const balance = t.income - t.expense;
-    const rate = t.income ? (balance/t.income)*100 : 0;
-
-    $("mIncome").textContent = money(t.income);
-    $("mExpense").textContent = money(t.expense);
-    $("mBalance").textContent = money(balance);
-    $("mBalance").className = "metric-value " + (balance >= 0 ? "positive":"negative");
-    $("mRate").textContent = `${rate.toFixed(1)}%`;
-    $("mRate").className = "metric-value " + (rate >= 0 ? "positive":"negative");
-
-    renderCategories();
-    renderRecent();
-    renderTransactions();
-    renderBudget();
-    renderGoals();
-    renderWealth();
-    renderChart();
-  }
-
-  function renderCategories(){
-    const tx = transactionsForMonth(selectedMonth).filter(t => t.type==="expense");
-    const sums = {};
-    tx.forEach(t => sums[t.category] = (sums[t.category]||0)+t.amount);
-    const list = Object.entries(sums).sort((a,b)=>b[1]-a[1]);
-    const total = list.reduce((s,x)=>s+x[1],0);
-    $("categoryTotal").textContent = money(total);
-
-    if(!list.length){
-      $("categoryList").innerHTML = `<div class="empty"><strong>Nenhum gasto ainda</strong>Adicione seu primeiro lançamento para acompanhar as categorias.</div>`;
-      return;
-    }
-    $("categoryList").innerHTML = list.map(([cat,val]) => {
-      const budget = Number(state.budgets[cat]||0);
-      const pct = budget ? Math.min((val/budget)*100,100) : (total ? (val/total)*100 : 0);
-      const over = budget && val > budget;
-      return `<div class="progress-row">
-        <div class="progress-head"><span><i class="category-dot"></i>${esc(cat)}</span><span>${money(val)}${budget ? " / "+money(budget):""}</span></div>
-        <div class="bar"><div class="${over?'over':''}" style="width:${pct}%"></div></div>
-      </div>`;
-    }).join("");
-  }
-
-  function dayLabel(dateStr){
-    if(!dateStr) return "Data não informada";
-    const d=new Date(dateStr+"T12:00:00");
-    const today=new Date(); today.setHours(12,0,0,0);
-    const yesterday=new Date(today); yesterday.setDate(today.getDate()-1);
-    if(d.getTime()===today.getTime()) return "Hoje";
-    if(d.getTime()===yesterday.getTime()) return "Ontem";
-    return new Intl.DateTimeFormat("pt-BR",{weekday:"long",day:"2-digit",month:"2-digit"}).format(d);
-  }
-
-  function renderRecent(){
-    const tx=[...transactionsForMonth(selectedMonth)].sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")));
-    const groups={};
-    tx.forEach(t=>{const key=t.date||""; (groups[key] ||= []).push(t)});
-    const dates=Object.keys(groups).filter(Boolean).sort((a,b)=>b.localeCompare(a)).slice(0,7);
-    const undated=groups[""]||[];
-    let html="";
-    dates.forEach(date=>{
-      html += `<div class="group-title"><span>${esc(dayLabel(date))}</span><span>${formatDate(date)}</span></div>`;
-      html += groups[date].slice(0,5).map(t=>`<div class="recent-item"><div><div style="font-weight:700;font-size:13px">${esc(t.description||"Sem descrição")}</div><div style="font-size:11px;color:var(--muted);margin-top:3px">${esc(t.category||"—")} · ${esc(t.responsible||"—")}</div></div><div class="${t.type==='income'?'positive':'negative'} privacy-value" style="font-weight:800;font-size:13px;white-space:nowrap">${t.type==='income'?'+':'−'} ${money(t.amount)}</div></div>`).join("");
     });
-    if(undated.length){
-      html += `<div class="group-title"><span>Data não informada</span><span>${undated.length}</span></div>`;
-      html += undated.slice(0,5).map(t=>`<div class="recent-item"><div><div style="font-weight:700;font-size:13px">${esc(t.description||"Sem descrição")}</div><div style="font-size:11px;color:var(--muted);margin-top:3px">${esc(t.category||"—")} · ${esc(t.responsible||"—")}</div></div><div class="${t.type==='income'?'positive':'negative'} privacy-value" style="font-weight:800;font-size:13px;white-space:nowrap">${t.type==='income'?'+':'−'} ${money(t.amount)}</div></div>`).join("");
-    }
-    $("transactionCount").textContent=`${tx.length} lançamento(s)`;
-    $("recentList").innerHTML=html||`<div class="empty"><strong>Comece pelo primeiro lançamento</strong>Suas movimentações aparecerão aqui.</div>`;
   }
 
-  function getFilteredTransactions(){
-    let tx=[...state.transactions];
-    const q=($( "searchInput")?.value||"").trim().toLowerCase();
-    const responsible=$( "responsibleFilter")?.value||"";
-    const type=$( "typeFilter")?.value||"";
-    const preset=$( "periodPreset")?.value||"month";
-    if(q) tx=tx.filter(t=>[t.description,t.category,t.channel,t.details,t.responsible].some(v=>String(v||"").toLowerCase().includes(q)));
-    if(responsible) tx=tx.filter(t=>t.responsible===responsible);
-    if(type) tx=tx.filter(t=>t.type===type);
-    if(preset==="month") tx=tx.filter(t=>(t.month || (t.date?t.date.slice(0,7):""))===selectedMonth);
-    else if(["7","15","30"].includes(preset)){
-      const endDate=new Date(); endDate.setHours(23,59,59,999);
-      const startDate=new Date(); startDate.setHours(0,0,0,0); startDate.setDate(startDate.getDate()-(Number(preset)-1));
-      tx=tx.filter(t=>{if(!t.date)return false; const d=new Date(t.date+"T12:00:00"); return d>=startDate&&d<=endDate});
-    } else if(preset==="custom"){
-      const from=$( "fromDate")?.value||""; const to=$( "toDate")?.value||"";
-      if(from) tx=tx.filter(t=>t.date && t.date>=from); if(to) tx=tx.filter(t=>t.date && t.date<=to);
-    }
-    return tx.sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")));
-  }
-
-  function renderTransactions(){
-    const tx=getFilteredTransactions();
-    const total=tx.reduce((s,t)=>s+(Number(t.amount)||0),0);
-    $("filterSummary").textContent=`${tx.length} lançamento(s) encontrado(s) · ${money(total)}`;
-    if(!tx.length){
-      $("transactionTable").innerHTML=`<tr><td colspan="8"><div class="empty"><strong>Nenhum lançamento encontrado</strong>Altere os filtros ou faça uma nova busca.</div></td></tr>`;
-      $("mobileTransactionList").innerHTML=`<div class="empty"><strong>Nenhum lançamento encontrado</strong>Altere os filtros ou faça uma nova busca.</div>`;
-      return;
-    }
-    $("transactionTable").innerHTML=tx.map(t=>`<tr><td>${formatDate(t.date)}</td><td>${esc(t.responsible||"—")}</td><td><strong>${esc(t.description||"Sem descrição")}</strong>${t.details?`<div style="font-size:11px;color:var(--muted);margin-top:3px">${esc(t.details)}</div>`:""}</td><td>${esc(t.category||"—")}</td><td>${esc(t.channel||"—")}</td><td><span class="pill ${t.type==='income'?'pill-income':'pill-expense'}">${t.type==='income'?'Receita':'Despesa'}</span></td><td class="${t.type==='income'?'positive':'negative'} privacy-value"><strong>${t.type==='income'?'+':'−'} ${money(t.amount)}</strong></td><td><button class="btn btn-danger btn-small" onclick="deleteTransaction('${t.id}')">Excluir</button></td></tr>`).join("");
-    const groups={}; tx.forEach(t=>{const k=t.date||"";(groups[k] ||= []).push(t)});
-    const keys=Object.keys(groups).sort((a,b)=>b.localeCompare(a));
-    $("mobileTransactionList").innerHTML=keys.map(k=>`<div class="group-title"><span>${esc(dayLabel(k))}</span><span>${k?formatDate(k):groups[k].length+" item(ns)"}</span></div>`+groups[k].map(t=>`<div class="recent-item"><div style="min-width:0"><div style="font-weight:750;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(t.description||"Sem descrição")}</div><div style="font-size:11px;color:var(--muted);margin-top:3px">${esc(t.category||"—")} · ${esc(t.responsible||"—")}</div></div><div style="text-align:right"><div class="${t.type==='income'?'positive':'negative'} privacy-value" style="font-weight:800;white-space:nowrap">${t.type==='income'?'+':'−'} ${money(t.amount)}</div><button class="btn btn-danger btn-small" style="margin-top:5px" onclick="deleteTransaction('${t.id}')">Excluir</button></div></div>`).join("")).join("");
-  }
-
-  function renderBudget(){
-    const spent = {};
-    transactionsForMonth(selectedMonth).filter(t=>t.type==="expense").forEach(t => spent[t.category]=(spent[t.category]||0)+t.amount);
-    const rows = categories.filter(c => state.budgets[c] || spent[c]).map(cat => {
-      const limit = Number(state.budgets[cat]||0), used = Number(spent[cat]||0);
-      const pct = limit ? Math.min((used/limit)*100,100) : 0;
-      const over = limit && used>limit;
-      return `<div class="progress-row">
-        <div class="progress-head"><span><strong>${esc(cat)}</strong></span><span>${money(used)}${limit?' / '+money(limit):' · sem limite'}</span></div>
-        <div class="bar"><div class="${over?'over':''}" style="width:${pct}%"></div></div>
-      </div>`;
+  function setupCategoriesSelect() {
+    ['tCategory', 'bCategory'].forEach(id => {
+      const sel = document.getElementById(id);
+      if (!sel) return;
+      sel.innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
     });
-    $("budgetList").innerHTML = rows.length ? rows.join("") : `<div class="empty"><strong>Seu orçamento ainda não foi definido</strong>Crie limites por categoria para controlar seus gastos.</div>`;
   }
 
-  function renderGoals(){
-    if(!state.goals.length){
-      $("goalList").innerHTML = `<div class="empty"><strong>Nenhuma meta cadastrada</strong>Crie uma meta para acompanhar a evolução do patrimônio.</div>`;
-      return;
-    }
-    $("goalList").innerHTML = state.goals.map(g=>{
-      const pct = g.target ? Math.min(g.current/g.target*100,100):0;
-      return `<div class="goal">
-        <div>
-          <div class="goal-title">${esc(g.name)}</div>
-          <div class="goal-meta">${money(g.current)} de ${money(g.target)} · ${pct.toFixed(0)}%</div>
-          <div class="bar"><div style="width:${pct}%"></div></div>
-        </div>
-        <div class="goal-right"><button class="btn btn-danger btn-small" onclick="deleteGoal('${g.id}')">Excluir</button></div>
-      </div>`;
-    }).join("");
-  }
-
-  function renderWealth(){
-    const assets = state.wealth.filter(w=>w.type==="asset").reduce((s,w)=>s+w.amount,0);
-    const debts = state.wealth.filter(w=>w.type==="debt").reduce((s,w)=>s+w.amount,0);
-    $("assetTotal").textContent = money(assets);
-    $("debtTotal").textContent = money(debts);
-    $("wealthTotal").textContent = money(assets-debts);
-    $("wealthMonthBalance").textContent = money(totals(selectedMonth).income-totals(selectedMonth).expense);
-
-    if(!state.wealth.length){
-      $("wealthList").innerHTML = `<div class="empty"><strong>Nenhum item cadastrado</strong>Adicione investimentos, reservas, bens ou dívidas para acompanhar seu patrimônio.</div>`;
-      return;
-    }
-    $("wealthList").innerHTML = state.wealth.map(w=>`
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid var(--border)">
-        <div>
-          <strong>${esc(w.name)}</strong>
-          <div style="font-size:11px;color:var(--muted);margin-top:3px">${w.type==='asset'?'Ativo':'Dívida'}</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px">
-          <strong class="${w.type==='asset'?'positive':'negative'}">${money(w.amount)}</strong>
-          <button class="btn btn-danger btn-small" onclick="deleteWealth('${w.id}')">Excluir</button>
-        </div>
-      </div>`).join("");
-  }
-
-  function renderChart(){
+  function setupMonthSelector() {
+    const sel = document.getElementById('monthSelect');
     const months = [];
-    const d = new Date(selectedMonth+"-01T12:00:00");
-    for(let i=5;i>=0;i--){
-      const x = new Date(d.getFullYear(),d.getMonth()-i,1);
-      months.push(`${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}`);
+    const now = new Date();
+    for (let i = -6; i <= 6; i++) {
+      const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+      months.push(d.toISOString().slice(0, 7));
     }
-    const vals = months.map(m=>totals(m));
-    const max = Math.max(1,...vals.flatMap(x=>[x.income,x.expense]));
-    $("chart").innerHTML = vals.map((v,i)=>{
-      const label = new Intl.DateTimeFormat("pt-BR",{month:"short"}).format(new Date(months[i]+"-01T12:00:00")).replace(".","");
-      const ih = Math.max(2,v.income/max*150), eh = Math.max(2,v.expense/max*150);
-      return `<div class="bar-col">
-        <div class="bar-stack">
-          <div class="chart-income" style="height:${v.income?ih:2}px"></div>
-          <div class="chart-expense" style="height:${v.expense?eh:2}px"></div>
+    if (!months.includes(currentMonth)) months.push(currentMonth);
+    months.sort().reverse();
+
+    sel.innerHTML = months.map(m => {
+      const [y, mm] = m.split('-');
+      const name = new Date(y, mm - 1, 1).toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
+      return `<option value="${m}" ${m === currentMonth ? 'selected' : ''}>${name.charAt(0).toUpperCase() + name.slice(1)}</option>`;
+    }).join('');
+
+    renderMonthChips(months);
+  }
+
+  function renderMonthChips(months) {
+    const container = document.getElementById('dashboardMonths');
+    container.innerHTML = months.slice(0, 6).map(m => {
+      const [y, mm] = m.split('-');
+      const name = new Date(y, mm - 1, 1).toLocaleString('pt-BR', { month: 'short' }).replace('.', '');
+      return `<button class="month-chip ${m === currentMonth ? 'active' : ''}" data-month="${m}">${name.toUpperCase()} ${y}</button>`;
+    }).join('');
+
+    container.querySelectorAll('.month-chip').forEach(btn => {
+      btn.onclick = () => {
+        currentMonth = btn.dataset.month;
+        document.getElementById('monthSelect').value = currentMonth;
+        updateUI();
+      };
+    });
+  }
+
+  // Sincronização Firebase
+  function loadUserData() {
+    if (!currentUser) return;
+    firebaseDb.collection('users').doc(currentUser.uid).onSnapshot(doc => {
+      if (doc.exists) {
+        appData = Object.assign({ transactions: [], budgets: {}, goals: [], wealth: [] }, doc.data());
+      } else {
+        appData = { transactions: [], budgets: {}, goals: [], wealth: [] };
+        saveUserData();
+      }
+      updateUI();
+    }, err => {
+      console.error("Erro ao carregar dados:", err);
+    });
+  }
+
+  function saveUserData() {
+    if (!currentUser) return;
+    firebaseDb.collection('users').doc(currentUser.uid).set(appData)
+      .catch(err => console.error("Erro ao salvar:", err));
+  }
+
+  // Renderização do Painel e Tabelas
+  function updateUI() {
+    const filteredTx = appData.transactions.filter(t => (t.date || '').startsWith(currentMonth));
+    
+    let totalIncome = 0;
+    let totalExpense = 0;
+    const catTotals = {};
+
+    filteredTx.forEach(t => {
+      const amt = Number(t.amount || 0);
+      if (t.type === 'income') {
+        totalIncome += amt;
+      } else {
+        totalExpense += amt;
+        catTotals[t.category] = (catTotals[t.category] || 0) + amt;
+      }
+    });
+
+    const balance = totalIncome - totalExpense;
+    const rate = totalIncome > 0 ? ((balance / totalIncome) * 100).toFixed(1) : 0;
+
+    document.getElementById('mIncome').innerText = formatCurrency(totalIncome);
+    document.getElementById('mExpense').innerText = formatCurrency(totalExpense);
+    document.getElementById('mBalance').innerText = formatCurrency(balance);
+    document.getElementById('mRate').innerText = `${rate}%`;
+
+    // Categorias
+    const catList = document.getElementById('categoryList');
+    if (Object.keys(catTotals).length === 0) {
+      catList.innerHTML = `<div class="empty">Nenhuma despesa registrada neste mês.</div>`;
+    } else {
+      catList.innerHTML = Object.entries(catTotals)
+        .sort((a,b) => b[1] - a[1])
+        .map(([cat, amt]) => {
+          const pct = totalExpense > 0 ? ((amt / totalExpense) * 100).toFixed(0) : 0;
+          return `
+            <div class="progress-row">
+              <div class="progress-head"><span>${cat}</span><span class="privacy-value">${formatCurrency(amt)} (${pct}%)</span></div>
+              <div class="bar"><div style="width:${pct}%"></div></div>
+            </div>`;
+        }).join('');
+    }
+
+    // Últimos lançamentos
+    const recentList = document.getElementById('recentList');
+    const recentTx = [...filteredTx].reverse().slice(0, 5);
+    if (recentTx.length === 0) {
+      recentList.innerHTML = `<div class="empty">Nenhum lançamento no mês.</div>`;
+    } else {
+      recentList.innerHTML = recentTx.map(t => `
+        <div class="recent-item">
+          <div>
+            <strong>${t.description}</strong>
+            <div style="font-size:11px;color:var(--muted)">${t.responsible} • ${t.category}</div>
+          </div>
+          <div style="text-align:right">
+            <strong class="${t.type === 'income' ? 'positive' : 'negative'} privacy-value">${t.type === 'income' ? '+' : '-'} ${formatCurrency(t.amount)}</strong>
+            <div style="font-size:11px;color:var(--muted)">${formatDate(t.date)}</div>
+          </div>
         </div>
-        <div class="bar-label">${label}</div>
-      </div>`;
-    }).join("");
-  }
-
-  function formatDate(s){
-    if(!s) return "Data não informada";
-    const [y,m,d]=s.split("-");
-    return `${d}/${m}/${y}`;
-  }
-
-  function populateMonths(){
-    const select=$( "monthSelect");
-    const base=new Date();
-    const opts=[];
-    const months=[];
-    for(let i=0;i<18;i++){
-      const x=new Date(base.getFullYear(),base.getMonth()-i,1);
-      const ym=`${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}`;
-      months.push(ym); opts.push(`<option value="${ym}">${monthName(ym)}</option>`);
+      `).join('');
     }
-    select.innerHTML=opts.join(""); select.value=selectedMonth;
-    $("dashboardMonths").innerHTML=months.slice(0,12).map(ym=>`<button type="button" class="month-chip ${ym===selectedMonth?'active':''}" data-month="${ym}">${new Intl.DateTimeFormat("pt-BR",{month:"short"}).format(new Date(ym+"-01T12:00:00")).replace(".","")} ${ym.slice(0,4)}</button>`).join("");
-    document.querySelectorAll(".month-chip").forEach(btn=>btn.addEventListener("click",()=>{selectedMonth=btn.dataset.month;select.value=selectedMonth;render();}));
+
+    renderTransactionsTable();
   }
 
-  function populateTransactionCategories(){
-    $("tCategory").innerHTML = categories.map(c=>`<option>${esc(c)}</option>`).join("");
+  function renderTransactionsTable() {
+    const tbody = document.getElementById('transactionTable');
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const resp = document.getElementById('responsibleFilter').value;
+    const type = document.getElementById('typeFilter').value;
+
+    let list = appData.transactions.filter(t => (t.date || '').startsWith(currentMonth));
+
+    if (search) {
+      list = list.filter(t => 
+        (t.description || '').toLowerCase().includes(search) ||
+        (t.category || '').toLowerCase().includes(search) ||
+        (t.channel || '').toLowerCase().includes(search)
+      );
+    }
+    if (resp) list = list.filter(t => t.responsible === resp);
+    if (type) list = list.filter(t => t.type === type);
+
+    if (list.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="8" class="empty">Nenhum lançamento encontrado.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = list.map(t => `
+      <tr>
+        <td>${formatDate(t.date)}</td>
+        <td>${t.responsible}</td>
+        <td><strong>${t.description}</strong></td>
+        <td><span class="category-dot"></span>${t.category}</td>
+        <td>${t.channel || '-'}</td>
+        <td><span class="pill ${t.type === 'income' ? 'pill-income' : 'pill-expense'}">${t.type === 'income' ? 'Receita' : 'Despesa'}</span></td>
+        <td class="privacy-value <strong>${t.type === 'income' ? 'positive' : 'negative'}</strong>">${formatCurrency(t.amount)}</td>
+        <td style="text-align:right">
+          <button class="btn btn-small btn-danger" onclick="deleteTransaction('${t.id}')">✕</button>
+        </td>
+      </tr>
+    `).join('');
   }
 
-  function openModal(){
-    $("modalBackdrop").classList.add("open");
-    const today=new Date(); const defaultDate=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
-    $("tDate").value = selectedMonth===defaultDate.slice(0,7) ? defaultDate : `${selectedMonth}-01`;
-    populateTransactionCategories();
-    $("tDescription").focus();
-  }
-  function closeModal(){$("modalBackdrop").classList.remove("open")}
-  function openBudgetModal(){
-    $("bCategory").innerHTML=categories.map(c=>`<option>${esc(c)}</option>`).join("");
-    $("bAmount").value=state.budgets[$("bCategory").value]||"";
-    $("budgetBackdrop").classList.add("open");
-  }
-  function closeBudgetModal(){$("budgetBackdrop").classList.remove("open")}
-  function openGoalModal(){$("goalBackdrop").classList.add("open");$("gName").focus()}
-  function closeGoalModal(){$("goalBackdrop").classList.remove("open")}
-  function openWealthModal(){$("wealthBackdrop").classList.add("open");$("wName").focus()}
-  function closeWealthModal(){$("wealthBackdrop").classList.remove("open")}
-
-  window.openModal=openModal; window.closeModal=closeModal;
-  window.openBudgetModal=openBudgetModal; window.closeBudgetModal=closeBudgetModal;
-  window.openGoalModal=openGoalModal; window.closeGoalModal=closeGoalModal;
-  window.openWealthModal=openWealthModal; window.closeWealthModal=closeWealthModal;
-
-  $("transactionForm").addEventListener("submit",async e=>{
-    e.preventDefault();
-    const amount=Number($("tAmount").value);
-    if(!amount || amount<=0) return;
-    const tx={
-      id:crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
-      type:$("tType").value,
-      date:$("tDate").value,
-      month:$("tDate").value ? $("tDate").value.slice(0,7) : selectedMonth,
-      description:$("tDescription").value.trim(),
-      category:$("tCategory").value,
-      amount,
-      responsible:$("tResponsible").value,
-      channel:$("tChannel").value.trim(),
-      details:$("tDetails").value.trim()
-    };
-    state.transactions.push(tx);
-    closeModal(); e.target.reset(); save();
-    if(currentUser && cloudReady) {
-      try{ await saveTransactionCloud(tx); toast("Lançamento salvo na nuvem!"); }
-      catch(err){ console.error(err); toast("Salvo localmente, mas houve erro na nuvem."); }
-    } else toast("Lançamento salvo!");
-
-  });
-
-  $("budgetForm").addEventListener("submit",e=>{
-    e.preventDefault();
-    state.budgets[$("bCategory").value]=Number($("bAmount").value)||0;
-    closeBudgetModal(); save(); toast("Orçamento atualizado!");
-  });
-
-  $("bCategory").addEventListener("change",()=>{$("bAmount").value=state.budgets[$("bCategory").value]||""});
-
-  $("goalForm").addEventListener("submit",e=>{
-    e.preventDefault();
-    state.goals.push({
-      id:crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
-      name:$("gName").value.trim(),
-      target:Number($("gTarget").value)||0,
-      current:Number($("gCurrent").value)||0
-    });
-    closeGoalModal(); e.target.reset(); save(); toast("Meta criada!");
-  });
-
-  $("wealthForm").addEventListener("submit",e=>{
-    e.preventDefault();
-    state.wealth.push({
-      id:crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
-      name:$("wName").value.trim(),
-      type:$("wType").value,
-      amount:Number($("wAmount").value)||0
-    });
-    closeWealthModal(); e.target.reset(); save(); toast("Patrimônio atualizado!");
-  });
-
-
-  // Filtros de lançamentos
-  ["searchInput","periodPreset","responsibleFilter","typeFilter","fromDate","toDate"].forEach(id=>{
-    const el=$(id); if(el) el.addEventListener("input",()=>{ if(id==="periodPreset") $("customRange").style.display=el.value==="custom"?"flex":"none"; renderTransactions(); });
-    if(el && id==="periodPreset") el.addEventListener("change",()=>{ $("customRange").style.display=el.value==="custom"?"flex":"none"; renderTransactions(); });
-  });
-
-  // Privacidade dos valores
-  const privacyKey="financas-a-dois-hide-values";
-  let valuesHidden=localStorage.getItem(privacyKey)==="1";
-  function applyPrivacy(){ document.body.classList.toggle("values-hidden",valuesHidden); $("privacyBtn").textContent=valuesHidden?"◎":"◉"; $("privacyBtn").title=valuesHidden?"Mostrar valores":"Ocultar valores"; }
-  $("privacyBtn").addEventListener("click",()=>{valuesHidden=!valuesHidden;localStorage.setItem(privacyKey,valuesHidden?"1":"0");applyPrivacy();});
-  applyPrivacy();
-
-  // Tema claro/escuro
-  const themeKey="financas-a-dois-theme";
-  let darkMode=localStorage.getItem(themeKey)==="dark";
-  function applyTheme(){ document.body.classList.toggle("dark-mode",darkMode); $("themeBtn").textContent=darkMode?"☀":"☾"; $("themeBtn").title=darkMode?"Usar modo claro":"Usar modo escuro"; }
-  $("themeBtn").addEventListener("click",()=>{darkMode=!darkMode;localStorage.setItem(themeKey,darkMode?"dark":"light");applyTheme();});
-  applyTheme();
-
-  // OCR de comprovantes/prints. O arquivo é processado no navegador; não é enviado ao Firestore.
-  $("receiptImage").addEventListener("change",async e=>{
-    const file=e.target.files?.[0]; if(!file)return;
-    const preview=$("ocrPreview"); preview.src=URL.createObjectURL(file); preview.style.display="block";
-    const status=$("ocrStatus"); status.textContent="Lendo o print… isso pode levar alguns segundos.";
-    try{
-      const result=await Tesseract.recognize(file,"por+eng",{logger:m=>{if(m.status==="recognizing text") status.textContent=`Lendo o print… ${Math.round((m.progress||0)*100)}%`;}});
-      const text=result.data.text||"";
-      const dateMatch=text.match(/\b(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})\b/);
-      if(dateMatch){let y=dateMatch[3];if(y.length===2)y="20"+y;$("tDate").value=`${y}-${String(dateMatch[2]).padStart(2,"0")}-${String(dateMatch[1]).padStart(2,"0")}`;}
-      const amounts=[];
-      const re=/R\$?\s*([0-9]{1,3}(?:\.[0-9]{3})*,\d{2}|[0-9]+,\d{2})/g; let m;
-      while((m=re.exec(text))) amounts.push(m[1]);
-      if(amounts.length){const raw=amounts[amounts.length-1].replace(/\./g,"").replace(",",".");const val=parseFloat(raw);if(val>0)$("tAmount").value=val.toFixed(2);}
-      const lines=text.split(/\r?\n/).map(x=>x.trim()).filter(x=>x.length>=3);
-      const skip=/pix|valor|data|hora|comprovante|pagamento|cart[aã]o|documento|autoriz|transa[cç][aã]o|total|cnpj|cpf|saldo/i;
-      const desc=lines.find(x=>!skip.test(x) && !/^[\d\W_]+$/.test(x) && x.length<80);
-      if(desc && !$("tDescription").value) $("tDescription").value=desc;
-      const lower=text.toLowerCase();
-      const cats=["Alimentação","Cartão de crédito","Compras","Cuidados pessoais","Dívidas","Financiamento","Lazer","Moradia","Outros","Saúde","Transporte"];
-      const hints={"Alimentação":/ifood|restaurante|mercado|supermercado|padaria|alimenta|lanche|almoço|jantar/,"Saúde":/farm[aá]cia|drogaria|hospital|cl[ií]nica|sa[uú]de|amil/,"Transporte":/uber|99|gasolina|posto|estacionamento|combust[ií]vel|moto|carro/,"Moradia":/aluguel|condom[ií]nio|energia|luz|[áa]gua|g[aá]s/,"Compras":/shopee|mercado livre|riachuelo|amazon|compra/,"Lazer":/cinema|viagem|bar|festival|restaurante/,"Cuidados pessoais":/barbeiro|cabeleireiro|sal[aã]o|est[eé]tica/};
-      const cat=cats.find(c=>hints[c]?.test(lower)); if(cat)$("tCategory").value=cat;
-      $("tType").value="expense";
-      status.textContent="Leitura concluída. Confira data, descrição, categoria e valor antes de salvar.";
-    }catch(err){console.error(err);status.textContent="Não consegui ler o print automaticamente. Preencha os campos manualmente.";}
-  });
-
-  $("monthSelect").addEventListener("change",e=>{selectedMonth=e.target.value;populateMonths();render()});
-
-  document.querySelectorAll(".tab").forEach(tab=>{
-    tab.addEventListener("click",()=>{
-      document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
-      document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));
-      tab.classList.add("active");
-      $(tab.dataset.view).classList.add("active");
-      $("pageTitle").textContent = ({
-        dashboard:"Visão geral",transactions:"Lançamentos",budget:"Orçamento",goals:"Metas",wealth:"Patrimônio"
-      })[tab.dataset.view];
-    });
-  });
-
-  window.deleteTransaction=async id=>{
-    if(!confirm("Excluir este lançamento?")) return;
-    state.transactions=state.transactions.filter(t=>t.id!==id);
-    save();
-    if(currentUser && cloudReady){
-      try{ await deleteTransactionCloud(id); toast("Lançamento excluído."); }
-      catch(err){ console.error(err); toast("Excluído localmente, mas houve erro na nuvem."); }
-    }else toast("Lançamento excluído.");
-  };
-  window.deleteGoal=id=>{
-    if(!confirm("Excluir esta meta?")) return;
-    state.goals=state.goals.filter(g=>g.id!==id); save(); toast("Meta excluída.");
-  };
-  window.deleteWealth=id=>{
-    if(!confirm("Excluir este item?")) return;
-    state.wealth=state.wealth.filter(w=>w.id!==id); save(); toast("Item excluído.");
+  window.deleteTransaction = (id) => {
+    if (!confirm('Deseja realmente excluir este lançamento?')) return;
+    appData.transactions = appData.transactions.filter(t => t.id !== id);
+    saveUserData();
+    showToast('Lançamento removido!');
   };
 
-  window.exportCSV=()=>{
-    const tx=[...state.transactions].sort((a,b)=>a.date.localeCompare(b.date));
-    if(!tx.length){toast("Não há lançamentos para exportar.");return}
-    const rows=[["Data","Descrição","Categoria","Tipo","Valor"],...tx.map(t=>[
-      t.date,t.description,t.category,t.type==="income"?"Receita":"Despesa",t.amount.toFixed(2).replace(".",",")
-    ])];
-    const csv="\uFEFF"+rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(";")).join("\n");
-    const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
-    const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="financas-a-dois.csv";a.click();
-    URL.revokeObjectURL(a.href); toast("CSV exportado!");
+  // Event Listeners e Modais
+  function setupEventListeners() {
+    document.getElementById('monthSelect').onchange = (e) => {
+      currentMonth = e.target.value;
+      updateUI();
+    };
+
+    document.getElementById('searchInput').oninput = renderTransactionsTable;
+    document.getElementById('responsibleFilter').onchange = renderTransactionsTable;
+    document.getElementById('typeFilter').onchange = renderTransactionsTable;
+
+    // Tabs
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.onclick = () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.view).classList.add('active');
+      };
+    });
+
+    // Login/Cadastro
+    document.getElementById('loginBtn').onclick = () => {
+      const e = document.getElementById('authEmail').value;
+      const p = document.getElementById('authPassword').value;
+      firebaseAuth.signInWithEmailAndPassword(e, p).catch(err => {
+        document.getElementById('authError').innerText = err.message;
+        document.getElementById('authError').classList.add('show');
+      });
+    };
+
+    document.getElementById('signupBtn').onclick = () => {
+      const e = document.getElementById('authEmail').value;
+      const p = document.getElementById('authPassword').value;
+      firebaseAuth.createUserWithEmailAndPassword(e, p).catch(err => {
+        document.getElementById('authError').innerText = err.message;
+        document.getElementById('authError').classList.add('show');
+      });
+    };
+
+    document.getElementById('logoutBtn').onclick = () => firebaseAuth.signOut();
+    document.getElementById('drawerLogoutBtn').onclick = () => firebaseAuth.signOut();
+
+    // Lançamento manual
+    document.getElementById('transactionForm').onsubmit = (e) => {
+      e.preventDefault();
+      const newTx = {
+        id: 'tx-' + Date.now(),
+        type: document.getElementById('tType').value,
+        date: document.getElementById('tDate').value,
+        description: document.getElementById('tDescription').value,
+        responsible: document.getElementById('tResponsible').value,
+        category: document.getElementById('tCategory').value,
+        amount: parseFloat(document.getElementById('tAmount').value),
+        channel: document.getElementById('tChannel').value,
+        details: document.getElementById('tDetails').value
+      };
+      appData.transactions.push(newTx);
+      saveUserData();
+      closeModal();
+      showToast('Lançamento salvo com sucesso!');
+    };
+
+    // Botões Assistente AI
+    document.getElementById('aiSend').onclick = processAiPrompt;
+    document.getElementById('aiInput').onkeypress = (e) => { if (e.key === 'Enter') processAiPrompt(); };
+    
+    document.querySelectorAll('.ai-example').forEach(btn => {
+      btn.onclick = () => {
+        document.getElementById('aiInput').value = btn.dataset.aiExample;
+        processAiPrompt();
+      };
+    });
+
+    document.getElementById('aiConfirm').onclick = () => {
+      if (!pendingAiTransaction) return;
+      appData.transactions.push(pendingAiTransaction);
+      saveUserData();
+      pendingAiTransaction = null;
+      document.getElementById('aiPreview').style.display = 'none';
+      document.getElementById('aiStatus').innerText = '';
+      showToast('Lançamento salvo com sucesso!');
+      updateUI();
+    };
+
+    document.getElementById('aiCancel').onclick = () => {
+      pendingAiTransaction = null;
+      document.getElementById('aiPreview').style.display = 'none';
+      document.getElementById('aiStatus').innerText = 'Lançamento cancelado.';
+    };
+
+    // Microfone
+    setupVoiceRecognition();
+  }
+
+  // ASSISTENTE DE IA INTELIGENTE
+  async function processAiPrompt() {
+    const input = document.getElementById('aiInput');
+    const promptText = input.value.trim();
+    if (!promptText) return;
+
+    const aiStatus = document.getElementById('aiStatus');
+    const aiAnswer = document.getElementById('aiAnswer');
+    const aiPreview = document.getElementById('aiPreview');
+
+    aiStatus.innerText = 'Processando com IA...';
+    aiAnswer.style.display = 'none';
+    aiPreview.style.display = 'none';
+
+    // 1. Calcula os dados acumulados do mês atual para contextualizar a IA
+    const filteredTx = appData.transactions.filter(t => (t.date || '').startsWith(currentMonth));
+    let totalIncome = 0;
+    let totalExpense = 0;
+    const catBreakdown = {};
+
+    filteredTx.forEach(t => {
+      const amt = Number(t.amount || 0);
+      if (t.type === 'income') totalIncome += amt;
+      else {
+        totalExpense += amt;
+        catBreakdown[t.category] = (catBreakdown[t.category] || 0) + amt;
+      }
+    });
+
+    const contextData = {
+      currentMonth,
+      today: new Date().toISOString().slice(0, 10),
+      summary: {
+        receitas: totalIncome,
+        despesas: totalExpense,
+        saldo: totalIncome - totalExpense,
+        categorias: catBreakdown,
+        totalLancamentos: filteredTx.length
+      },
+      recentTransactions: filteredTx.slice(-10)
+    };
+
+    const systemContextPrompt = `
+Você é o assistente financeiro do app Finanças a Dois.
+Data de hoje: ${contextData.today}
+Mês de referência selecionado: ${contextData.currentMonth}
+
+DADOS FINANCEIROS ATUAIS DO MÊS SELECIONADO:
+- Total de Receitas: R$ ${contextData.summary.receitas.toFixed(2)}
+- Total de Despesas (Gastos): R$ ${contextData.summary.despesas.toFixed(2)}
+- Saldo Atual: R$ ${contextData.summary.saldo.toFixed(2)}
+- Gastos por Categoria: ${JSON.stringify(contextData.summary.categorias)}
+
+Regras de Resposta:
+1. Se o usuário quiser REGISTRAR uma despesa ou receita (ex: "gastei 50 reais de gasolina", "registre 100 de mercado", "gás 50"), retorne EXATAMENTE e SOMENTE um JSON no seguinte formato (sem texto adicional):
+{
+  "action": "transaction",
+  "type": "expense",
+  "amount": 50.00,
+  "date": "${contextData.today}",
+  "description": "Gasolina",
+  "category": "Transporte",
+  "responsible": "Danillo",
+  "channel": "Posto"
+}
+* IMPORTANTE NO REGISTRO: A "description" deve ser um nome limpo e direto do item (ex: "Gasolina", "Supermercado", "Conta de Gás"), JAMAIS repetindo o comando do usuário como "Registre um gás".
+* Categorias válidas: Alimentação, Cartão de crédito, Compras, Cuidados pessoais, Dívidas, Financiamento, Lazer, Moradia, Outros, Saúde, Transporte.
+
+2. Se o usuário fizer uma PERGUNTA sobre o saldo, quanto gastou no mês ou análises, retorne SOMENTE um JSON:
+{
+  "action": "answer",
+  "answer": "Sua resposta formatada em Português do Brasil com base nos dados fornecidos acima."
+}
+
+Entrada do Usuário: "${promptText}"
+    `.trim();
+
+    try {
+      let rawResponse = "";
+
+      // Tenta via Firebase AI / Gemini Direct API
+      if (window.financasGemini && window.financasGemini.ready) {
+        rawResponse = await window.financasGemini.generate(systemContextPrompt);
+      } else {
+        // Fallback local caso offline ou sem AI inicializado
+        rawResponse = processFallbackLocally(promptText, contextData);
+      }
+
+      parseAndApplyAiResponse(rawResponse, promptText, contextData);
+    } catch (err) {
+      console.warn("Falha no serviço principal de IA, executando motor local:", err);
+      const fallbackResp = processFallbackLocally(promptText, contextData);
+      parseAndApplyAiResponse(fallbackResp, promptText, contextData);
+    } finally {
+      input.value = '';
+    }
+  }
+
+  // Motor Local de IA de Contingência
+  function processFallbackLocally(prompt, context) {
+    const text = prompt.toLowerCase();
+    
+    // Identificar intenção de perguntas financeiras
+    if (text.includes('quanto') && (text.includes('gastei') || text.includes('gastamos') || text.includes('mês') || text.includes('mes'))) {
+      return JSON.stringify({
+        action: "answer",
+        answer: `Neste mês (${context.currentMonth}), você já gastou um total de ${formatCurrency(context.summary.despesas)}.`
+      });
+    }
+
+    // Identificar intenção de registro
+    const numberMatch = text.match(/\d+([.,]\d+)?/);
+    if (numberMatch) {
+      const val = parseFloat(numberMatch[0].replace(',', '.'));
+      let cat = "Outros";
+      let desc = "Gasto registrado";
+
+      if (text.includes('gasolina') || text.includes('combustivel') || text.includes('posto') || text.includes('uber')) {
+        cat = "Transporte";
+        desc = "Gasolina";
+      } else if (text.includes('mercado') || text.includes('comida') || text.includes('almoço') || text.includes('ifood')) {
+        cat = "Alimentação";
+        desc = "Alimentação / Mercado";
+      } else if (text.includes('gás') || text.includes('gas') || text.includes('luz') || text.includes('aluguel')) {
+        cat = "Moradia";
+        desc = "Conta de Gás / Casa";
+      }
+
+      return JSON.stringify({
+        action: "transaction",
+        type: "expense",
+        amount: val,
+        date: context.today,
+        description: desc,
+        category: cat,
+        responsible: "Danillo",
+        channel: "Voz/Assistente"
+      });
+    }
+
+    return JSON.stringify({
+      action: "answer",
+      answer: "Entendi sua solicitação! Posso te ajudar a registrar gastos (ex: 'gastei 50 de gasolina') ou consultar seus totais do mês."
+    });
+  }
+
+  function parseAndApplyAiResponse(rawText, originalPrompt, context) {
+    const aiStatus = document.getElementById('aiStatus');
+    const aiAnswer = document.getElementById('aiAnswer');
+    const aiPreview = document.getElementById('aiPreview');
+
+    try {
+      const cleanJsonStr = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+      const parsed = JSON.parse(cleanJsonStr);
+
+      aiStatus.innerText = '';
+
+      if (parsed.action === 'answer') {
+        aiAnswer.innerText = parsed.answer;
+        aiAnswer.style.display = 'block';
+      } else if (parsed.action === 'transaction') {
+        pendingAiTransaction = {
+          id: 'tx-ai-' + Date.now(),
+          type: parsed.type || 'expense',
+          amount: parseFloat(parsed.amount || 0),
+          date: parsed.date || context.today,
+          description: parsed.description || 'Lançamento',
+          category: parsed.category || 'Outros',
+          responsible: parsed.responsible || 'Danillo',
+          channel: parsed.channel || 'Assistente',
+          details: 'Registrado via IA'
+        };
+
+        document.getElementById('aiPreviewText').innerText = `Entendido a partir de: "${originalPrompt}"`;
+        document.getElementById('aiPType').innerText = pendingAiTransaction.type === 'expense' ? 'Despesa' : 'Receita';
+        document.getElementById('aiPAmount').innerText = formatCurrency(pendingAiTransaction.amount);
+        document.getElementById('aiPCat').innerText = pendingAiTransaction.category;
+        document.getElementById('aiPResp').innerText = pendingAiTransaction.responsible;
+        document.getElementById('aiPDate').innerText = formatDate(pendingAiTransaction.date);
+        document.getElementById('aiPChannel').innerText = pendingAiTransaction.channel;
+
+        aiPreview.style.display = 'block';
+      }
+    } catch (e) {
+      console.error("Erro ao interpretar JSON da IA:", e, rawText);
+      aiStatus.innerText = '';
+      aiAnswer.innerText = rawText;
+      aiAnswer.style.display = 'block';
+    }
+  }
+
+  // Reconhecimento de Voz
+  function setupVoiceRecognition() {
+    const micBtn = document.getElementById('aiMic');
+    const input = document.getElementById('aiInput');
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      micBtn.style.display = 'none';
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'pt-BR';
+    recognition.continuous = false;
+
+    micBtn.onclick = () => {
+      micBtn.classList.add('listening');
+      document.getElementById('aiStatus').innerText = 'Ouvindo... Fale agora.';
+      recognition.start();
+    };
+
+    recognition.onresult = (e) => {
+      micBtn.classList.remove('listening');
+      const text = e.results[0][0].transcript;
+      input.value = text;
+      processAiPrompt();
+    };
+
+    recognition.onerror = () => {
+      micBtn.classList.remove('listening');
+      document.getElementById('aiStatus').innerText = 'Não consegui ouvir. Tente novamente.';
+    };
+
+    recognition.onend = () => {
+      micBtn.classList.remove('listening');
+    };
+  }
+
+  // Modais visuais
+  window.openModal = () => {
+    document.getElementById('tDate').value = new Date().toISOString().slice(0, 10);
+    document.getElementById('modalBackdrop').classList.add('open');
+  };
+  window.closeModal = () => document.getElementById('modalBackdrop').classList.remove('open');
+  window.openBudgetModal = () => document.getElementById('budgetBackdrop').classList.add('open');
+  window.closeBudgetModal = () => document.getElementById('budgetBackdrop').classList.remove('open');
+  window.openGoalModal = () => document.getElementById('goalBackdrop').classList.add('open');
+  window.closeGoalModal = () => document.getElementById('goalBackdrop').classList.remove('open');
+  window.openWealthModal = () => document.getElementById('wealthBackdrop').classList.add('open');
+  window.closeWealthModal = () => document.getElementById('wealthBackdrop').classList.remove('open');
+
+  // Exportação CSV
+  window.exportCSV = () => {
+    if (!appData.transactions.length) return showToast('Sem dados para exportar');
+    let csv = 'Data;Responsavel;Descricao;Categoria;Canal;Tipo;Valor\n';
+    appData.transactions.forEach(t => {
+      csv += `${t.date};${t.responsible};"${t.description}";${t.category};${t.channel};${t.type};${t.amount}\n`;
+    });
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute("download", `financas_${currentMonth}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
-  function toast(msg){
-    const el=$("toast");el.textContent=msg;el.classList.add("show");
-    clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove("show"),2200);
-  }
-
-  document.querySelectorAll(".modal-backdrop").forEach(b=>{
-    b.addEventListener("click",e=>{if(e.target===b)b.classList.remove("open")});
-  });
-
-  populateMonths();
-  render();
-
-  // ===== Assistente financeiro: voz + linguagem natural, sem chave/API externa =====
-  let aiPendingTransaction = null;
-  let aiRecognition = null;
-
-  function aiToday(offset=0){
-    const d=new Date(); d.setHours(12,0,0,0); d.setDate(d.getDate()+offset);
-    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
-  }
-
-  function aiNormalize(s){
-    return String(s||"").toLowerCase()
-      .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
-      .replace(/\s+/g," ").trim();
-  }
-
-  function aiParseAmount(text){
-    const t=aiNormalize(text);
-    const patterns=[
-      /(?:r\$|reais?|rs)\s*(\d{1,3}(?:\.\d{3})*(?:,\d{1,2})?|\d+(?:[.,]\d{1,2})?)/i,
-      /(\d{1,3}(?:\.\d{3})*(?:,\d{1,2})?)\s*(?:reais?|r\$|rs)\b/i,
-      /(?:gastei|paguei|custou|valor(?: de)?|recebi)\s+(\d+(?:[.,]\d{1,2})?)/i
-    ];
-    for(const re of patterns){
-      const m=t.match(re); if(m){
-        let raw=m[1].replace(/\./g,"").replace(",",".");
-        const n=Number(raw); if(Number.isFinite(n)&&n>0)return n;
-      }
-    }
-    return null;
-  }
-
-  function aiDetectCategory(text){
-    const t=aiNormalize(text);
-    const hints={
-      "Alimentação":/mercado|supermercado|ifood|comida|almoco|jantar|cafe|padaria|restaurante|lanche|pizza|salgado|chocolate|leite/,
-      "Transporte":/uber|99|gasolina|combustivel|posto|estacionamento|sem parar|pedagio|moto|carro|lavagem/,
-      "Saúde":/farmacia|remedio|medico|consulta|vacina|plano de saude|dentista|exame/,
-      "Moradia":/aluguel|condominio|energia|luz|agua|gas|faxina|quinto andar/,
-      "Compras":/shopee|mercado livre|amazon|riachuelo|shein|roupa|eletrodomestico|compra/,
-      "Lazer":/cinema|viagem|bar|festival|restaurante|lazer|passeio|show/,
-      "Cuidados pessoais":/barbeiro|cabeleireiro|salao|unha|estetica/,
-      "Financiamento":/financiamento|consorcio|parcela do carro|parcela moto/,
-      "Dívidas":/divida|dividas|emprestimo/,
-      "Cartão de crédito":/cartao de credito|fatura do cartao/
-    };
-    for(const c of categories) if(hints[c]?.test(t)) return c;
-    return "Outros";
-  }
-
-  function aiDetectResponsible(text){
-    const t=aiNormalize(text);
-    if(/\b(patricia|paty)\b/.test(t)) return "Patricia";
-    if(/\b(danillo|dan)\b/.test(t)) return "Danillo";
-    return $("tResponsible")?.value || "Danillo";
-  }
-
-  function aiDetectDate(text){
-    const t=aiNormalize(text);
-    if(/\bontem\b/.test(t)) return aiToday(-1);
-    if(/\banteontem\b/.test(t)) return aiToday(-2);
-    return aiToday(0);
-  }
-
-  function aiDetectType(text){
-    const t=aiNormalize(text);
-    return /\b(recebi|receita|ganhei|entrada|salario|salário)\b/.test(t) ? "income" : "expense";
-  }
-
-  function aiDescription(text){
-    const t=String(text||"").trim();
-    const amount=/\b(?:r\$|reais?|rs)\b|\d+(?:[.,]\d{1,2})?\s*(?:reais?|r\$|rs)\b/i;
-    let d=t.replace(/^(eu\s+)?(gastei|paguei|comprei|recebi|ganhei)\s+/i,"");
-    d=d.replace(amount,"").replace(/\b(hoje|ontem|anteontem)\b/ig,"").trim();
-    d=d.replace(/\b(no|na|em|de)\s*$/i,"").trim();
-    if(!d) d="Lançamento por voz";
-    return d.charAt(0).toUpperCase()+d.slice(1);
-  }
-
-  function aiBuildTransaction(text){
-    const amount=aiParseAmount(text);
-    if(!amount) return null;
-    const date=aiDetectDate(text);
-    const type=aiDetectType(text);
-    const category=aiDetectCategory(text);
-    const responsible=aiDetectResponsible(text);
-    const lower=aiNormalize(text);
-    const channel =
-      /uber/.test(lower) ? "Uber" :
-      /ifood/.test(lower) ? "Ifood" :
-      /shopee/.test(lower) ? "Shopee" :
-      /mercado livre/.test(lower) ? "Mercado Livre" :
-      /gasolina|posto/.test(lower) ? "Posto" : "";
-    return {
-      id:crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
-      type,date,month:date.slice(0,7),
-      description:aiDescription(text),
-      category,amount,responsible,channel,
-      details:"Registrado pelo assistente"
-    };
-  }
-
-  function aiShowAnswer(html){
-    const el=$("aiAnswer"); el.innerHTML=html; el.style.display="block";
-  }
-  function aiHideAnswer(){ $("aiAnswer").style.display="none"; }
-
-  function aiPreview(tx){
-    aiPendingTransaction=tx;
-    $("aiPreview").style.display="block";
-    $("aiPreviewText").textContent=`${tx.description} · ${tx.responsible}`;
-    $("aiPType").textContent=tx.type==="income"?"Receita":"Despesa";
-    $("aiPAmount").textContent=money(tx.amount);
-    $("aiPCat").textContent=tx.category;
-    $("aiPResp").textContent=tx.responsible;
-    $("aiPDate").textContent=formatDate(tx.date);
-    $("aiPChannel").textContent=tx.channel||"—";
-  }
-
-  function aiClearPreview(){aiPendingTransaction=null;$("aiPreview").style.display="none";}
-
-  async function aiConfirmTransaction(){
-    if(!aiPendingTransaction)return;
-    const tx=aiPendingTransaction;
-    state.transactions.push(tx);
-    save();
-    aiClearPreview();
-    $("aiInput").value="";
-    $("aiStatus").textContent="✓ Lançamento salvo.";
-    if(currentUser && cloudReady){
-      try{ await saveTransactionCloud(tx); $("aiStatus").textContent="✓ Lançamento salvo e sincronizado na nuvem."; }
-      catch(err){ console.error(err); $("aiStatus").textContent="✓ Salvo no aparelho; houve erro ao sincronizar."; }
-    }
-  }
-
-  function aiAnswerQuery(text){
-    const t=aiNormalize(text);
-    const all=state.transactions;
-    const current=transactionsForMonth(selectedMonth);
-    const isMonth = /\b(este mes|esse mes|mes atual|neste mes|nesse mes)\b/.test(t);
-    const pool=isMonth ? current : all;
-    const expenses=pool.filter(x=>x.type==="expense");
-    const incomes=pool.filter(x=>x.type==="income");
-    const totalExp=expenses.reduce((s,x)=>s+Number(x.amount||0),0);
-    const totalInc=incomes.reduce((s,x)=>s+Number(x.amount||0),0);
-
-    const respMatch=t.match(/\b(danillo|patricia)\b/);
-    const cat=categories.find(c=>t.includes(aiNormalize(c)));
-    let filtered=pool;
-    if(respMatch) filtered=filtered.filter(x=>aiNormalize(x.responsible)===respMatch[1]);
-    if(cat) filtered=filtered.filter(x=>x.category===cat);
-
-    const channelHints=["uber","ifood","shopee","mercado livre","gasolina","posto","sem parar"];
-    const channel=channelHints.find(x=>t.includes(x));
-    if(channel) filtered=filtered.filter(x=>aiNormalize(`${x.channel} ${x.description} ${x.details}`) .includes(channel));
-
-    const asksCategory=/categoria|categorias|onde.*gast|gast.*onde/.test(t);
-    const asksResponsible=/danillo|patricia/.test(t);
-    const asksHowMuch=/quanto|total|gastei|gastamos|despesa|despesas/.test(t);
-    const asksTop=/maior|maiores|top|mais gast/.test(t);
-
-    if(asksTop || asksCategory){
-      const sums={};
-      (asksCategory && !cat ? expenses : filtered.filter(x=>x.type==="expense")).forEach(x=>sums[x.category]=(sums[x.category]||0)+Number(x.amount||0));
-      const top=Object.entries(sums).sort((a,b)=>b[1]-a[1]).slice(0,5);
-      if(!top.length) return `Não encontrei despesas para esse período.`;
-      return `<strong>Principais gastos</strong><br>${top.map((x,i)=>`${i+1}. ${esc(x[0])}: <strong>${money(x[1])}</strong>`).join("<br>")}`;
-    }
-
-    if(channel || cat || asksResponsible){
-      const e=filtered.filter(x=>x.type==="expense");
-      const sum=e.reduce((s,x)=>s+Number(x.amount||0),0);
-      const label=cat||channel||(respMatch?respMatch[1][0].toUpperCase()+respMatch[1].slice(1):"esse filtro");
-      return `<strong>${esc(label)}</strong>: você gastou <strong>${money(sum)}</strong> em ${e.length} lançamento(s)${isMonth?` em ${esc(monthName(selectedMonth))}`:" no histórico disponível"}.`;
-    }
-
-    if(asksHowMuch || /resumo|saldo/.test(t)){
-      const balance=totalInc-totalExp;
-      return `<strong>${isMonth?`Resumo de ${esc(monthName(selectedMonth))}`:"Resumo geral"}</strong><br>
-        Receitas: <strong>${money(totalInc)}</strong><br>
-        Despesas: <strong>${money(totalExp)}</strong><br>
-        Saldo: <strong>${money(balance)}</strong>`;
-    }
-
-    return `Posso registrar gastos e responder perguntas sobre seus lançamentos. Experimente: <em>“gastei 80 reais no Uber”</em>, <em>“quanto gastamos este mês?”</em> ou <em>“qual categoria mais pesou?”</em>.`;
-  }
-
-  function aiExtractJson(text){
-    let raw=String(text||"").trim()
-      .replace(/^```(?:json)?/i,"")
-      .replace(/```$/,"")
-      .trim();
-    const first=raw.indexOf("{"), last=raw.lastIndexOf("}");
-    if(first>=0 && last>first) raw=raw.slice(first,last+1);
-    try{return JSON.parse(raw)}catch(e){return null}
-  }
-
-  function aiFinancialContext(){
-    return {
-      today:aiToday(0),
-      selectedMonth,
-      selectedMonthName:monthName(selectedMonth),
-      categories,
-      budgets:state.budgets||{},
-      goals:state.goals||[],
-      wealth:state.wealth||[],
-      transactions:state.transactions.map(t=>({
-        date:t.date||null,
-        month:t.month||(t.date?t.date.slice(0,7):null),
-        type:t.type,
-        amount:Number(t.amount)||0,
-        description:t.description||"",
-        category:t.category||"Outros",
-        responsible:t.responsible||"",
-        channel:t.channel||"",
-        details:t.details||""
-      }))
-    };
-  }
-
-  function aiNormalizeTransaction(data, originalText){
-    if(!data || data.action!=="transaction")return null;
-    const amount=Number(data.amount);
-    if(!Number.isFinite(amount)||amount<=0)return null;
-    const date=/^\d{4}-\d{2}-\d{2}$/.test(String(data.date||"")) ? data.date : aiToday(0);
-    const category=categories.includes(data.category) ? data.category : aiDetectCategory(originalText);
-    const responsible=["Danillo","Patricia"].includes(data.responsible) ? data.responsible : aiDetectResponsible(originalText);
-    return {
-      id:crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
-      type:data.type==="income"?"income":"expense",
-      date,
-      month:date.slice(0,7),
-      description:String(data.description||"Lançamento pelo assistente").trim(),
-      category,
-      amount,
-      responsible,
-      channel:String(data.channel||"").trim(),
-      details:String(data.details||"Registrado pelo assistente").trim()
-    };
-  }
-
-  async function aiAskGemini(text){
-    if(!window.financasGemini?.ready)throw new Error("GEMINI_NOT_READY");
-    const context=aiFinancialContext();
-    const prompt=`
-Data atual: ${context.today}
-Mês selecionado: ${context.selectedMonthName} (${context.selectedMonth})
-
-Pedido do usuário:
-${text}
-
-Dados financeiros do usuário:
-${JSON.stringify(context)}
-
-Retorne SOMENTE o JSON solicitado nas regras do sistema.
-`;
-    return await window.financasGemini.generate(prompt);
-  }
-
-  async function aiProcess(text){
-    const clean=String(text||"").trim();
-    if(!clean)return;
-
-    $("aiStatus").textContent="✨ Consultando a IA…";
-    aiHideAnswer();
-
-    try{
-      const raw=await aiAskGemini(clean);
-      const data=aiExtractJson(raw);
-
-      if(data?.action==="transaction"){
-        const tx=aiNormalizeTransaction(data,clean);
-        if(tx){
-          aiPreview(tx);
-          $("aiStatus").textContent="Entendi o lançamento. Confira os dados antes de salvar.";
-          return;
-        }
-      }
-
-      if(data?.action==="answer" && data.answer){
-        aiShowAnswer(esc(data.answer).replace(/\n/g,"<br>"));
-        $("aiStatus").textContent="✓ Resposta gerada pela IA.";
-        return;
-      }
-
-      throw new Error("FORMATO_IA_INVALIDO");
-    }catch(err){
-      console.error("Assistente Gemini:",err);
-      /* Fallback: mantém a funcionalidade anterior sem API. */
-      const tx=aiBuildTransaction(clean);
-      const looksLikeQuery=/\b(quanto|qual|quais|como|onde|resumo|saldo|maior|maiores|total|gastamos|gastei quanto)\b/i.test(clean) && !tx;
-      if(tx && !looksLikeQuery){
-        aiPreview(tx);
-        $("aiStatus").textContent="IA indisponível. Usei o modo local — confira antes de salvar.";
-        return;
-      }
-      aiClearPreview();
-      aiAnswerQuery(clean);
-      $("aiStatus").textContent="IA indisponível. Mostrando resposta local.";
-    }
-  }
-
-  $("aiSend").addEventListener("click",()=>aiProcess($("aiInput").value));
-  $("aiInput").addEventListener("keydown",e=>{if(e.key==="Enter")aiProcess(e.target.value)});
-  $("aiConfirm").addEventListener("click",aiConfirmTransaction);
-  $("aiCancel").addEventListener("click",()=>{aiClearPreview();$("aiStatus").textContent="Lançamento cancelado.";});
-
-  document.querySelectorAll(".ai-example").forEach(btn=>btn.addEventListener("click",()=>{
-    $("aiInput").value=btn.dataset.aiExample; aiProcess(btn.dataset.aiExample);
-  }));
-
-  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(SpeechRecognition){
-    aiRecognition=new SpeechRecognition();
-    aiRecognition.lang="pt-BR";
-    aiRecognition.interimResults=false;
-    aiRecognition.continuous=false;
-    aiRecognition.onstart=()=>{$("aiMic").classList.add("listening");$("aiMic").textContent="⏹️";$("aiStatus").textContent="Ouvindo… fale agora."};
-    aiRecognition.onresult=e=>{
-      const text=e.results?.[0]?.[0]?.transcript||"";
-      $("aiInput").value=text; aiProcess(text);
-    };
-    aiRecognition.onerror=e=>{$("aiStatus").textContent="Não consegui ouvir. Tente novamente ou digite.";console.warn(e)};
-    aiRecognition.onend=()=>{$("aiMic").classList.remove("listening");$("aiMic").textContent="🎙️"};
-    $("aiMic").addEventListener("click",()=>{
-      try{
-        if($("aiMic").classList.contains("listening")) aiRecognition.stop();
-        else aiRecognition.start();
-      }catch(e){console.warn(e)}
-    });
-  }else{
-    $("aiMic").disabled=true;
-    $("aiMic").title="Seu navegador não oferece reconhecimento de voz.";
-    $("aiStatus").textContent="Reconhecimento de voz não disponível neste navegador. Você ainda pode digitar os comandos.";
-  }
-
+  // Inicializar quando o DOM estiver pronto
+  document.addEventListener('DOMContentLoaded', init);
 })();
 </script>
 </body>
