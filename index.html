@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#0C2A3A">
-  <title>Finanças a Dois — V2.0.10</title>
+  <title>Finanças a Dois — V2.0.11</title>
   <meta name="description" content="Controle financeiro do casal: registre gastos, acompanhe orçamento, metas e patrimônio.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -3078,7 +3078,9 @@ Regras:
     const all=state.transactions;
     const current=transactionsForMonth(selectedMonth);
     const isMonth = /\b(este mes|esse mes|mes atual|neste mes|nesse mes)\b/.test(t);
-    const pool=isMonth ? current : all;
+    const asksToday=/\b(hoje|de hoje|no dia de hoje)\b/.test(t);
+    const today=aiToday(0);
+    const pool=asksToday ? all.filter(x=>String(x.date||"")===today) : (isMonth ? current : all);
     const expenses=pool.filter(x=>x.type==="expense");
     const incomes=pool.filter(x=>x.type==="income");
     const totalExp=expenses.reduce((s,x)=>s+Number(x.amount||0),0);
@@ -3111,7 +3113,9 @@ Regras:
       const e=filtered.filter(x=>x.type==="expense");
       const sum=e.reduce((s,x)=>s+Number(x.amount||0),0);
       const label=cat||channel||(respMatch?respMatch[1][0].toUpperCase()+respMatch[1].slice(1):"esse filtro");
-      return `<strong>${esc(label)}</strong>: você gastou <strong>${money(sum)}</strong> em ${e.length} lançamento(s)${isMonth?` em ${esc(monthName(selectedMonth))}`:" no histórico disponível"}.`;
+      const periodLabel=asksToday?" hoje":(isMonth?` em ${esc(monthName(selectedMonth))}`:" no histórico disponível");
+      if(asksToday && !e.length) return `Não encontrei nenhum lançamento de <strong>${esc(label)}</strong> hoje.`;
+      return `<strong>${esc(label)}</strong>: você gastou <strong>${money(sum)}</strong> em ${e.length} lançamento(s)${periodLabel}.`;
     }
 
     if(asksHowMuch || /resumo|saldo/.test(t)){
@@ -3126,6 +3130,11 @@ Regras:
   }
 
   function aiExtractJson(text){
+    if(text && typeof text==="object"){
+      if(text.action) return text;
+      if(text.response && typeof text.response==="object" && text.response.action) return text.response;
+      if(typeof text.text==="string") text=text.text;
+    }
     let raw=String(text||"").trim()
       .replace(/^```(?:json)?/i,"")
       .replace(/```$/,"")
@@ -3292,7 +3301,8 @@ Retorne SOMENTE o JSON solicitado nas regras do sistema.
         return;
       }
       aiClearPreview();
-      aiAnswerQuery(clean);
+      const localAnswer=aiAnswerQuery(clean);
+      if(localAnswer) aiShowAnswer(localAnswer);
       $("aiStatus").textContent=`IA indisponível (${motivo}). Mostrando resposta local.`;
     }
   }
