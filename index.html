@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#0C2A3A">
-  <title>Finanças a Dois — V2.0.12</title>
+  <title>Finanças a Dois — V2.0.13</title>
   <meta name="description" content="Controle financeiro do casal: registre gastos, acompanhe orçamento, metas e patrimônio.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1747,6 +1747,23 @@ Regras:
     $("brandMenuBtn").setAttribute("aria-expanded","false");
   }
   $("brandMenuBtn").addEventListener("click",openDrawer);
+
+  // V2.0.13 — gesto estilo iOS: puxar somente a partir da borda esquerda abre o menu.
+  // A área é propositalmente estreita para não interferir no scroll nem nos gestos normais do app.
+  let drawerTouchStartX=null, drawerTouchStartY=null, drawerEdgeGesture=false;
+  document.addEventListener("touchstart",e=>{
+    if($("sideDrawer").classList.contains("open") || e.touches.length!==1) return;
+    const t=e.touches[0];
+    drawerTouchStartX=t.clientX; drawerTouchStartY=t.clientY;
+    drawerEdgeGesture=t.clientX<=24;
+  },{passive:true});
+  document.addEventListener("touchend",e=>{
+    if(!drawerEdgeGesture || drawerTouchStartX===null || !e.changedTouches.length) return;
+    const t=e.changedTouches[0], dx=t.clientX-drawerTouchStartX, dy=Math.abs(t.clientY-drawerTouchStartY);
+    if(dx>=55 && dy<=70) openDrawer();
+    drawerTouchStartX=drawerTouchStartY=null; drawerEdgeGesture=false;
+  },{passive:true});
+
   $("drawerCloseBtn").addEventListener("click",closeDrawer);
   $("drawerBackdrop").addEventListener("click",closeDrawer);
   $("drawerLogoutBtn").addEventListener("click",()=>{closeDrawer();firebaseAuth.signOut();});
@@ -3531,3 +3548,5 @@ Retorne SOMENTE o JSON solicitado nas regras do sistema.
 </html>
 
 <style id="v2012-card-privacy-fix">#tCardClosing,#tCardDue{filter:none!important;opacity:1!important;color:var(--text)!important;-webkit-text-security:none!important}#tCardFields{filter:none!important}#savedCardsList .cc-purchase-meta strong{color:var(--text)}</style>
+
+<style id="v2013-mobile-menu-fix">@media(max-width:900px){#brandMenuBtn.brand{display:flex!important;cursor:pointer;pointer-events:auto!important;position:relative;z-index:25}.couple-avatars{pointer-events:none}}</style>
