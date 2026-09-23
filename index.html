@@ -3558,19 +3558,25 @@ Retorne SOMENTE o JSON solicitado nas regras do sistema.
 </style>
 <script id="v2017-mobile-desktop-menu-parity-script">
 (function(){
+ let syncing=false;
  function closeDrawer(){document.querySelector('.drawer')?.classList.remove('open');document.querySelector('.drawer-backdrop')?.classList.remove('open')}
  function syncMobileMenu(){
+  if(syncing || window.innerWidth>900)return;
   const drawer=document.querySelector('.drawer'); if(!drawer)return;
-  let nav=drawer.querySelector('.mobile-desktop-nav');
-  if(!nav){nav=document.createElement('div');nav.className='mobile-desktop-nav';const anchor=drawer.querySelector('.drawer-email');(anchor||drawer.querySelector('.drawer-head'))?.after(nav)}
   const desktop=[...document.querySelectorAll('.desktop-sidebar .side-nav')];
   if(!desktop.length)return;
-  nav.innerHTML='';
-  desktop.forEach(src=>{const b=document.createElement('button');b.type='button';b.innerHTML=src.innerHTML;b.classList.toggle('active',src.classList.contains('active'));b.addEventListener('click',()=>{src.click();closeDrawer();setTimeout(syncMobileMenu,30)});nav.appendChild(b)});
+  syncing=true;
+  try{
+   let nav=drawer.querySelector('.mobile-desktop-nav');
+   if(!nav){nav=document.createElement('div');nav.className='mobile-desktop-nav';const anchor=drawer.querySelector('.drawer-email');(anchor||drawer.querySelector('.drawer-head'))?.after(nav)}
+   nav.replaceChildren();
+   desktop.forEach(src=>{const b=document.createElement('button');b.type='button';b.innerHTML=src.innerHTML;b.classList.toggle('active',src.classList.contains('active'));b.addEventListener('click',()=>{src.click();closeDrawer();setTimeout(syncMobileMenu,30)});nav.appendChild(b)});
+  } finally {syncing=false}
  }
- document.addEventListener('DOMContentLoaded',()=>setTimeout(syncMobileMenu,80));
- document.addEventListener('click',e=>{if(e.target.closest('#brandMenuBtn,.side-nav,.tab'))setTimeout(syncMobileMenu,40)});
- new MutationObserver(()=>{if(innerWidth<=900)syncMobileMenu()}).observe(document.body,{childList:true,subtree:true});
+ function scheduleSync(delay=40){window.setTimeout(syncMobileMenu,delay)}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>scheduleSync(80),{once:true});else scheduleSync(80);
+ document.addEventListener('click',e=>{if(e.target.closest('#brandMenuBtn,.side-nav,.tab'))scheduleSync(40)});
+ window.addEventListener('resize',()=>{if(window.innerWidth<=900)scheduleSync(80)},{passive:true});
 })();
 </script>
 </body>
