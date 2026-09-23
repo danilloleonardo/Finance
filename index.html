@@ -3545,6 +3545,33 @@ Retorne SOMENTE o JSON solicitado nas regras do sistema.
 
 })();
 </script>
+
+<style id="v2017-mobile-desktop-menu-parity">
+/* V2.0.17 — no mobile, o drawer replica a navegação disponível no menu lateral do PC. */
+.mobile-desktop-nav{display:none}
+@media(max-width:900px){
+ .mobile-desktop-nav{display:flex;flex-direction:column;gap:6px;margin:4px 0 16px;padding:12px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+ .mobile-desktop-nav button{width:100%;border:0;background:transparent;color:var(--text);padding:12px 13px;border-radius:10px;text-align:left;font-weight:650;font-size:13px}
+ .mobile-desktop-nav button:hover,.mobile-desktop-nav button.active{background:rgba(74,158,231,.12);color:#7ebcff}
+}
+</style>
+<script id="v2017-mobile-desktop-menu-parity-script">
+(function(){
+ function closeDrawer(){document.querySelector('.drawer')?.classList.remove('open');document.querySelector('.drawer-backdrop')?.classList.remove('open')}
+ function syncMobileMenu(){
+  const drawer=document.querySelector('.drawer'); if(!drawer)return;
+  let nav=drawer.querySelector('.mobile-desktop-nav');
+  if(!nav){nav=document.createElement('div');nav.className='mobile-desktop-nav';const anchor=drawer.querySelector('.drawer-email');(anchor||drawer.querySelector('.drawer-head'))?.after(nav)}
+  const desktop=[...document.querySelectorAll('.desktop-sidebar .side-nav')];
+  if(!desktop.length)return;
+  nav.innerHTML='';
+  desktop.forEach(src=>{const b=document.createElement('button');b.type='button';b.innerHTML=src.innerHTML;b.classList.toggle('active',src.classList.contains('active'));b.addEventListener('click',()=>{src.click();closeDrawer();setTimeout(syncMobileMenu,30)});nav.appendChild(b)});
+ }
+ document.addEventListener('DOMContentLoaded',()=>setTimeout(syncMobileMenu,80));
+ document.addEventListener('click',e=>{if(e.target.closest('#brandMenuBtn,.side-nav,.tab'))setTimeout(syncMobileMenu,40)});
+ new MutationObserver(()=>{if(innerWidth<=900)syncMobileMenu()}).observe(document.body,{childList:true,subtree:true});
+})();
+</script>
 </body>
 </html>
 
