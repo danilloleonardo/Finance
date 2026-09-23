@@ -4,8 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#0C2A3A">
-  <title>Finanças a Dois</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'><defs><linearGradient%20id='g'%20x1='0'%20y1='0'%20x2='1'%20y2='1'><stop%20stop-color='%23096b4b'/><stop%20offset='1'%20stop-color='%23003427'/></linearGradient></defs><rect%20width='64'%20height='64'%20rx='14'%20fill='url(%23g)'/><text%20x='32'%20y='40'%20text-anchor='middle'%20font-family='Arial,sans-serif'%20font-size='26'%20font-weight='700'%20fill='white'>R$</text></svg>">
+  <title>Finanças a Dois — V2.0.10</title>
   <meta name="description" content="Controle financeiro do casal: registre gastos, acompanhe orçamento, metas e patrimônio.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -343,16 +342,30 @@
     .month-chip.active{background:var(--navy-800);border-color:var(--navy-800);color:#fff}
     .filter-panel{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:9px;margin-bottom:13px}
     .filter-panel input,.filter-panel select{min-width:0}
-    .privacy-value{transition:filter .18s ease}
-    .values-hidden .privacy-value{filter:blur(10px);user-select:none;pointer-events:none}
-    /* Campos financeiros seguem protegidos, exceto o valor do lançamento:
-       ele precisa permanecer visível para conferência antes de salvar. */
-    .values-hidden input[type="number"]:not(#tAmount),
-    .values-hidden input[data-private-value]{
+    .privacy-money{transition:filter .18s ease}
+    .values-hidden .privacy-money{filter:blur(10px);user-select:none;pointer-events:none}
+    /* Também protege valores que estejam em campos de formulários enquanto a privacidade estiver ativa. */
+    .values-hidden input[type="number"]:not(.privacy-entry-visible),
+    .values-hidden input[data-private-value]:not(.privacy-entry-visible){
       color:transparent!important;
       text-shadow:0 0 10px var(--text);
       caret-color:transparent;
     }
+    /* V1.4: valores em fluxos de conferência/lançamento precisam permanecer legíveis. */
+    .values-hidden .privacy-entry-visible,
+    .values-hidden .entry-confirmation .privacy-money{
+      filter:none!important;
+      color:inherit!important;
+      text-shadow:none!important;
+      user-select:auto!important;
+      pointer-events:auto!important;
+      caret-color:auto!important;
+    }
+    .transaction-feedback{display:none;margin:12px 0 0;padding:10px 12px;border-radius:10px;font-size:12px;line-height:1.45}
+    .transaction-feedback.error{display:block;background:var(--red-bg);color:var(--red);border:1px solid rgba(201,75,75,.22)}
+    .transaction-feedback.info{display:block;background:var(--green-3);color:var(--navy);border:1px solid rgba(4,52,76,.12)}
+    .installment-summary{display:none;margin-top:9px;padding:10px 12px;border-radius:10px;background:var(--bg);border:1px solid var(--border);font-size:12px;color:var(--muted);line-height:1.45}
+    .installment-summary strong{color:var(--text)}
     .group-title{display:flex;align-items:center;justify-content:space-between;padding:15px 0 8px;font-size:11px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.5px}
     .recent-item{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
     .recent-item:last-child{border-bottom:0}
@@ -794,7 +807,54 @@
     @media(max-width:560px){
       .mobile-couple-avatars{transform:scale(.92);transform-origin:left center;margin-right:-1px}
     }
-  </style>
+  
+    /* ===== Finance-test — variação VERDE ===== */
+    :root{
+      --navy-900:#061a14; --navy-800:#0b2b20; --navy-700:#124b37; --teal-600:#176b4b;
+      --green-2:#31d39a; --gold-600:#54c99a; --gold-700:#3eaa7e; --gold-100:rgba(84,201,154,.14);
+    }
+    html,body{background:#061a14!important}
+    body{background-image:radial-gradient(900px 500px at 70% -10%,rgba(45,190,132,.15),transparent 60%),radial-gradient(700px 420px at 10% 30%,rgba(16,120,78,.10),transparent 60%)!important}
+    .desktop-sidebar{background:linear-gradient(180deg,#09251c 0%,#061a14 100%)!important}
+    .side-logo{background:linear-gradient(145deg,#2fa977,#176344)!important;box-shadow:0 8px 24px rgba(35,160,108,.30)!important}
+    .side-nav.active{background:linear-gradient(90deg,rgba(46,180,125,.23),rgba(46,180,125,.07))!important;box-shadow:inset 3px 0 0 #4bd19a!important}
+    .side-mini-card{border-color:rgba(87,219,163,.18)!important;background:linear-gradient(145deg,rgba(31,150,102,.22),rgba(11,47,35,.45))!important}
+    .side-mini-icon{background:rgba(78,225,161,.15)!important;color:#7ee0b5!important}
+    header{background:rgba(6,26,20,.82)!important}
+    .actions .btn-primary,.btn-primary{background:linear-gradient(135deg,#2fa977,#237b59)!important;border-color:#2fa977!important;box-shadow:0 10px 25px rgba(33,150,102,.25)!important}
+    .tab.active{background:rgba(68,194,137,.16)!important;color:#dcffef!important}
+    .month-chip.active{background:#27885f!important;border-color:#27885f!important}
+    .metric::before{background:linear-gradient(90deg,#3fca91,transparent 70%)!important}
+    .cfo-hero{background:radial-gradient(450px 180px at 90% 0%,rgba(44,216,145,.24),transparent 65%),linear-gradient(145deg,#103b2b,#0c281d)!important}
+    .bar>div,.cfo-mini-bar>div{background:linear-gradient(90deg,#2cae78,#4bd19a)!important}
+    .ai-assistant{background:radial-gradient(500px 220px at 85% 0%,rgba(55,225,154,.20),transparent 65%),linear-gradient(145deg,#103d2d,#0c281d)!important}
+    .ai-send,.ai-mic{background:#3bc98f!important}
+    .chart-income{background:linear-gradient(180deg,#47d6a0,#21805b)!important}
+    .toast,#firebaseStatus{background:#0b271d!important}
+    body:not(.dark-mode) .desktop-sidebar{background:linear-gradient(180deg,#09251c,#061a14)!important}
+    .couple-avatar{border-color:#0b2b20!important;background:#163a2c!important}
+    .mobile-couple-avatars .couple-avatar{border-color:#061a14!important}
+    #authGate{background:linear-gradient(160deg,#061a14 0%,#0b2b20 60%,#124b37 100%)!important}
+    .auth-logo{background:#0b2b20!important;border-color:#54c99a!important}
+    input:focus,select:focus{border-color:#54c99a!important;box-shadow:0 0 0 3px rgba(84,201,154,.14)!important}
+
+    /* V2.0 — importação inteligente */
+    .import-row{display:grid;grid-template-columns:32px minmax(125px,.85fr) minmax(220px,1.65fr) minmax(175px,1.25fr) minmax(140px,1fr) minmax(135px,.9fr);gap:14px;align-items:end;padding:16px;border:1px solid var(--border);border-radius:14px;background:var(--card)}
+    .import-row input,.import-row select{min-width:0;width:100%}
+    .import-field{min-width:0}
+    .import-label{display:block;font-size:10px;line-height:1.2;font-weight:800;text-transform:uppercase;letter-spacing:.45px;color:var(--muted);margin:0 0 6px}
+    .import-original{font-size:10px;color:var(--muted);margin-top:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .import-amount{font-size:15px;font-weight:800;color:var(--text);white-space:nowrap}
+    .import-badge{display:inline-flex;font-size:10px;font-weight:800;padding:4px 7px;border-radius:999px;background:var(--green-3);color:var(--navy)}
+    /* Importação é uma tela de conferência: privacidade global nunca deve apagar seus dados. */
+    .values-hidden #importBackdrop input,
+    .values-hidden #importBackdrop select,
+    .values-hidden #importBackdrop .import-amount,
+    .values-hidden #importBackdrop .import-original{filter:none!important;color:var(--text)!important;text-shadow:none!important;caret-color:auto!important;opacity:1!important}
+    .values-hidden #importBackdrop .import-original{color:var(--muted)!important}
+    @media(max-width:900px){.import-row{grid-template-columns:32px 1fr 1fr}.import-field.merchant{grid-column:2/-1}.import-field.category{grid-column:2}.import-field.responsible{grid-column:3}.import-field.amount{grid-column:2/-1}}
+    @media(max-width:600px){.import-row{grid-template-columns:28px 1fr;gap:10px}.import-field,.import-field.merchant,.import-field.category,.import-field.responsible,.import-field.amount{grid-column:2}.toolbar .actions{gap:6px}.toolbar .actions .btn{padding:9px 10px}}
+</style>
 </head>
 
 <body>
@@ -912,7 +972,11 @@
       </div>
       <div class="actions">
         <button class="btn" onclick="exportCSV()">Exportar CSV</button>
+        <button class="btn" type="button" onclick="openSmartImport()" title="Importar CSV, OFX ou PDF">📥 Importar</button>
+        <button class="btn" type="button" onclick="openCameraImport()" title="Tirar foto ou anexar print">📷</button>
         <button class="btn btn-primary" onclick="openModal()">+ Novo lançamento</button>
+        <input id="smartImportFile" type="file" accept=".csv,.ofx,.qfx,.pdf,text/csv,application/pdf" style="display:none">
+        <input id="cameraImportFile" type="file" accept="image/*" style="display:none">
       </div>
     </div>
 
@@ -925,12 +989,12 @@
         <div class="ai-assistant-sub">A IA usa seus lançamentos do Firebase para registrar gastos, responder perguntas, comparar meses e encontrar oportunidades de economia.</div>
         <div class="ai-row">
           <input id="aiInput" class="ai-input" type="text" autocomplete="off" placeholder="Ex.: gastei 50 reais de gasolina">
-          <button id="aiMic" class="ai-mic" type="button" title="Segure para falar e solte para enviar">🎙️</button>
+          <button id="aiMic" title="Segure para falar; solte para enviar" class="ai-mic" type="button" title="Segure para falar e solte para enviar">🎙️</button>
           <button id="aiSend" class="btn ai-send" type="button">Perguntar</button>
         </div>
         <div id="aiStatus" class="ai-status"></div>
         <div id="aiAnswer" class="ai-answer"></div>
-        <div id="aiPreview" class="ai-preview">
+        <div id="aiPreview" class="ai-preview entry-confirmation">
           <strong>Confira o lançamento</strong>
           <div id="aiPreviewText" style="font-size:12px;color:var(--muted);margin-top:3px"></div>
           <div class="ai-preview-grid">
@@ -1023,7 +1087,7 @@
         </div>
         <div class="card metric">
           <div class="metric-label">Taxa de economia</div>
-          <div id="mRate" class="metric-value privacy-value">0%</div>
+          <div id="mRate" class="metric-value">0%</div>
           <div class="metric-sub">Quanto ficou no mês</div>
         </div>
       </div>
@@ -1169,13 +1233,28 @@
   </main>
 </div>
 
+<div id="importBackdrop" class="modal-backdrop">
+  <div class="modal" style="max-width:1120px">
+    <div class="modal-head">
+      <div><h3>Importação inteligente</h3><div style="font-size:12px;color:var(--muted);margin-top:3px">Confira o que foi identificado antes de importar.</div></div>
+      <button class="close" type="button" onclick="closeSmartImport()">✕</button>
+    </div>
+    <div id="importStatus" class="ocr-status" style="margin-bottom:12px"></div>
+    <div id="importPreview" style="display:grid;gap:10px"></div>
+    <div class="form-actions">
+      <button class="btn" type="button" onclick="closeSmartImport()">Fechar</button>
+      <button class="btn btn-primary" id="importConfirmBtn" type="button" disabled>Importar selecionados</button>
+    </div>
+  </div>
+</div>
+
 <div id="modalBackdrop" class="modal-backdrop">
   <div class="modal">
     <div class="modal-head">
       <h3 id="modalTitle">Novo lançamento</h3>
       <button class="close" onclick="closeModal()">✕</button>
     </div>
-    <form id="transactionForm">
+    <form id="transactionForm" class="entry-confirmation" novalidate>
       <div class="ocr-box" id="ocrBox">
         <label style="display:block;margin-bottom:7px">Lançamento por print</label>
         <label class="ocr-drop" for="receiptImage" id="ocrDrop">📷 Toque aqui para escolher um print ou foto do comprovante<br><span style="font-size:11px">O sistema tenta identificar data, valor e descrição. Confira os campos antes de salvar.</span></label>
@@ -1210,7 +1289,7 @@
         </div>
         <div class="field">
           <label>Valor</label>
-          <input id="tAmount" type="number" min="0.01" step="0.01" placeholder="0,00" required>
+          <input id="tAmount" class="privacy-entry-visible" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0,00" required aria-describedby="transactionFeedback installmentSummary">
         </div>
         <div class="field">
           <label>Canal / estabelecimento</label>
@@ -1242,13 +1321,15 @@
             <option value="36">36x</option>
             <option value="custom">Outro (digitar)</option>
           </select>
-          <input id="tInstallmentsCustom" type="number" min="2" step="1" placeholder="Quantidade de parcelas" style="display:none;margin-top:8px">
+          <input id="tInstallmentsCustom" type="number" min="2" max="120" step="1" inputmode="numeric" placeholder="Quantidade de parcelas" style="display:none;margin-top:8px">
+          <div id="installmentSummary" class="installment-summary privacy-entry-visible"></div>
         </div>
         <div class="field full">
           <label>Detalhes (opcional)</label>
           <input id="tDetails" placeholder="Observação do lançamento">
         </div>
       </div>
+      <div id="transactionFeedback" class="transaction-feedback" role="status" aria-live="polite"></div>
       <div class="form-actions">
         <button type="button" class="btn" onclick="closeModal()">Cancelar</button>
         <button type="submit" id="modalSubmitBtn" class="btn btn-primary">Salvar lançamento</button>
@@ -1421,7 +1502,11 @@ Regras:
 - Responsáveis válidos: Danillo ou Patricia.
 - Resolva "hoje", "ontem" e datas relativas usando a data atual enviada no prompt.
 - IMPORTANTE: os dados financeiros trazem "selectedMonthTotals" (totais do mês selecionado), "monthlyTotals" (totais já somados de cada mês) e "categoryTotalsSelectedMonth" (soma por categoria no mês selecionado) — esses valores já foram calculados pelo aplicativo e são a fonte da verdade. Para perguntas sobre total gasto/recebido/saldo de um mês ou de uma categoria, USE ESSES TOTAIS PRONTOS e nunca some os itens de "transactions" manualmente, pois isso pode gerar erro de conta. Use a lista "transactions" apenas para listar lançamentos individuais ou detalhes (datas, descrições, canais) que não estejam nos totais prontos.
-- Você pode resumir, comparar meses, encontrar maiores gastos, tendências e oportunidades de economia usando os totais prontos sempre que disponíveis. Quando o usuário pedir uma análise geral, apresente um diagnóstico objetivo com saldo, taxa de economia, principais gastos, comparação com o mês anterior e projeção do mês atual quando houver dados suficientes. Quando o usuário pedir uma análise geral, apresente um diagnóstico objetivo com saldo, taxa de economia, principais gastos, comparação com o mês anterior e projeção do mês atual quando houver dados suficientes.
+- Você pode resumir, comparar meses, encontrar maiores gastos, tendências e oportunidades de economia usando os totais prontos sempre que disponíveis.
+- "budgetStatus" contém orçamento, gasto, disponível e percentual usado por categoria. Use-o para perguntas como "quanto ainda posso gastar em lazer?".
+- Para comparações entre meses, use "monthlyTotals"; deixe claro o valor absoluto e, quando fizer sentido, a variação percentual.
+- Para "onde estou gastando mais?", use "categoryTotalsSelectedMonth" e explique objetivamente as maiores categorias.
+- Quando o usuário pedir uma análise geral, apresente saldo, taxa de economia, principais gastos, comparação com o mês anterior, alertas de orçamento e projeção do mês atual quando houver dados suficientes.
 - Se algo não puder ser concluído com os dados recebidos, diga isso.
 - Nunca diga que salvou um lançamento. O aplicativo só salva após a confirmação do usuário.
         `.trim()
@@ -1434,6 +1519,15 @@ Regras:
     modelName: AI_MODEL_NAME,
     async generate(prompt) {
       const result = await model.generateContent(prompt);
+      return result.response.text();
+    },
+    async generateImage(dataUrl, prompt) {
+      const match=String(dataUrl||"").match(/^data:([^;]+);base64,(.+)$/);
+      if(!match) throw new Error("Imagem inválida");
+      const result=await model.generateContent([
+        {text:prompt},
+        {inlineData:{mimeType:match[1],data:match[2]}}
+      ]);
       return result.response.text();
     }
   };
@@ -1495,6 +1589,7 @@ Regras:
         budgets: state.budgets || {},
         goals: state.goals || [],
         wealth: state.wealth || [],
+        cards: state.cards || [],
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       }, {merge:true});
     }catch(err){
@@ -1548,6 +1643,7 @@ Regras:
           budgets: state.budgets,
           goals: state.goals,
           wealth: state.wealth,
+          cards: state.cards || [],
           updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         }, {merge:true});
       }else{
@@ -1556,7 +1652,9 @@ Regras:
         state.budgets = settings.budgets || {};
         state.goals = settings.goals || [];
         state.wealth = settings.wealth || [];
+        state.cards = settings.cards || state.cards || [];
       }
+      state.cards = state.cards || [];
 
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       cloudReady = true;
@@ -1603,6 +1701,10 @@ Regras:
       await firebaseAuth.signInWithEmailAndPassword($("authEmail").value.trim(), $("authPassword").value);
     }catch(err){ showAuthError(authError(err)); }
   });
+  // V2.0.4: Enter apenas aciona exatamente o mesmo botão/fluxo já validado na produção.
+  ["authEmail","authPassword"].forEach(id=>$(id).addEventListener("keydown",e=>{
+    if(e.key==="Enter"){e.preventDefault();$("loginBtn").click();}
+  }));
 
   $("signupBtn").addEventListener("click", async()=>{
     clearAuthError();
@@ -1943,7 +2045,16 @@ Regras:
       const from=$( "fromDate")?.value||""; const to=$( "toDate")?.value||"";
       if(from) tx=tx.filter(t=>t.date && t.date>=from); if(to) tx=tx.filter(t=>t.date && t.date<=to);
     }
-    return tx.sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")));
+    // Mais recente primeiro. A data do lançamento é a prioridade; no mesmo dia,
+    // o horário de criação fica apenas interno e serve como desempate.
+    return tx.sort((a,b)=>{
+      const byDate=String(b.date||"").localeCompare(String(a.date||""));
+      if(byDate) return byDate;
+      const aCreated=Number(a.createdAt||0), bCreated=Number(b.createdAt||0);
+      if(aCreated!==bCreated) return bCreated-aCreated;
+      // Legado: como novos lançamentos são adicionados ao fim do array, maior índice = mais recente.
+      return state.transactions.indexOf(b)-state.transactions.indexOf(a);
+    });
   }
 
   function renderTransactions(){
@@ -2091,7 +2202,8 @@ Regras:
   }
 
   function creditCardTransactionsForMonth(ym){
-    return state.transactions.filter(t=>t.isCreditCard && t.type==="expense" && (t.month || (t.date?t.date.slice(0,7):"")) === ym);
+    const cardId = document.getElementById("ccCardSelect")?.value || "";
+    return state.transactions.filter(t=>t.isCreditCard && t.type==="expense" && (t.invoiceMonth || t.month || (t.date?t.date.slice(0,7):"")) === ym && (!cardId || t.cardId===cardId));
   }
 
   function renderCreditCard(){
@@ -2111,7 +2223,7 @@ Regras:
       $("ccPurchaseList").innerHTML = purchases.map(t=>`<div class="cc-purchase-item">
         <div>
           <div class="cc-purchase-desc">${esc(t.description||"Sem descrição")}</div>
-          <div class="cc-purchase-meta">${esc(t.channel||"—")} · ${esc(t.category||"—")} · ${formatDate(t.purchaseDate||t.date)}</div>
+          <div class="cc-purchase-meta">${t.cardName?esc(t.cardName)+" · ":""}${esc(t.channel||"—")} · ${esc(t.category||"—")} · ${formatDate(t.purchaseDate||t.date)}</div>
         </div>
         <div class="cc-purchase-right">
           <div class="cc-purchase-amount privacy-value">${money(t.amount)}</div>
@@ -2140,6 +2252,65 @@ Regras:
     return editingTransactionId ? state.transactions.find(t=>t.id===editingTransactionId) : null;
   }
 
+  function clearTransactionFeedback(){
+    const el=$("transactionFeedback");
+    if(!el) return;
+    el.className="transaction-feedback";
+    el.textContent="";
+  }
+
+  function showTransactionFeedback(message,type="error"){
+    const el=$("transactionFeedback");
+    if(!el) return;
+    el.className=`transaction-feedback ${type}`;
+    el.textContent=message;
+  }
+
+  function getInstallmentCount(){
+    if(!$("tCreditCard").checked || $("tType").value!=="expense") return 1;
+    if($("tInstallmentsSelect").value==="custom") return parseInt($("tInstallmentsCustom").value,10)||0;
+    return parseInt($("tInstallmentsSelect").value,10)||1;
+  }
+
+  function updateInstallmentSummary(){
+    const box=$("installmentSummary");
+    if(!box) return;
+    const editingTx=getEditingTx();
+    const alreadySplit=!!(editingTx && (editingTx.installmentTotal||1)>1);
+    const isCard=$("tType").value==="expense" && $("tCreditCard").checked;
+    if(!isCard || alreadySplit){ box.style.display="none"; box.innerHTML=""; return; }
+    const amount=Number($("tAmount").value)||0;
+    const count=getInstallmentCount();
+    if(!amount || count<1){ box.style.display="none"; box.innerHTML=""; return; }
+    const parts=splitInstallments(amount,count);
+    const first=parts[0]||amount;
+    const last=parts[parts.length-1]||first;
+    box.style.display="block";
+    box.innerHTML=count>1
+      ? `<strong>${count}x no cartão</strong> · total ${money(amount)} · parcelas de ${money(first)}${Math.abs(last-first)>0.001?` (última ${money(last)})`:""}. Cada parcela entra no mês da sua competência.`
+      : `<strong>Compra no cartão à vista</strong> · ${money(amount)}. O pagamento da fatura continua separado da despesa para evitar dupla contabilização.`;
+  }
+
+  function validateTransactionForm(){
+    clearTransactionFeedback();
+    const type=$("tType").value;
+    const date=$("tDate").value;
+    const description=$("tDescription").value.trim();
+    const amount=Number($("tAmount").value);
+    const category=$("tCategory").value;
+    if(!date){ showTransactionFeedback("Informe a data do lançamento."); $("tDate").focus(); return false; }
+    if(!description){ showTransactionFeedback("Informe uma descrição para o lançamento."); $("tDescription").focus(); return false; }
+    if(!category){ showTransactionFeedback("Selecione uma categoria."); $("tCategory").focus(); return false; }
+    if(!Number.isFinite(amount) || amount<=0){ showTransactionFeedback("Informe um valor maior que zero."); $("tAmount").focus(); return false; }
+    if(type!=="expense" && $("tCreditCard").checked){ showTransactionFeedback("Cartão de crédito e parcelamento são aplicados apenas a despesas."); return false; }
+    if(type==="expense" && $("tCreditCard").checked){
+      const count=getInstallmentCount();
+      if(!Number.isInteger(count) || count<1 || count>120){ showTransactionFeedback("Informe uma quantidade válida de parcelas entre 1 e 120."); $("tInstallmentsCustom").focus(); return false; }
+      if($("tInstallmentsSelect").value==="custom" && count<2){ showTransactionFeedback("Para parcelamento personalizado, informe pelo menos 2 parcelas."); $("tInstallmentsCustom").focus(); return false; }
+    }
+    return true;
+  }
+
   function updateCcVisibility(){
     const type = $("tType").value;
     const editingTx = getEditingTx();
@@ -2165,6 +2336,7 @@ Regras:
       $("tCreditCardLabel").textContent = "Cartão de crédito";
       $("tInstallmentsWrap").classList.toggle("hidden", !$("tCreditCard").checked);
     }
+    updateInstallmentSummary();
   }
 
   function openModal(id){
@@ -2174,6 +2346,12 @@ Regras:
     $("modalTitle").textContent = tx ? "Editar lançamento" : "Novo lançamento";
     $("modalSubmitBtn").textContent = tx ? "Salvar alterações" : "Salvar lançamento";
     $("ocrBox").style.display = tx ? "none" : "";
+    clearTransactionFeedback();
+    if(!tx){
+      $("ocrStatus").textContent="";
+      $("ocrPreview").style.display="none";
+      $("receiptImage").value="";
+    }
     populateTransactionCategories();
 
     const total = tx ? (tx.installmentTotal||1) : 1;
@@ -2232,16 +2410,18 @@ Regras:
   window.openGoalModal=openGoalModal; window.closeGoalModal=closeGoalModal;
   window.openWealthModal=openWealthModal; window.closeWealthModal=closeWealthModal;
 
-  $("tType").addEventListener("change",updateCcVisibility);
-  $("tCreditCard").addEventListener("change",updateCcVisibility);
+  $("tType").addEventListener("change",()=>{clearTransactionFeedback();updateCcVisibility();});
+  $("tCreditCard").addEventListener("change",()=>{clearTransactionFeedback();updateCcVisibility();});
   $("tInstallmentsSelect").addEventListener("change",()=>{
     $("tInstallmentsCustom").style.display = $("tInstallmentsSelect").value==="custom" ? "" : "none";
+    clearTransactionFeedback(); updateInstallmentSummary();
   });
+  ["tAmount","tInstallmentsCustom","tDate","tDescription","tCategory"].forEach(id=>$(id)?.addEventListener("input",()=>{clearTransactionFeedback();updateInstallmentSummary();}));
 
   $("transactionForm").addEventListener("submit",async e=>{
     e.preventDefault();
+    if(!validateTransactionForm()) return;
     const amount=Number($("tAmount").value);
-    if(!amount || amount<=0) return;
     const isEditing=!!editingTransactionId;
     const baseType=$("tType").value;
     const editingTx = getEditingTx();
@@ -2252,17 +2432,23 @@ Regras:
     let installmentCount=1;
     if(isCardExpense){
       installmentCount = $("tInstallmentsSelect").value==="custom"
-        ? Math.max(2, parseInt($("tInstallmentsCustom").value,10)||1)
+        ? Math.min(120, Math.max(2, parseInt($("tInstallmentsCustom").value,10)||2))
         : parseInt($("tInstallmentsSelect").value,10)||1;
     }
 
+    const selectedCard = (baseType==="expense" && $("tCreditCard").checked && window.V171Cards) ? window.V171Cards.ensureCardFromForm() : null;
+    if(baseType==="expense" && $("tCreditCard").checked && !selectedCard){ showTransactionFeedback("Informe o cartão, fechamento e vencimento."); return; }
+    const nowTs=Date.now();
     const common={
       type:baseType,
+      createdAt: editingTx?.createdAt || nowTs,
+      updatedAt: nowTs,
       description:$("tDescription").value.trim(),
       category:$("tCategory").value,
       responsible:$("tResponsible").value,
       channel:$("tChannel").value.trim(),
-      details:$("tDetails").value.trim()
+      details:$("tDetails").value.trim(),
+      ...(selectedCard ? {cardId:selectedCard.id, cardName:selectedCard.name} : {})
     };
     const purchaseDate=$("tDate").value;
 
@@ -2287,7 +2473,8 @@ Regras:
           installmentTotal:installmentCount,
           originalPurchaseId,
           purchaseDate,
-          purchaseAmount:amount
+          purchaseAmount:amount,
+          invoiceMonth: window.V171Cards ? window.V171Cards.invoiceMonthForDate(d, selectedCard) : d.slice(0,7)
         };
       });
       if(isEditing) removedId = editingTransactionId; /* estava editando um lançamento simples que virou série de parcelas */
@@ -2309,13 +2496,16 @@ Regras:
           installmentTotal:editingTx.installmentTotal,
           originalPurchaseId:editingTx.originalPurchaseId,
           purchaseDate:editingTx.purchaseDate,
-          purchaseAmount:editingTx.purchaseAmount
+          purchaseAmount:editingTx.purchaseAmount,
+          cardId:editingTx.cardId, cardName:editingTx.cardName, invoiceMonth:editingTx.invoiceMonth
         });
       } else if(isCardExpense){
         Object.assign(tx,{
           paymentMethod:"credit_card", isCreditCard:true,
           installments:1, installmentNumber:1, installmentTotal:1,
-          originalPurchaseId: tx.id, purchaseDate, purchaseAmount:amount
+          originalPurchaseId: tx.id, purchaseDate, purchaseAmount:amount,
+          cardId:selectedCard?.id||null, cardName:selectedCard?.name||"",
+          invoiceMonth: window.V171Cards ? window.V171Cards.invoiceMonthForDate(purchaseDate, selectedCard) : purchaseDate.slice(0,7)
         });
       }
       newTxs=[tx];
@@ -2393,15 +2583,30 @@ Regras:
   */
   function markPrivacyValues(root=document.body){
     if(!root) return;
-    const moneyOrPercent=/(?:R\$\s*-?\s*[\d.]+(?:,\d{1,2})?|[-+]?\s*[\d.]+(?:,\d{1,2})?\s*%)/i;
+    const moneyRe=/R\$\s*-?\s*[\d.]+(?:,\d{1,2})?/gi;
     const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
     const nodes=[];
     while(walker.nextNode()) nodes.push(walker.currentNode);
     nodes.forEach(node=>{
       const parent=node.parentElement;
-      if(!parent || !moneyOrPercent.test(node.nodeValue||"")) return;
-      if(parent.closest("script,style,noscript,textarea,select,option")) return;
-      parent.classList.add("privacy-value");
+      if(!parent || parent.closest("script,style,noscript,textarea,select,option,.privacy-money")) return;
+      if(parent.closest(".entry-confirmation")) return;
+      const text=node.nodeValue||"";
+      moneyRe.lastIndex=0;
+      if(!moneyRe.test(text)) return;
+      moneyRe.lastIndex=0;
+      const frag=document.createDocumentFragment();
+      let last=0,match;
+      while((match=moneyRe.exec(text))){
+        if(match.index>last) frag.appendChild(document.createTextNode(text.slice(last,match.index)));
+        const span=document.createElement("span");
+        span.className="privacy-money privacy-value";
+        span.textContent=match[0];
+        frag.appendChild(span);
+        last=match.index+match[0].length;
+      }
+      if(last<text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+      node.replaceWith(frag);
     });
   }
 
@@ -2434,6 +2639,204 @@ Regras:
   $("themeBtn").addEventListener("click",()=>{darkMode=!darkMode;localStorage.setItem(themeKey,darkMode?"dark":"light");applyTheme();});
   applyTheme();
 
+  // ===== V2.0 — Importação inteligente (prévia segura no ambiente de teste) =====
+  let smartImportRows=[];
+  function openSmartImport(){ $("smartImportFile").click(); }
+  function openCameraImport(){ $("cameraImportFile").click(); }
+  function closeSmartImport(){ $("importBackdrop").classList.remove("open"); }
+  window.openSmartImport=openSmartImport; window.openCameraImport=openCameraImport; window.closeSmartImport=closeSmartImport;
+
+  function importGuessCategory(text){
+    const t=aiNormalize(text);
+    const hints={
+      "Mercado":/walmart|wal mart|carrefour|assai|atacadao|sams club|supermerc|mercado|hortifruti/,
+      "Alimentação":/ifood|restaurante|padaria|burger|mcdonald|pizza|cafe/,
+      "Farmácia":/drogasil|droga raia|drogaria|farmacia/,
+      "Transporte":/uber|99|posto|shell|ipiranga|gasolina|estacionamento|sem parar/,
+      "Moradia":/quinto andar|condominio|enel|sabesp|aluguel/,
+      "Compras":/amazon|shopee|mercado livre/,
+      "Vestuário":/riachuelo|renner|cea|c&a|shein/,
+      "Lazer":/cinema|ingresso|hotel|booking/
+    };
+    return Object.keys(hints).find(k=>hints[k].test(t))||"Outros";
+  }
+  function importGuessMerchant(raw){
+    const t=String(raw||"").trim();
+    const known=[
+      [/jefferson\s+ltda\s+me/i,"Walmart"],
+      [/wal\s*mart|walmart/i,"Walmart"],
+      [/ifd\*?|ifood/i,"iFood"],
+      [/droga\s*sil|drogasil/i,"Drogasil"],
+      [/carrefour/i,"Carrefour"],
+      [/uber/i,"Uber"],
+      [/mercado\s*livre/i,"Mercado Livre"],
+      [/amazon/i,"Amazon"]
+    ];
+    return (known.find(([re])=>re.test(t))||[])[1]||t.replace(/\s{2,}/g," ").slice(0,55);
+  }
+  function importParseMoney(raw){
+    let s=String(raw||"").replace(/[^\d,.-]/g,"").trim();
+    if(s.includes(","))s=s.replace(/\./g,"").replace(",",".");
+    const n=Math.abs(Number(s)); return Number.isFinite(n)?n:0;
+  }
+  function importNormalizeDate(raw){
+    const s=String(raw||"").trim();
+    let m=s.match(/(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{2,4})/);
+    if(m){let y=m[3];if(y.length===2)y="20"+y;return `${y}-${m[2].padStart(2,"0")}-${m[1].padStart(2,"0")}`;}
+    if(/^\d{4}-\d{2}-\d{2}$/.test(s))return s;
+    return aiToday(0);
+  }
+  function importDuplicate(row){
+    return state.transactions.some(t=>String(t.date||"")===row.date && Math.abs(Number(t.amount||0)-row.amount)<0.01 && aiNormalize(`${t.description} ${t.channel}`).includes(aiNormalize(row.merchant).slice(0,8)));
+  }
+  function fillTransactionFromImport(r){
+    closeSmartImport();
+    openModal();
+    $("ocrBox").style.display="none";
+    $("modalTitle").textContent="Conferir lançamento";
+    $("modalSubmitBtn").textContent=false?"Somente leitura":"Salvar lançamento";
+    $("tType").value="expense";
+    $("tDate").value=r.date||aiToday(0);
+    $("tDescription").value=r.merchant||r.original||"";
+    $("tResponsible").value=r.responsible||"Danillo";
+    $("tCategory").value=r.category||"Outros";
+    $("tAmount").value=Number(r.amount||0).toFixed(2);
+    $("tChannel").value=r.merchant||"";
+    $("tDetails").value=r.original&&r.original!==r.merchant?`Importado de foto/arquivo · Original: ${r.original}`:"Importado de foto/arquivo";
+    updateCcVisibility();
+    $("tDescription").focus();
+  }
+  function renderSmartImport(){
+    const box=$("importPreview");
+    if(!smartImportRows.length){box.innerHTML='<div class="empty">Nenhuma transação identificada.</div>';return;}
+    if(smartImportRows.length===1){
+      const r=smartImportRows[0];
+      r.responsible=r.responsible||"Danillo";
+      fillTransactionFromImport(r);
+      return;
+    }
+    box.innerHTML=smartImportRows.map((r,i)=>`<div class="import-row entry-confirmation">
+      <input type="checkbox" class="import-check" data-i="${i}" ${r.duplicate?"":"checked"} aria-label="Selecionar transação">
+      <div class="import-field date"><label class="import-label">Data</label><input type="date" class="import-date privacy-entry-visible" data-i="${i}" value="${esc(r.date)}"></div>
+      <div class="import-field merchant"><label class="import-label">Estabelecimento</label><input class="import-merchant privacy-entry-visible" data-i="${i}" value="${esc(r.merchant)}"><div class="import-original">Original: ${esc(r.original)}</div></div>
+      <div class="import-field category"><label class="import-label">Categoria</label><select class="import-category privacy-entry-visible" data-i="${i}">${categories.map(x=>`<option ${x===r.category?"selected":""}>${esc(x)}</option>`).join("")}</select></div>
+      <div class="import-field responsible"><label class="import-label">Responsável</label><select class="import-resp privacy-entry-visible" data-i="${i}"><option>Danillo</option><option>Patricia</option></select></div>
+      <div class="import-field amount"><label class="import-label">Valor</label><div class="import-amount privacy-entry-visible">${money(r.amount)}</div><div style="margin-top:6px">${r.duplicate?'<span class="import-badge">Possível duplicado</span>':'<span class="import-badge">Novo</span>'}</div></div>
+    </div>`).join("");
+    $("importConfirmBtn").disabled=false;
+    $("importConfirmBtn").title=false?"Ambiente de teste: somente leitura":"";
+  }
+  function showSmartImport(rows,label){
+    smartImportRows=rows.map(r=>({...r,merchant:importGuessMerchant(r.original),category:importGuessCategory(importGuessMerchant(r.original)),responsible:"Danillo"})).map(r=>({...r,duplicate:importDuplicate(r)}));
+    $("importBackdrop").classList.add("open");
+    $("importStatus").textContent=`${label}: ${smartImportRows.length} transação(ões) encontrada(s). Revise os dados antes de salvar.`;
+    renderSmartImport();
+  }
+  function parseCsvImport(text){
+    const lines=String(text||"").split(/\r?\n/).filter(x=>x.trim());
+    const rows=[];
+    for(const line of lines.slice(0,300)){
+      const parts=line.split(/[;,\t]/).map(x=>x.replace(/^"|"$/g,"").trim());
+      const datePart=parts.find(x=>/\d{1,2}[\/.-]\d{1,2}[\/.-]\d{2,4}|\d{4}-\d{2}-\d{2}/.test(x));
+      const amountPart=[...parts].reverse().find(x=>/-?\s*(?:R\$\s*)?\d+[\d.]*[,.]\d{2}/.test(x));
+      if(!datePart||!amountPart)continue;
+      const original=parts.filter(x=>x!==datePart&&x!==amountPart).sort((a,b)=>b.length-a.length)[0]||"Transação";
+      const amount=importParseMoney(amountPart); if(amount)rows.push({date:importNormalizeDate(datePart),amount,original});
+    } return rows;
+  }
+  function parseOfxImport(text){
+    const rows=[]; const blocks=String(text||"").split(/<STMTTRN>/i).slice(1);
+    blocks.forEach(b=>{
+      const get=tag=>((b.match(new RegExp("<"+tag+">([^<\\r\\n]+)","i"))||[])[1]||"").trim();
+      const rawDate=get("DTPOSTED"), amount=importParseMoney(get("TRNAMT"));
+      const original=get("NAME")||get("MEMO")||"Transação";
+      if(amount)rows.push({date:rawDate?rawDate.slice(0,4)+"-"+rawDate.slice(4,6)+"-"+rawDate.slice(6,8):aiToday(0),amount,original});
+    }); return rows;
+  }
+  async function handleSmartFile(file){
+    if(!file)return;
+    const name=file.name.toLowerCase();
+    if(name.endsWith(".pdf")){
+      $("importBackdrop").classList.add("open"); $("importPreview").innerHTML="";
+      $("importStatus").textContent="PDF selecionado. A leitura de PDF entra na próxima evolução do parser; nesta V2.0 de teste use CSV/OFX ou 📷 foto/print.";
+      return;
+    }
+    const text=await file.text();
+    const rows=name.endsWith(".ofx")||name.endsWith(".qfx")?parseOfxImport(text):parseCsvImport(text);
+    showSmartImport(rows,file.name);
+  }
+  $("smartImportFile").addEventListener("change",async e=>{try{await handleSmartFile(e.target.files?.[0])}catch(err){console.error(err);toast("Não consegui ler esse arquivo.")}finally{e.target.value=""}});
+
+  $("cameraImportFile").addEventListener("change",async e=>{
+    const file=e.target.files?.[0]; if(!file)return;
+    $("importBackdrop").classList.add("open"); $("importPreview").innerHTML="";
+    $("importStatus").textContent="Lendo foto/print…";
+    try{
+      const result=await Tesseract.recognize(file,"por+eng",{logger:m=>{if(m.status==="recognizing text")$("importStatus").textContent=`Lendo foto/print… ${Math.round((m.progress||0)*100)}%`;}});
+      const text=result.data.text||"", rows=[];
+      const lines=text.split(/\r?\n/).map(x=>x.replace(/\s+/g," ").trim()).filter(Boolean);
+      // Em comprovantes, data, estabelecimento e valor normalmente ficam em linhas diferentes.
+      // Primeiro tenta extrair o comprovante como uma única transação.
+      const all=text.replace(/\s+/g," ");
+      const dm=all.match(/(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{2,4})/);
+      const moneyMatches=[...all.matchAll(/(?:R\s*\$?\s*)?(-?\d{1,3}(?:\.\d{3})*[,.]\d{2})/gi)];
+      const plausible=moneyMatches.map(m=>({raw:m[0],amount:importParseMoney(m[1])})).filter(x=>x.amount>0&&x.amount<1000000);
+      const amountHit=plausible.find(x=>/r\s*\$/i.test(x.raw))||plausible[0];
+      const skip=/credito|d[eé]bito|mastercard|visa|aut[e:]|auto|arqc|aid|cnpj|cpf|estab|aprovado|emissor|via estabelecimento|cv\b|sv\d|ita[uú]|\*{2,}|\d{6,}/i;
+      let merchantLine=lines.find(x=>/restaurante|mercado|farm[aá]cia|drogaria|posto|ltda|me\b|padaria|pizzaria|bar\b|loja/i.test(x) && !skip.test(x));
+      if(!merchantLine){
+        merchantLine=lines.find(x=>!skip.test(x) && /[a-zá-ú]{3,}/i.test(x) && !/r\s*\$?\s*\d/i.test(x) && x.length<70);
+      }
+      if(amountHit){
+        rows.push({
+          date:dm?importNormalizeDate(dm[0]):aiToday(0),
+          amount:amountHit.amount,
+          original:(merchantLine||"Estabelecimento não identificado").replace(/[-–—|]/g," ").trim()
+        });
+      }else{
+        // Fallback 1: prints de extrato, uma transação por linha.
+        lines.forEach(line=>{
+          const ldm=line.match(/(\d{1,2})[\/.-](\d{1,2})(?:[\/.-](\d{2,4}))?/);
+          const lam=line.match(/(?:R\s*\$?\s*)?(-?\d{1,3}(?:\.\d{3})*[,.]\d{2})/i);
+          if(!lam)return;
+          const amount=importParseMoney(lam[1]); if(!amount)return;
+          const date=ldm?importNormalizeDate(ldm[3]?ldm[0]:`${ldm[1]}/${ldm[2]}/${new Date().getFullYear()}`):aiToday(0);
+          const original=line.replace(ldm?.[0]||"","").replace(lam[0],"").replace(/[-–—|]/g," ").replace(/\s+/g," ").trim()||"Transação";
+          rows.push({date,amount,original});
+        });
+        // Fallback 2: comprovante fotografado em que o OCR leu "R$35,09" como "RS35,09",
+        // "R535,09" ou perdeu totalmente o símbolo. Procura valores decimais no texto inteiro.
+        if(!rows.length){
+          const loose=[...all.matchAll(/\b(\d{1,4}[,.]\d{2})\b/g)]
+            .map(m=>({raw:m[1],amount:importParseMoney(m[1])}))
+            .filter(x=>x.amount>=0.5&&x.amount<100000);
+          // Evita números de CNPJ/data e prefere candidatos próximos a termos de pagamento.
+          let hit=loose.find(x=> /(?:credito|debito|total|valor)/i.test(all));
+          if(!hit) hit=loose[0];
+          if(hit) rows.push({
+            date:dm?importNormalizeDate(dm[0]):aiToday(0),
+            amount:hit.amount,
+            original:(merchantLine||"Estabelecimento não identificado").replace(/[-–—|]/g," ").trim()
+          });
+        }
+      }
+      // Se o OCR local não conseguiu estruturar a foto, usa o Gemini multimodal como segunda leitura.
+      if(!rows.length && window.financasGemini?.generateImage){
+        $("importStatus").textContent="OCR local não encontrou a compra. Tentando uma segunda leitura com IA…";
+        try{
+          const dataUrl=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)});
+          const aiRows=await window.financasGemini.generateImage(dataUrl,`Leia este comprovante ou print financeiro. Retorne SOMENTE JSON válido no formato {"transactions":[{"date":"YYYY-MM-DD","amount":0,"merchant":"nome do estabelecimento como aparece ou nome comercial se estiver claro"}]}. Não invente dados. Se não conseguir ler, retorne {"transactions":[]}.`);
+          const cleaned=String(aiRows||"").replace(/^```json\s*/i,"").replace(/```$/,"").trim();
+          const parsed=JSON.parse(cleaned);
+          (parsed.transactions||[]).forEach(t=>{const amount=Math.abs(Number(t.amount||0));if(amount>0)rows.push({date:/^\d{4}-\d{2}-\d{2}$/.test(t.date||"")?t.date:aiToday(0),amount,original:String(t.merchant||"Estabelecimento não identificado")})});
+        }catch(aiErr){console.warn("Segunda leitura por IA falhou:",aiErr)}
+      }
+      showSmartImport(rows,"Foto/print");
+    }catch(err){console.error(err);$("importStatus").textContent="Não consegui ler essa imagem. Tente um print mais nítido.";}
+    finally{e.target.value=""}
+  });
+  $("importConfirmBtn").addEventListener("click",()=>toast("Ambiente de teste: importação não grava dados."));
+
   // OCR de comprovantes/prints. O arquivo é processado no navegador; não é enviado ao Firestore.
   $("receiptImage").addEventListener("change",async e=>{
     const file=e.target.files?.[0]; if(!file)return;
@@ -2457,6 +2860,9 @@ Regras:
       const hints={"Mercado":/mercado(?! livre)|hortifruti|hortifruit|sacol[aã]o|atacad[aã]o|sams club|andorinha|assa[ií]|carrefour/,"Almoço-Trabalho":/almoço.*trabalho|almoco.*trabalho|refei[cç][aã]o.*trabalho|almo[cç]o.*expediente/,"Alimentação":/ifood|restaurante|padaria|alimenta|lanche|almoço|jantar/,"Saúde":/hospital|cl[ií]nica|sa[uú]de|amil|consulta|vacina|dentista/,"Farmácia":/farm[aá]cia|drogaria|rem[eé]dio|medicamento/,"Transporte":/uber|99|gasolina|posto|estacionamento|combust[ií]vel|moto|carro/,"Moradia":/aluguel|condom[ií]nio|energia|luz|[áa]gua|g[aá]s/,"Compras":/shopee|mercado livre|amazon|compra|eletrodom[eé]stico/,"Vestuário":/riachuelo|shein|c&a|roupa|cal[çc]a|camisa|vestido|sapato|t[êe]nis/,"Lazer":/cinema|viagem|bar|festival|restaurante/,"Cuidados pessoais":/barbeiro|cabeleireiro|sal[aã]o|est[eé]tica/,"Educação":/escola|faculdade|curso|mensalidade|matr[ií]cula|universidade|col[eé]gio/,"Financiamento e parcelas":/financiamento|cons[oó]rcio|parcela/,"Dízimo/Doações":/d[ií]zimo|oferta|doa[çc][aã]o|igreja/,"Impostos e Documentos":/imposto|ipva|iptu|taxa|cart[oó]rio|documento|darf/,"Transferências":/\bpix\b|\bted\b|\bdoc\b|transfer[eê]ncia/};
       const cat=["Mercado",...cats].find(c=>hints[c]?.test(lower)); if(cat)$("tCategory").value=cat;
       $("tType").value="expense";
+      clearTransactionFeedback();
+      updateCcVisibility();
+      updateInstallmentSummary();
       status.textContent="Leitura concluída. Confira data, descrição, categoria e valor antes de salvar.";
     }catch(err){console.error(err);status.textContent="Não consegui ler o print automaticamente. Preencha os campos manualmente.";}
   });
@@ -2477,13 +2883,12 @@ Regras:
   });
 
   window.deleteTransaction=async id=>{
-    if(!confirm("Excluir este lançamento?")) return;
-    state.transactions=state.transactions.filter(t=>t.id!==id);
-    save();
-    if(currentUser && cloudReady){
-      try{ await deleteTransactionCloud(id); toast("Lançamento excluído."); }
-      catch(err){ console.error(err); toast("Excluído localmente, mas houve erro na nuvem."); }
-    }else toast("Lançamento excluído.");
+    const target=state.transactions.find(t=>t.id===id), seriesId=target?.originalPurchaseId;
+    const ids=(target?.isCreditCard && Number(target?.installmentTotal)>1 && seriesId)?state.transactions.filter(t=>t.originalPurchaseId===seriesId).map(t=>t.id):[id];
+    if(!confirm(ids.length>1?`Excluir esta compra parcelada e todas as ${ids.length} parcelas vinculadas?`:"Excluir este lançamento?")) return;
+    state.transactions=state.transactions.filter(t=>!ids.includes(t.id)); save();
+    if(currentUser && cloudReady){try{for(const txId of ids) await deleteTransactionCloud(txId);toast(ids.length>1?"Compra parcelada e parcelas excluídas.":"Lançamento excluído.");}catch(err){console.error(err);toast("Excluído localmente, mas houve erro na nuvem.");}}
+    else toast(ids.length>1?"Compra parcelada e parcelas excluídas.":"Lançamento excluído.");
   };
   window.deleteGoal=id=>{
     if(!confirm("Excluir esta meta?")) return;
@@ -2620,8 +3025,10 @@ Regras:
       /shopee/.test(lower) ? "Shopee" :
       /mercado livre/.test(lower) ? "Mercado Livre" :
       /gasolina|posto/.test(lower) ? "Posto" : "";
+    const createdAt=Date.now();
     return {
-      id:crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+      id:crypto.randomUUID ? crypto.randomUUID() : String(createdAt),
+      createdAt,updatedAt:createdAt,
       type,date,month:date.slice(0,7),
       description:aiDescription(text),
       category,amount,responsible,channel,
@@ -2651,6 +3058,10 @@ Regras:
   async function aiConfirmTransaction(){
     if(!aiPendingTransaction)return;
     const tx=aiPendingTransaction;
+    if(!tx.date || !tx.description || !tx.category || !Number.isFinite(Number(tx.amount)) || Number(tx.amount)<=0){
+      $("aiStatus").textContent="Revise o lançamento: data, descrição, categoria e valor precisam estar preenchidos corretamente.";
+      return;
+    }
     state.transactions.push(tx);
     save();
     aiClearPreview();
@@ -2760,8 +3171,13 @@ Regras:
       selectedMonthTotals:{income:round2(selectedTotals.income), expense:round2(selectedTotals.expense), balance:round2(selectedTotals.income-selectedTotals.expense)},
       monthlyTotals,
       categoryTotalsSelectedMonth,
+      budgetStatus: categories.map(category=>{
+        const budget=Number(state.budgets?.[category]||0);
+        const spent=Number(catSums[category]||0);
+        return {category,budget:round2(budget),spent:round2(spent),available:round2(budget-spent),usedPct:budget?round2(spent/budget*100):null};
+      }).filter(x=>x.budget>0),
       forecast: cfoBuildForecastForAI(selectedMonth),
-      transactions:state.transactions.map(t=>({
+      transactions:state.transactions.slice().sort((a,b)=>String(b.date||"").localeCompare(String(a.date||""))).slice(0,250).map(t=>({
         date:t.date||null,
         month:t.month||(t.date?t.date.slice(0,7):null),
         type:t.type,
@@ -2785,8 +3201,10 @@ Regras:
     const date=/^\d{4}-\d{2}-\d{2}$/.test(String(data.date||"")) ? data.date : aiToday(0);
     const category=categories.includes(data.category) ? data.category : aiDetectCategory(originalText);
     const responsible=["Danillo","Patricia"].includes(data.responsible) ? data.responsible : aiDetectResponsible(originalText);
+    const createdAt=Date.now();
     return {
-      id:crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+      id:crypto.randomUUID ? crypto.randomUUID() : String(createdAt),
+      createdAt,updatedAt:createdAt,
       type:data.type==="income"?"income":"expense",
       date,
       month:date.slice(0,7),
@@ -2909,65 +3327,115 @@ Retorne SOMENTE o JSON solicitado nas regras do sistema.
   if(SpeechRecognition){
     aiRecognition=new SpeechRecognition();
     aiRecognition.lang="pt-BR";
-    aiRecognition.interimResults=false;
-    aiRecognition.continuous=false;
+    aiRecognition.interimResults=true;
+    aiRecognition.continuous=true;
+    aiRecognition.maxAlternatives=1;
 
-    // Estado do "segurar para falar" (estilo WhatsApp)
-    let aiHolding=false;      // botão está pressionado
-    let aiHeardSomething=false; // já chegou algum resultado de voz
-    let aiHoldTimer=null;
-    const HOLD_THRESHOLD_MS=250; // toque rápido (< isso) não conta como "segurar"
+    // V1.9 — segurar para falar: acumula frases longas e só processa ao soltar.
+    let aiHolding=false;
+    let aiRecognitionActive=false;
+    let aiFinalTranscript="";
+    let aiInterimTranscript="";
+    let aiShouldProcess=false;
+    let aiRestarting=false;
+
+    const voiceText=()=>[aiFinalTranscript,aiInterimTranscript].filter(Boolean).join(" ").replace(/\s+/g," ").trim();
 
     aiRecognition.onstart=()=>{
+      aiRecognitionActive=true;
+      aiRestarting=false;
       $("aiMic").classList.add("listening");
       $("aiMic").textContent="🔴";
-      $("aiStatus").textContent="Ouvindo… fale agora e solte o botão.";
+      $("aiStatus").textContent="Ouvindo… pode falar à vontade. Solte quando terminar.";
     };
 
     aiRecognition.onresult=e=>{
-      aiHeardSomething=true;
-      const text=e.results?.[0]?.[0]?.transcript||"";
-      $("aiInput").value=text;
-      // Já chegou o texto reconhecido: processa automaticamente, sem esperar clique em "Perguntar"
-      aiProcess(text);
+      let interim="";
+      for(let i=e.resultIndex;i<e.results.length;i++){
+        const part=(e.results[i]?.[0]?.transcript||"").trim();
+        if(!part) continue;
+        if(e.results[i].isFinal) aiFinalTranscript+=(aiFinalTranscript?" ":"")+part;
+        else interim+=(interim?" ":"")+part;
+      }
+      aiInterimTranscript=interim;
+      const full=voiceText();
+      if(full) $("aiInput").value=full;
     };
 
     aiRecognition.onerror=e=>{
-      $("aiStatus").textContent="Não consegui ouvir. Tente novamente ou digite.";
-      console.warn(e);
+      console.warn("Reconhecimento de voz:",e);
+      if(e.error==="no-speech" && aiHolding) return;
+      if(e.error==="aborted" && !aiHolding) return;
+      $("aiStatus").textContent=e.error==="not-allowed"
+        ?"Permissão do microfone bloqueada. Libere o microfone no navegador."
+        :"Não consegui ouvir corretamente. Tente novamente ou digite.";
     };
 
     aiRecognition.onend=()=>{
+      aiRecognitionActive=false;
+      // Alguns navegadores encerram sessões longas sozinhos. Enquanto o botão continuar
+      // pressionado, reiniciamos para não perder o restante da fala.
+      if(aiHolding){
+        try{
+          aiRestarting=true;
+          aiRecognition.start();
+          return;
+        }catch(e){console.warn("Reinício da voz:",e)}
+      }
       $("aiMic").classList.remove("listening");
       $("aiMic").textContent="🎙️";
-      aiHolding=false;
+      if(aiShouldProcess){
+        aiShouldProcess=false;
+        const full=voiceText();
+        aiInterimTranscript="";
+        if(full){
+          $("aiInput").value=full;
+          $("aiStatus").textContent="✓ Áudio transcrito. Interpretando…";
+          aiProcess(full);
+        }else{
+          $("aiStatus").textContent="Não identifiquei nenhuma fala. Tente novamente.";
+        }
+      }
     };
 
-    const startHold=(ev)=>{
-      ev.preventDefault();
-      if(aiHolding) return;
+    const startHold=ev=>{
+      ev?.preventDefault();
+      if(aiHolding)return;
       aiHolding=true;
-      aiHeardSomething=false;
-      try{ aiRecognition.start(); }catch(e){ /* já pode estar rodando */ }
+      aiShouldProcess=false;
+      aiFinalTranscript="";
+      aiInterimTranscript="";
+      $("aiInput").value="";
+      try{aiRecognition.start()}catch(e){console.warn("Início da voz:",e)}
     };
 
-    const endHold=(ev)=>{
-      if(ev) ev.preventDefault();
-      if(!aiHolding) return;
+    const endHold=ev=>{
+      ev?.preventDefault();
+      if(!aiHolding)return;
       aiHolding=false;
-      try{ aiRecognition.stop(); }catch(e){console.warn(e)}
+      aiShouldProcess=true;
+      // stop() preserva o último resultado; abort() poderia descartá-lo.
+      if(aiRecognitionActive){
+        try{aiRecognition.stop()}catch(e){console.warn("Fim da voz:",e)}
+      }else{
+        const full=voiceText();
+        aiShouldProcess=false;
+        if(full){$("aiInput").value=full;aiProcess(full)}
+      }
     };
 
     const micBtn=$("aiMic");
-    // Mouse (desktop)
-    micBtn.addEventListener("mousedown",startHold);
-    document.addEventListener("mouseup",endHold);
-    micBtn.addEventListener("mouseleave",()=>{ if(aiHolding) endHold(); });
-    // Touch (celular)
-    micBtn.addEventListener("touchstart",startHold,{passive:false});
-    micBtn.addEventListener("touchend",endHold,{passive:false});
-    micBtn.addEventListener("touchcancel",endHold,{passive:false});
-    // Evita menu de contexto ao segurar no celular
+    if(window.PointerEvent){
+      micBtn.addEventListener("pointerdown",ev=>{try{micBtn.setPointerCapture(ev.pointerId)}catch(_){} startHold(ev)});
+      micBtn.addEventListener("pointerup",endHold);
+      micBtn.addEventListener("pointercancel",endHold);
+    }else{
+      micBtn.addEventListener("mousedown",startHold);
+      document.addEventListener("mouseup",endHold);
+      micBtn.addEventListener("touchstart",startHold,{passive:false});
+      micBtn.addEventListener("touchend",endHold,{passive:false});
+      micBtn.addEventListener("touchcancel",endHold,{passive:false});
+    }
     micBtn.addEventListener("contextmenu",e=>e.preventDefault());
   }else{
     $("aiMic").disabled=true;
@@ -2993,6 +3461,46 @@ Retorne SOMENTE o JSON solicitado nas regras do sistema.
   $("sideThemeQuick")?.addEventListener("click",()=>$("themeBtn")?.click());
   $("sideLogoutQuick")?.addEventListener("click",()=>$("logoutBtn")?.click());
 
+
+
+
+  /* FINANCAS_V20 — importação CSV/OFX + foto/print + conferência de estabelecimento/categoria */
+  /* FINANCAS_V18_V19 — IA financeira ampliada + voz longa acumulada */
+  
+
+  /* FINANCAS_V171_CORRECTIONS */
+  const V171Cards={
+    cards(){state.cards=state.cards||[];return state.cards;},
+    invoiceMonthForDate(dateStr,card){const d=new Date(dateStr+"T12:00:00");if(!card||Number.isNaN(d.getTime()))return String(dateStr||"").slice(0,7);const closing=Math.max(1,Math.min(31,Number(card.closingDay)||31));const x=new Date(d.getFullYear(),d.getMonth()+(d.getDate()>closing?1:0),1);return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}`;},
+    ensureCardFromForm(){const name=(document.getElementById("tCardName")?.value||"").trim(),closing=Number(document.getElementById("tCardClosing")?.value),due=Number(document.getElementById("tCardDue")?.value);if(!name||closing<1||closing>31||due<1||due>31)return null;let card=this.cards().find(x=>x.name.toLowerCase()===name.toLowerCase());if(!card){card={id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),name,closingDay:closing,dueDay:due};this.cards().push(card);}else{card.name=name;card.closingDay=closing;card.dueDay=due;}this.refreshDatalist();return card;},
+    refreshDatalist(){const dl=document.getElementById("cardNames");if(dl)dl.innerHTML=this.cards().map(x=>`<option value="${esc(x.name)}"></option>`).join("");const sel=document.getElementById("ccCardSelect");if(sel){const old=sel.value;sel.innerHTML='<option value="">Todos os cartões</option>'+this.cards().map(x=>`<option value="${esc(x.id)}">${esc(x.name)}</option>`).join("");if([...sel.options].some(o=>o.value===old))sel.value=old;}},
+    fillCardFields(name){const card=this.cards().find(x=>x.name.toLowerCase()===String(name||"").trim().toLowerCase());if(card){document.getElementById("tCardClosing").value=card.closingDay||"";document.getElementById("tCardDue").value=card.dueDay||"";}},
+    addForm(){if(document.getElementById("tCardFields"))return;const wrap=document.getElementById("tInstallmentsWrap");if(!wrap)return;const d=document.createElement("div");d.id="tCardFields";d.className="field full hidden";d.style.display="none";d.innerHTML='<label>Qual cartão?</label><input id="tCardName" list="cardNames" placeholder="Ex.: Cartão C6 PF"><datalist id="cardNames"></datalist><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:9px"><div><label>Fechamento</label><input id="tCardClosing" type="number" min="1" max="31" placeholder="Dia"></div><div><label>Vencimento</label><input id="tCardDue" type="number" min="1" max="31" placeholder="Dia"></div></div><small style="display:block;color:var(--muted);margin-top:7px">Cartões novos são gravados automaticamente. Fechamento e vencimento continuam editáveis.</small>';wrap.before(d);this.refreshDatalist();document.getElementById("tCardName").addEventListener("change",e=>this.fillCardFields(e.target.value));document.getElementById("tCardName").addEventListener("blur",e=>this.fillCardFields(e.target.value));},
+    syncFormVisibility(){const f=document.getElementById("tCardFields");if(!f)return;const on=document.getElementById("tType")?.value==="expense"&&document.getElementById("tCreditCard")?.checked;f.classList.toggle("hidden",!on);f.style.display=on?"":"none";},
+    addInvoiceControls(){const title=document.getElementById("ccInvoiceTitle");if(!title||document.getElementById("ccCardSelect"))return;const s=document.createElement("select");s.id="ccCardSelect";s.setAttribute("aria-label","Filtrar cartão");s.style.marginLeft="8px";title.parentElement.appendChild(s);s.addEventListener("change",()=>renderCreditCard());const total=document.getElementById("ccInvoiceTotal"),b=document.createElement("button");b.type="button";b.id="ccPayInvoice";b.className="btn btn-primary btn-small";b.style.marginTop="14px";b.textContent="Registrar pagamento da fatura";total.after(b);b.addEventListener("click",()=>this.payInvoice());this.refreshDatalist();},
+    payInvoice(){const ym=document.getElementById("ccMonthSelect")?.value||selectedMonth,p=creditCardTransactionsForMonth(ym),total=p.reduce((s,t)=>s+Number(t.amount||0),0);if(!total){toast("Esta fatura não possui compras.");return;}const cardId=document.getElementById("ccCardSelect")?.value||"",card=this.cards().find(x=>x.id===cardId);openModal();document.getElementById("tType").value="transfer";document.getElementById("tDescription").value=`Pagamento fatura ${card?.name||"cartão"} — ${monthName(ym)}`;document.getElementById("tAmount").value=total.toFixed(2);document.getElementById("tDetails").value=`Pagamento da fatura ${ym}${card?" · "+card.name:""}`;updateCcVisibility();},
+    dashboardAlerts(){const dash=document.getElementById("dashboard");if(!dash)return;let box=document.getElementById("v171Attention");const spent={};transactionsForMonth(selectedMonth).filter(t=>t.type==="expense").forEach(t=>spent[t.category]=(spent[t.category]||0)+Number(t.amount||0));const alerts=categories.map(cat=>{const budget=Number(state.budgets?.[cat]||0),used=Number(spent[cat]||0);return{cat,budget,used,pct:budget?used/budget*100:0,left:budget-used};}).filter(x=>x.budget&&x.pct>=70).sort((a,b)=>b.pct-a.pct);if(!alerts.length){if(box)box.remove();return;}if(!box){box=document.createElement("div");box.id="v171Attention";box.className="card section";dash.prepend(box);}box.innerHTML=`<div class="section-title"><h3>Atenção este mês</h3><span>${alerts.length} alerta(s)</span></div>`+alerts.slice(0,5).map(x=>`<div class="v17-alert ${x.pct>=100?"v17-danger":x.pct>=90?"v17-warn":""}" style="cursor:pointer" data-budget-cat="${esc(x.cat)}"><strong>${esc(x.cat)}</strong> está em ${Math.round(x.pct)}% do orçamento · <span class="privacy-value">${money(x.used)} de ${money(x.budget)}</span> · restam <span class="privacy-value">${money(x.left)}</span></div>`).join("");box.querySelectorAll("[data-budget-cat]").forEach(el=>el.onclick=()=>{document.querySelector('.tab[data-view="budget"]')?.click();setTimeout(()=>openBudgetModal(el.dataset.budgetCat),50);});},
+    init(){state.cards=state.cards||[];this.addForm();this.addInvoiceControls();this.syncFormVisibility();this.dashboardAlerts();document.getElementById("tCreditCard")?.addEventListener("change",()=>this.syncFormVisibility());document.getElementById("tType")?.addEventListener("change",()=>this.syncFormVisibility());const oldOpen=window.openModal;window.openModal=(id)=>{oldOpen(id);setTimeout(()=>{this.syncFormVisibility();const tx=getEditingTx();if(tx?.cardId){const card=this.cards().find(x=>x.id===tx.cardId);document.getElementById("tCardName").value=tx.cardName||card?.name||"";document.getElementById("tCardClosing").value=card?.closingDay||"";document.getElementById("tCardDue").value=card?.dueDay||"";}},0);};const mo=new MutationObserver(()=>this.dashboardAlerts()),d=document.getElementById("mExpense");if(d)mo.observe(d,{childList:true,characterData:true,subtree:true});}
+  };
+  window.V171Cards=V171Cards;setTimeout(()=>V171Cards.init(),0);
+  /* /FINANCAS_V171_CORRECTIONS */
+
+  /* FINANCAS_V17_EXTENSION */
+  const V17={
+    expenses:function(){return transactionsForMonth(selectedMonth).filter(function(t){return t.type==="expense"})},
+    budgetRows:function(){var spent={};this.expenses().forEach(function(t){var k=t.category||"Outros";spent[k]=(spent[k]||0)+Number(t.amount||0)});var b=(state.budgets&&state.budgets[selectedMonth])||state.budgets||{};return categories.map(function(cat){var budget=Number((b&&b[cat])||0),used=Number(spent[cat]||0);return {cat:cat,budget:budget,used:used,pct:budget?used/budget*100:0,left:budget-used}}).filter(function(x){return x.budget||x.used})},
+    recurring:function(){var g={};state.transactions.filter(function(t){return t.type==="expense"}).forEach(function(t){var k=(t.description||"").toLowerCase().replace(/[0-9]+/g,"").trim();if(k)(g[k]||(g[k]=[])).push(t)});return Object.keys(g).map(function(k){var a=g[k],ms={};a.forEach(function(x){ms[x.month||(x.date||"").slice(0,7)]=1});return {a:a,months:Object.keys(ms).length}}).filter(function(x){return x.months>=2}).map(function(x){return {name:x.a[0].description,count:x.a.length,avg:x.a.reduce(function(s,t){return s+Number(t.amount||0)},0)/x.a.length}}).sort(function(a,b){return b.avg-a.avg}).slice(0,6)},
+    styles:function(){var s=document.createElement("style");s.textContent=".v17-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}.v17-card{padding:16px;border:1px solid var(--border);border-radius:14px;background:var(--card)}.v17-card b{display:block;font-family:var(--font-display);font-size:20px;margin:6px 0}.v17-k{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:800}.v17-alert{padding:10px 12px;border-radius:10px;margin:7px 0;font-size:12px;border:1px solid var(--border);background:var(--bg)}.v17-warn{background:var(--yellow-bg)}.v17-danger{background:var(--red-bg);color:var(--red)}@media(max-width:700px){.v17-grid{grid-template-columns:1fr}}";document.head.appendChild(s)},
+    addPayer:function(){if(document.getElementById("tPayer"))return;var r=document.getElementById("tResponsible");if(!r)return;var fld=r.closest(".field"),w=document.createElement("div");w.className="field";w.innerHTML="<label>Quem pagou?</label><select id='tPayer'><option>Danillo</option><option>Patricia</option><option>Compartilhado</option></select>";fld.after(w);var form=r.closest("form"),self=this;if(form)form.addEventListener("submit",function(){var payer=document.getElementById("tPayer").value;setTimeout(function(){var last=state.transactions[state.transactions.length-1];if(last&&!last.payer){last.payer=payer;save();self.couple()}},20)},true)},
+    addCouple:function(){if(document.querySelector(".tab[data-view='couple']"))return;var tabs=document.querySelector(".tabs");if(!tabs)return;var b=document.createElement("button");b.className="tab";b.dataset.view="couple";b.textContent="A Dois";tabs.appendChild(b);var v=document.createElement("section");v.id="couple";v.className="view";v.innerHTML="<div class='card section'><div class='section-title'><h3>Finanças a Dois</h3><span>V1.7</span></div><div id='v17Couple'></div></div>";tabs.parentElement.appendChild(v);var self=this;b.onclick=function(){document.querySelectorAll(".tab").forEach(function(x){x.classList.remove("active")});document.querySelectorAll(".view").forEach(function(x){x.classList.remove("active")});b.classList.add("active");v.classList.add("active");self.couple()}},
+    smart:function(){var v=document.getElementById("budget");if(!v)return;var h=document.getElementById("v17Smart");if(!h){h=document.createElement("div");h.id="v17Smart";h.className="card section";v.prepend(h)}var rows=this.budgetRows(),tb=rows.reduce(function(s,x){return s+x.budget},0),tu=rows.reduce(function(s,x){return s+x.used},0),now=new Date(),cur=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0"),p=selectedMonth===cur?Math.max(.05,now.getDate()/new Date(now.getFullYear(),now.getMonth()+1,0).getDate()):1,proj=tu/p,alerts=rows.filter(function(x){return x.budget&&x.pct>=70}).sort(function(a,b){return b.pct-a.pct});h.innerHTML="<div class='section-title'><h3>Orçamento inteligente</h3><span>V1.5</span></div><div class='v17-grid'><div class='v17-card'><span class='v17-k'>Orçado</span><b class='privacy-value'>"+money(tb)+"</b></div><div class='v17-card'><span class='v17-k'>Disponível</span><b class='privacy-value'>"+money(tb-tu)+"</b></div><div class='v17-card'><span class='v17-k'>Projeção do mês</span><b class='privacy-value'>"+money(proj)+"</b></div></div>"+(alerts.length?alerts.map(function(x){return "<div class='v17-alert "+(x.pct>=100?"v17-danger":x.pct>=90?"v17-warn":"")+"'><strong>"+esc(x.cat)+"</strong>: "+Math.round(x.pct)+"% consumido · restam <span class='privacy-value'>"+money(x.left)+"</span></div>"}).join(""):"<div class='v17-alert'>Nenhuma categoria atingiu 70% do orçamento.</div>")},
+    cards:function(){var d=document.getElementById("dashboard");if(!d)return;var h=document.getElementById("v17Cards");if(!h){h=document.createElement("div");h.id="v17Cards";h.className="card section";d.appendChild(h)}var tx=this.expenses().filter(function(t){return t.isCreditCard||String((t.details||"")+" "+(t.category||"")).toLowerCase().indexOf("cart")>=0||String(t.category||"").toLowerCase().indexOf("fatura")>=0}),tot=tx.reduce(function(s,x){return s+Number(x.amount||0)},0),inst=tx.filter(function(t){return Number(t.installmentTotal)>1}),rec=this.recurring();h.innerHTML="<div class='section-title'><h3>Cartões & recorrências</h3><span>V1.6</span></div><div class='v17-grid'><div class='v17-card'><span class='v17-k'>Compras no cartão</span><b class='privacy-value'>"+money(tot)+"</b><small>"+tx.length+" lançamento(s)</small></div><div class='v17-card'><span class='v17-k'>Parceladas</span><b>"+inst.length+"</b><small>no mês selecionado</small></div><div class='v17-card'><span class='v17-k'>Recorrências</span><b>"+rec.length+"</b><small>detectadas em 2+ meses</small></div></div>"+(rec.length?rec.map(function(r){return "<div class='v17-alert'><strong>"+esc(r.name)+"</strong> · "+r.count+" ocorrências · média <span class='privacy-value'>"+money(r.avg)+"</span></div>"}).join(""):"<div class='v17-alert'>As recorrências serão detectadas automaticamente após repetirem em pelo menos dois meses.</div>")},
+    couple:function(){var h=document.getElementById("v17Couple");if(!h)return;var tx=this.expenses(),ps=["Danillo","Patricia"],html=ps.map(function(p){var r=tx.filter(function(t){return t.responsible===p}).reduce(function(s,x){return s+Number(x.amount||0)},0),pd=tx.filter(function(t){return (t.payer||t.responsible)===p}).reduce(function(s,x){return s+Number(x.amount||0)},0);return "<div class='v17-card'><span class='v17-k'>"+p+"</span><b class='privacy-value'>"+money(r)+"</b><small>realizou · pagou <span class='privacy-value'>"+money(pd)+"</span></small></div>"}).join(""),sh=tx.filter(function(t){return t.payer==="Compartilhado"}).reduce(function(s,x){return s+Number(x.amount||0)},0);h.innerHTML="<div class='v17-grid'>"+html+"<div class='v17-card'><span class='v17-k'>Compartilhado</span><b class='privacy-value'>"+money(sh)+"</b><small>pagamentos do casal</small></div></div><div class='v17-alert'>Nos novos lançamentos, use <strong>Quem realizou?</strong> e <strong>Quem pagou?</strong>.</div>"},
+    refresh:function(){this.smart();this.cards();this.couple()},
+    init:function(){var self=this;this.styles();this.addPayer();this.addCouple();this.refresh();document.addEventListener("click",function(e){if(e.target.closest(".month-chip,.tab,.btn"))setTimeout(function(){self.refresh()},40)});var ms=document.getElementById("monthSelect");if(ms)ms.addEventListener("change",function(){setTimeout(function(){self.refresh()},20)})}
+  };
+  setTimeout(function(){V17.init()},0);
+  /* /FINANCAS_V17_EXTENSION */
 
 })();
 </script>
