@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#0C2A3A">
-  <title>Finanças a Dois — V2.0.11</title>
+  <title>Finanças a Dois — V2.0.12</title>
   <meta name="description" content="Controle financeiro do casal: registre gastos, acompanhe orçamento, metas e patrimônio.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -897,7 +897,8 @@
     <div class="side-menu-label">MENU</div>
     <button class="side-nav active" data-view="dashboard" type="button"><span class="side-icon">⌂</span><span>Dashboard</span></button>
     <button class="side-nav" data-view="transactions" type="button"><span class="side-icon">▦</span><span>Lançamentos</span></button>
-    <button class="side-nav" data-view="creditcard" type="button"><span class="side-icon">▣</span><span>Cartão</span></button>
+    <button class="side-nav" data-view="creditcard" type="button"><span class="side-icon">▣</span><span>Faturas</span></button>
+    <button class="side-nav" data-view="cards" type="button"><span class="side-icon">▤</span><span>Meus cartões</span></button>
     <button class="side-nav" data-view="budget" type="button"><span class="side-icon">◒</span><span>Orçamento</span></button>
     <button class="side-nav" data-view="goals" type="button"><span class="side-icon">◎</span><span>Metas</span></button>
     <button class="side-nav" data-view="wealth" type="button"><span class="side-icon">◇</span><span>Patrimônio</span></button>
@@ -1021,6 +1022,7 @@
       <button class="tab active" data-view="dashboard">Dashboard</button>
       <button class="tab" data-view="transactions">Lançamentos</button>
       <button class="tab" data-view="creditcard">💳 Cartão de crédito</button>
+      <button class="tab" data-view="cards">💳 Meus cartões</button>
       <button class="tab" data-view="budget">Orçamento</button>
       <button class="tab" data-view="goals">Metas</button>
       <button class="tab" data-view="wealth">Patrimônio</button>
@@ -1175,6 +1177,15 @@
           <span>Compromissos futuros no cartão</span>
         </div>
         <div id="ccFutureList"></div>
+      </div>
+    </section>
+
+    <section id="cards" class="view">
+      <div class="card section">
+        <div class="section-title">
+          <div><h3>Meus cartões</h3><span>Consulte e edite fechamento e vencimento dos cartões cadastrados.</span></div>
+        </div>
+        <div id="savedCardsList"></div>
       </div>
     </section>
 
@@ -3482,15 +3493,17 @@ Retorne SOMENTE o JSON solicitado nas regras do sistema.
   const V171Cards={
     cards(){state.cards=state.cards||[];return state.cards;},
     invoiceMonthForDate(dateStr,card){const d=new Date(dateStr+"T12:00:00");if(!card||Number.isNaN(d.getTime()))return String(dateStr||"").slice(0,7);const closing=Math.max(1,Math.min(31,Number(card.closingDay)||31));const x=new Date(d.getFullYear(),d.getMonth()+(d.getDate()>closing?1:0),1);return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}`;},
-    ensureCardFromForm(){const name=(document.getElementById("tCardName")?.value||"").trim(),closing=Number(document.getElementById("tCardClosing")?.value),due=Number(document.getElementById("tCardDue")?.value);if(!name||closing<1||closing>31||due<1||due>31)return null;let card=this.cards().find(x=>x.name.toLowerCase()===name.toLowerCase());if(!card){card={id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),name,closingDay:closing,dueDay:due};this.cards().push(card);}else{card.name=name;card.closingDay=closing;card.dueDay=due;}this.refreshDatalist();return card;},
+    ensureCardFromForm(){const name=(document.getElementById("tCardName")?.value||"").trim(),closing=Number(document.getElementById("tCardClosing")?.value),due=Number(document.getElementById("tCardDue")?.value);if(!name||closing<1||closing>31||due<1||due>31)return null;let card=this.cards().find(x=>x.name.toLowerCase()===name.toLowerCase());if(!card){card={id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),name,closingDay:closing,dueDay:due};this.cards().push(card);}else{card.name=name;card.closingDay=closing;card.dueDay=due;}this.refreshDatalist();this.renderCards();return card;},
     refreshDatalist(){const dl=document.getElementById("cardNames");if(dl)dl.innerHTML=this.cards().map(x=>`<option value="${esc(x.name)}"></option>`).join("");const sel=document.getElementById("ccCardSelect");if(sel){const old=sel.value;sel.innerHTML='<option value="">Todos os cartões</option>'+this.cards().map(x=>`<option value="${esc(x.id)}">${esc(x.name)}</option>`).join("");if([...sel.options].some(o=>o.value===old))sel.value=old;}},
     fillCardFields(name){const card=this.cards().find(x=>x.name.toLowerCase()===String(name||"").trim().toLowerCase());if(card){document.getElementById("tCardClosing").value=card.closingDay||"";document.getElementById("tCardDue").value=card.dueDay||"";}},
     addForm(){if(document.getElementById("tCardFields"))return;const wrap=document.getElementById("tInstallmentsWrap");if(!wrap)return;const d=document.createElement("div");d.id="tCardFields";d.className="field full hidden";d.style.display="none";d.innerHTML='<label>Qual cartão?</label><input id="tCardName" list="cardNames" placeholder="Ex.: Cartão C6 PF"><datalist id="cardNames"></datalist><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:9px"><div><label>Fechamento</label><input id="tCardClosing" type="number" min="1" max="31" placeholder="Dia"></div><div><label>Vencimento</label><input id="tCardDue" type="number" min="1" max="31" placeholder="Dia"></div></div><small style="display:block;color:var(--muted);margin-top:7px">Cartões novos são gravados automaticamente. Fechamento e vencimento continuam editáveis.</small>';wrap.before(d);this.refreshDatalist();document.getElementById("tCardName").addEventListener("change",e=>this.fillCardFields(e.target.value));document.getElementById("tCardName").addEventListener("blur",e=>this.fillCardFields(e.target.value));},
+    renderCards(){const box=document.getElementById("savedCardsList");if(!box)return;const cards=this.cards();if(!cards.length){box.innerHTML='<div class="empty"><strong>Nenhum cartão cadastrado</strong>Ao marcar “Cartão de crédito” em um lançamento, o cartão salvo aparecerá aqui.</div>';return;}box.innerHTML=cards.map(card=>`<div class="cc-purchase-item" style="align-items:center"><div><div class="cc-purchase-desc">${esc(card.name)}</div><div class="cc-purchase-meta">Fechamento: dia <strong>${Number(card.closingDay)||"—"}</strong> · Vencimento: dia <strong>${Number(card.dueDay)||"—"}</strong></div></div><button type="button" class="btn btn-small" data-edit-card="${esc(card.id)}">Editar</button></div>`).join("");box.querySelectorAll("[data-edit-card]").forEach(btn=>btn.onclick=()=>this.editCard(btn.dataset.editCard));},
+    editCard(id){const card=this.cards().find(x=>x.id===id);if(!card)return;const name=prompt("Nome do cartão:",card.name);if(name===null)return;const closing=prompt("Dia do fechamento (1 a 31):",card.closingDay);if(closing===null)return;const due=prompt("Dia do vencimento (1 a 31):",card.dueDay);if(due===null)return;const cday=Number(closing),dday=Number(due);if(!name.trim()||cday<1||cday>31||dday<1||dday>31){toast("Confira nome, fechamento e vencimento.");return;}card.name=name.trim();card.closingDay=cday;card.dueDay=dday;state.transactions.forEach(t=>{if(t.cardId===card.id)t.cardName=card.name;});this.refreshDatalist();save();this.renderCards();renderCreditCard();toast("Cartão atualizado!");},
     syncFormVisibility(){const f=document.getElementById("tCardFields");if(!f)return;const on=document.getElementById("tType")?.value==="expense"&&document.getElementById("tCreditCard")?.checked;f.classList.toggle("hidden",!on);f.style.display=on?"":"none";},
     addInvoiceControls(){const title=document.getElementById("ccInvoiceTitle");if(!title||document.getElementById("ccCardSelect"))return;const s=document.createElement("select");s.id="ccCardSelect";s.setAttribute("aria-label","Filtrar cartão");s.style.marginLeft="8px";title.parentElement.appendChild(s);s.addEventListener("change",()=>renderCreditCard());const total=document.getElementById("ccInvoiceTotal"),b=document.createElement("button");b.type="button";b.id="ccPayInvoice";b.className="btn btn-primary btn-small";b.style.marginTop="14px";b.textContent="Registrar pagamento da fatura";total.after(b);b.addEventListener("click",()=>this.payInvoice());this.refreshDatalist();},
     payInvoice(){const ym=document.getElementById("ccMonthSelect")?.value||selectedMonth,p=creditCardTransactionsForMonth(ym),total=p.reduce((s,t)=>s+Number(t.amount||0),0);if(!total){toast("Esta fatura não possui compras.");return;}const cardId=document.getElementById("ccCardSelect")?.value||"",card=this.cards().find(x=>x.id===cardId);openModal();document.getElementById("tType").value="transfer";document.getElementById("tDescription").value=`Pagamento fatura ${card?.name||"cartão"} — ${monthName(ym)}`;document.getElementById("tAmount").value=total.toFixed(2);document.getElementById("tDetails").value=`Pagamento da fatura ${ym}${card?" · "+card.name:""}`;updateCcVisibility();},
     dashboardAlerts(){const dash=document.getElementById("dashboard");if(!dash)return;let box=document.getElementById("v171Attention");const spent={};transactionsForMonth(selectedMonth).filter(t=>t.type==="expense").forEach(t=>spent[t.category]=(spent[t.category]||0)+Number(t.amount||0));const alerts=categories.map(cat=>{const budget=Number(state.budgets?.[cat]||0),used=Number(spent[cat]||0);return{cat,budget,used,pct:budget?used/budget*100:0,left:budget-used};}).filter(x=>x.budget&&x.pct>=70).sort((a,b)=>b.pct-a.pct);if(!alerts.length){if(box)box.remove();return;}if(!box){box=document.createElement("div");box.id="v171Attention";box.className="card section";dash.prepend(box);}box.innerHTML=`<div class="section-title"><h3>Atenção este mês</h3><span>${alerts.length} alerta(s)</span></div>`+alerts.slice(0,5).map(x=>`<div class="v17-alert ${x.pct>=100?"v17-danger":x.pct>=90?"v17-warn":""}" style="cursor:pointer" data-budget-cat="${esc(x.cat)}"><strong>${esc(x.cat)}</strong> está em ${Math.round(x.pct)}% do orçamento · <span class="privacy-value">${money(x.used)} de ${money(x.budget)}</span> · restam <span class="privacy-value">${money(x.left)}</span></div>`).join("");box.querySelectorAll("[data-budget-cat]").forEach(el=>el.onclick=()=>{document.querySelector('.tab[data-view="budget"]')?.click();setTimeout(()=>openBudgetModal(el.dataset.budgetCat),50);});},
-    init(){state.cards=state.cards||[];this.addForm();this.addInvoiceControls();this.syncFormVisibility();this.dashboardAlerts();document.getElementById("tCreditCard")?.addEventListener("change",()=>this.syncFormVisibility());document.getElementById("tType")?.addEventListener("change",()=>this.syncFormVisibility());const oldOpen=window.openModal;window.openModal=(id)=>{oldOpen(id);setTimeout(()=>{this.syncFormVisibility();const tx=getEditingTx();if(tx?.cardId){const card=this.cards().find(x=>x.id===tx.cardId);document.getElementById("tCardName").value=tx.cardName||card?.name||"";document.getElementById("tCardClosing").value=card?.closingDay||"";document.getElementById("tCardDue").value=card?.dueDay||"";}},0);};const mo=new MutationObserver(()=>this.dashboardAlerts()),d=document.getElementById("mExpense");if(d)mo.observe(d,{childList:true,characterData:true,subtree:true});}
+    init(){state.cards=state.cards||[];this.addForm();this.addInvoiceControls();this.syncFormVisibility();this.dashboardAlerts();this.renderCards();document.getElementById("tCreditCard")?.addEventListener("change",()=>this.syncFormVisibility());document.getElementById("tType")?.addEventListener("change",()=>this.syncFormVisibility());const oldOpen=window.openModal;window.openModal=(id)=>{oldOpen(id);setTimeout(()=>{this.syncFormVisibility();const tx=getEditingTx();if(tx?.cardId){const card=this.cards().find(x=>x.id===tx.cardId);document.getElementById("tCardName").value=tx.cardName||card?.name||"";document.getElementById("tCardClosing").value=card?.closingDay||"";document.getElementById("tCardDue").value=card?.dueDay||"";}},0);};const mo=new MutationObserver(()=>this.dashboardAlerts()),d=document.getElementById("mExpense");if(d)mo.observe(d,{childList:true,characterData:true,subtree:true});}
   };
   window.V171Cards=V171Cards;setTimeout(()=>V171Cards.init(),0);
   /* /FINANCAS_V171_CORRECTIONS */
@@ -3516,3 +3529,5 @@ Retorne SOMENTE o JSON solicitado nas regras do sistema.
 </script>
 </body>
 </html>
+
+<style id="v2012-card-privacy-fix">#tCardClosing,#tCardDue{filter:none!important;opacity:1!important;color:var(--text)!important;-webkit-text-security:none!important}#tCardFields{filter:none!important}#savedCardsList .cc-purchase-meta strong{color:var(--text)}</style>
