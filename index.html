@@ -1370,7 +1370,7 @@
       </div>
       <div class="form-actions">
         <button type="button" class="btn" onclick="closeBudgetModal()">Cancelar</button>
-        <button class="btn btn-primary">Salvar</button>
+        <button type="button" id="budgetSaveBtn" class="btn btn-primary">Salvar</button>
       </div>
     </form>
   </div>
@@ -3887,6 +3887,37 @@ Retorne SOMENTE o JSON solicitado nas regras do sistema.
     init(){let n=0;const timer=setInterval(()=>{if(window.V27Budget){clearInterval(timer);this.apply()}else if(++n>50)clearInterval(timer)},40)}
   };
   window.V271=V271;V271.init();
+  /* FINANCAS_BUDGET_SAVE_FIX — fluxo único e explícito de salvamento */
+  function installBudgetSaveFix(){
+    const btn=document.getElementById("budgetSaveBtn");
+    if(!btn||btn.dataset.saveFix==="1")return;
+    btn.dataset.saveFix="1";
+    btn.onclick=async function(){
+      const cat=document.getElementById("bCategory")?.value||"";
+      const field=document.getElementById("bAmount");
+      const val=parseBRLCents(field?.value||"");
+      if(!cat||!Number.isFinite(val)||val<0){toast("Informe um limite mensal válido.");return}
+      state.budgets=state.budgets||{};
+      const monthly=window.V27Budget?.monthMap ? window.V27Budget.monthMap(selectedMonth,true) : (state.budgets[selectedMonth]||(state.budgets[selectedMonth]={}));
+      monthly[cat]=val;
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+      try{
+        if(currentUser&&cloudReady){
+          await userRef().collection("settings").doc("main").set({budgets:state.budgets,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+        }
+        if(window.V27Budget?.render)window.V27Budget.render();else renderBudget();
+        closeBudgetModal();
+        toast("Orçamento atualizado: "+money(val));
+      }catch(err){
+        console.error("budget-save-fix",err);
+        toast("Erro ao sincronizar o orçamento. Tente novamente.");
+      }
+    };
+  }
+  installBudgetSaveFix();
+  setTimeout(installBudgetSaveFix,250);
+  /* /FINANCAS_BUDGET_SAVE_FIX */
+
   /* /FINANCAS_V271_ALL_BUDGET_CATEGORIES */
 })();
 </script>
