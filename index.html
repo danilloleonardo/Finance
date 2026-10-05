@@ -1302,7 +1302,7 @@
         </div>
         <div class="field">
           <label>Valor</label>
-          <input id="tAmount" class="privacy-entry-visible" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0,00" required aria-describedby="transactionFeedback installmentSummary">
+          <input id="tAmount" class="privacy-entry-visible" type="text" inputmode="numeric" autocomplete="off" placeholder="R$ 0,00" required aria-describedby="transactionFeedback installmentSummary">
         </div>
         <div class="field">
           <label>Canal / estabelecimento</label>
@@ -1791,7 +1791,23 @@ Regras:
   });
 
   function transactionsForMonth(ym){
-    return state.transactions.filter(t => (t.month || (t.date ? t.date.slice(0,7) : "")) === ym);
+    const regular = state.transactions.filter(t=>{
+      if(t.isCreditCard && (t.installmentTotal||1)>1) return false;
+      return (t.month || (t.date ? t.date.slice(0,7) : "")) === ym;
+    });
+    const groups={};
+    state.transactions.filter(t=>t.isCreditCard && (t.installmentTotal||1)>1).forEach(t=>{
+      const key=t.originalPurchaseId||t.id;
+      (groups[key] ||= []).push(t);
+    });
+    Object.values(groups).forEach(group=>{
+      const first=[...group].sort((a,b)=>(a.installmentNumber||1)-(b.installmentNumber||1))[0];
+      const purchaseDate=first.purchaseDate||first.date||"";
+      if(purchaseDate.slice(0,7)!==ym) return;
+      const fullAmount=Number(first.purchaseAmount)||group.reduce((s,t)=>s+(Number(t.amount)||0),0);
+      regular.push({...first,date:purchaseDate,month:purchaseDate.slice(0,7),amount:fullAmount,installmentNumber:1,accountingMode:first.accountingMode||"legacy_purchase_competence_full"});
+    });
+    return regular;
   }
 
   function totals(ym){
@@ -1820,6 +1836,20 @@ Regras:
     const day = Math.min(d, lastDay);
     const dd = new Date(base.getFullYear(), base.getMonth(), day);
     return `${dd.getFullYear()}-${String(dd.getMonth()+1).padStart(2,"0")}-${String(dd.getDate()).padStart(2,"0")}`;
+  }
+
+  function parseBRLCents(value){
+    const digits=String(value??"").replace(/\D/g,"");
+    return digits ? Number(digits)/100 : 0;
+  }
+  function formatBRLInput(value){
+    const amount=Number(value)||0;
+    return new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(amount);
+  }
+  function applyBRLMask(el){
+    const digits=String(el.value||"").replace(/\D/g,"");
+    const amount=digits ? Number(digits)/100 : 0;
+    el.value=digits ? new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(amount) : "";
   }
 
   function splitInstallments(total, n){
@@ -2233,7 +2263,24 @@ Regras:
 
   function creditCardTransactionsForMonth(ym){
     const cardId = document.getElementById("ccCardSelect")?.value || "";
-    return state.transactions.filter(t=>t.isCreditCard && t.type==="expense" && (t.invoiceMonth || t.month || (t.date?t.date.slice(0,7):"")) === ym && (!cardId || t.cardId===cardId));
+    const out=[];
+    const legacyIds=new Set(state.transactions.filter(t=>t.isCreditCard && (t.installmentTotal||1)>1 && t.originalPurchaseId && t.accountingMode!=="purchase_competence_full").map(t=>t.originalPurchaseId));
+    state.transactions.filter(t=>t.isCreditCard && t.type==="expense" && (!cardId || t.cardId===cardId)).forEach(t=>{
+      if(legacyIds.has(t.originalPurchaseId)){
+        if((t.invoiceMonth || t.month || (t.date?t.date.slice(0,7):""))===ym) out.push(t);
+        return;
+      }
+      const total=Math.max(1,Number(t.installmentTotal||t.installments||1));
+      const purchaseAmount=Number(t.purchaseAmount||t.amount)||0;
+      const parts=splitInstallments(purchaseAmount,total);
+      const purchaseDate=t.purchaseDate||t.date;
+      for(let i=0;i<total;i++){
+        const d=addMonthsToDate(purchaseDate,i);
+        const invoiceMonth=window.V171Cards ? window.V171Cards.invoiceMonthForDate(d,{id:t.cardId,name:t.cardName}) : d.slice(0,7);
+        if(invoiceMonth===ym) out.push({...t,date:d,month:d.slice(0,7),invoiceMonth,amount:parts[i],installmentNumber:i+1,installmentTotal:total,purchaseAmount});
+      }
+    });
+    return out;
   }
 
   function renderCreditCard(){
@@ -2306,10 +2353,10 @@ Regras:
     const box=$("installmentSummary");
     if(!box) return;
     const editingTx=getEditingTx();
-    const alreadySplit=!!(editingTx && (editingTx.installmentTotal||1)>1);
+    const alreadySplit=!!(editingTx && (editingTx.installmentTotal||1)>1 && editingTx.accountingMode!=="purchase_competence_full");
     const isCard=$("tType").value==="expense" && $("tCreditCard").checked;
     if(!isCard || alreadySplit){ box.style.display="none"; box.innerHTML=""; return; }
-    const amount=Number($("tAmount").value)||0;
+    const amount=parseBRLCents($("tAmount").value);
     const count=getInstallmentCount();
     if(!amount || count<1){ box.style.display="none"; box.innerHTML=""; return; }
     const parts=splitInstallments(amount,count);
@@ -2317,7 +2364,7 @@ Regras:
     const last=parts[parts.length-1]||first;
     box.style.display="block";
     box.innerHTML=count>1
-      ? `<strong>${count}x no cartão</strong> · total ${money(amount)} · parcelas de ${money(first)}${Math.abs(last-first)>0.001?` (última ${money(last)})`:""}. Cada parcela entra no mês da sua competência.`
+      ? `<strong>${count}x no cartão</strong> · total ${money(amount)} · parcelas de ${money(first)}${Math.abs(last-first)>0.001?` (última ${money(last)})`:""}; no dashboard, o valor integral entra no mês da compra. As parcelas futuras aparecem apenas na aba do cartão.`
       : `<strong>Compra no cartão à vista</strong> · ${money(amount)}. O pagamento da fatura continua separado da despesa para evitar dupla contabilização.`;
   }
 
@@ -2326,7 +2373,7 @@ Regras:
     const type=$("tType").value;
     const date=$("tDate").value;
     const description=$("tDescription").value.trim();
-    const amount=Number($("tAmount").value);
+    const amount=parseBRLCents($("tAmount").value);
     const category=$("tCategory").value;
     if(!date){ showTransactionFeedback("Informe a data do lançamento."); $("tDate").focus(); return false; }
     if(!description){ showTransactionFeedback("Informe uma descrição para o lançamento."); $("tDescription").focus(); return false; }
@@ -2344,7 +2391,7 @@ Regras:
   function updateCcVisibility(){
     const type = $("tType").value;
     const editingTx = getEditingTx();
-    const alreadySplit = !!(editingTx && (editingTx.installmentTotal||1) > 1);
+    const alreadySplit = !!(editingTx && (editingTx.installmentTotal||1) > 1 && editingTx.accountingMode!=="purchase_competence_full");
 
     if(type!=="expense"){
       $("tCreditCardWrap").classList.add("hidden");
@@ -2407,7 +2454,7 @@ Regras:
       $("tDescription").value = tx.description||"";
       $("tResponsible").value = tx.responsible||"Danillo";
       $("tCategory").value = tx.category||categories[0];
-      $("tAmount").value = tx.amount||"";
+      $("tAmount").value = formatBRLInput(tx.amount||0);
       $("tChannel").value = tx.channel||"";
       $("tDetails").value = tx.details||"";
     } else {
@@ -2440,6 +2487,7 @@ Regras:
   window.openGoalModal=openGoalModal; window.closeGoalModal=closeGoalModal;
   window.openWealthModal=openWealthModal; window.closeWealthModal=closeWealthModal;
 
+  $("tAmount")?.addEventListener("input",e=>applyBRLMask(e.target));
   $("tType").addEventListener("change",()=>{clearTransactionFeedback();updateCcVisibility();});
   $("tCreditCard").addEventListener("change",()=>{clearTransactionFeedback();updateCcVisibility();});
   $("tInstallmentsSelect").addEventListener("change",()=>{
@@ -2451,11 +2499,11 @@ Regras:
   $("transactionForm").addEventListener("submit",async e=>{
     e.preventDefault();
     if(!validateTransactionForm()) return;
-    const amount=Number($("tAmount").value);
+    const amount=parseBRLCents($("tAmount").value);
     const isEditing=!!editingTransactionId;
     const baseType=$("tType").value;
     const editingTx = getEditingTx();
-    const alreadySplit = !!(editingTx && (editingTx.installmentTotal||1) > 1);
+    const alreadySplit = !!(editingTx && (editingTx.installmentTotal||1) > 1 && editingTx.accountingMode!=="purchase_competence_full");
 
     /* Se já faz parte de uma compra parcelada, os campos de cartão ficam travados (ver updateCcVisibility). */
     const isCardExpense = !alreadySplit && baseType==="expense" && $("tCreditCard").checked;
@@ -2486,28 +2534,24 @@ Regras:
     let removedId=null; /* preenchido quando um lançamento único é convertido em várias parcelas */
 
     if(isCardExpense && installmentCount>1){
-      const originalPurchaseId = crypto.randomUUID ? crypto.randomUUID() : String(Date.now());
-      const parts = splitInstallments(amount, installmentCount);
-      newTxs = parts.map((val,i)=>{
-        const d = addMonthsToDate(purchaseDate, i);
-        return {
-          ...common,
-          id: `${originalPurchaseId}-p${i+1}`,
-          date:d,
-          month:d.slice(0,7),
-          amount:val,
-          paymentMethod:"credit_card",
-          isCreditCard:true,
-          installments:installmentCount,
-          installmentNumber:i+1,
-          installmentTotal:installmentCount,
-          originalPurchaseId,
-          purchaseDate,
-          purchaseAmount:amount,
-          invoiceMonth: window.V171Cards ? window.V171Cards.invoiceMonthForDate(d, selectedCard) : d.slice(0,7)
-        };
-      });
-      if(isEditing) removedId = editingTransactionId; /* estava editando um lançamento simples que virou série de parcelas */
+      const originalPurchaseId = isEditing ? editingTransactionId : (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()));
+      newTxs=[{
+        ...common,
+        id:originalPurchaseId,
+        date:purchaseDate,
+        month:purchaseDate.slice(0,7),
+        amount,
+        paymentMethod:"credit_card",
+        isCreditCard:true,
+        installments:installmentCount,
+        installmentNumber:1,
+        installmentTotal:installmentCount,
+        originalPurchaseId,
+        purchaseDate,
+        purchaseAmount:amount,
+        accountingMode:"purchase_competence_full",
+        invoiceMonth: window.V171Cards ? window.V171Cards.invoiceMonthForDate(purchaseDate, selectedCard) : purchaseDate.slice(0,7)
+      }];
     } else {
       const tx={
         id:isEditing ? editingTransactionId : (crypto.randomUUID ? crypto.randomUUID() : String(Date.now())),
@@ -2730,7 +2774,7 @@ Regras:
     $("tDescription").value=r.merchant||r.original||"";
     $("tResponsible").value=r.responsible||"Danillo";
     $("tCategory").value=r.category||"Outros";
-    $("tAmount").value=Number(r.amount||0).toFixed(2);
+    $("tAmount").value=formatBRLInput(Number(r.amount||0));
     $("tChannel").value=r.merchant||"";
     $("tDetails").value=r.original&&r.original!==r.merchant?`Importado de foto/arquivo · Original: ${r.original}`:"Importado de foto/arquivo";
     updateCcVisibility();
@@ -2880,7 +2924,7 @@ Regras:
       const amounts=[];
       const re=/R\$?\s*([0-9]{1,3}(?:\.[0-9]{3})*,\d{2}|[0-9]+,\d{2})/g; let m;
       while((m=re.exec(text))) amounts.push(m[1]);
-      if(amounts.length){const raw=amounts[amounts.length-1].replace(/\./g,"").replace(",",".");const val=parseFloat(raw);if(val>0)$("tAmount").value=val.toFixed(2);}
+      if(amounts.length){const raw=amounts[amounts.length-1].replace(/\./g,"").replace(",",".");const val=parseFloat(raw);if(val>0)$("tAmount").value=formatBRLInput(val);}
       const lines=text.split(/\r?\n/).map(x=>x.trim()).filter(x=>x.length>=3);
       const skip=/pix|valor|data|hora|comprovante|pagamento|cart[aã]o|documento|autoriz|transa[cç][aã]o|total|cnpj|cpf|saldo/i;
       const desc=lines.find(x=>!skip.test(x) && !/^[\d\W_]+$/.test(x) && x.length<80);
