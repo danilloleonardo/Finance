@@ -3835,6 +3835,7 @@ Retorne SOMENTE o JSON solicitado nas regras do sistema.
     open(cat){
       const sel=document.getElementById("bCategory"),amount=document.getElementById("bAmount");sel.innerHTML=categories.map(c=>'<option>'+esc(c)+'</option>').join("");if(cat&&categories.includes(cat))sel.value=cat;
       {const current=this.monthMap(selectedMonth)[sel.value];amount.value=current!==undefined?formatBRLInput(current):"";}
+      amount.oninput=function(){applyBRLMask(this)};
       let ref=document.getElementById("v27BudgetReference");if(!ref){ref=document.createElement("div");ref.id="v27BudgetReference";ref.className="v27-budget-reference";amount.closest(".field").after(ref)}
       const prev=this.monthOffset(selectedMonth,-1),last=Number(this.spent(prev)[sel.value]||0);ref.innerHTML='<strong>Referência:</strong> gasto em '+esc(monthName(prev))+' = <span class="privacy-value">'+money(last)+'</span>';
       document.getElementById("budgetBackdrop").classList.add("open");amount.focus();amount.select();if(typeof applyPrivacyState==="function")applyPrivacyState();
@@ -3875,7 +3876,7 @@ Retorne SOMENTE o JSON solicitado nas regras do sistema.
         oldForm.replaceWith(cleanForm);
         cleanForm.addEventListener("submit",e=>this.saveBudget(e));
         document.getElementById("bAmount")?.addEventListener("input",e=>applyBRLMask(e.target));
-        document.getElementById("bCategory")?.addEventListener("change",e=>{const sel=e.currentTarget,prev=this.monthOffset(selectedMonth,-1),last=Number(this.spent(prev)[sel.value]||0);{const current=this.monthMap(selectedMonth)[sel.value];document.getElementById("bAmount").value=current!==undefined?formatBRLInput(current):"";}const ref=document.getElementById("v27BudgetReference");if(ref)ref.innerHTML='<strong>Referência:</strong> gasto em '+esc(monthName(prev))+' = <span class="privacy-value">'+money(last)+'</span>';});
+        document.getElementById("bCategory")?.addEventListener("change",e=>{const sel=e.currentTarget,prev=this.monthOffset(selectedMonth,-1),last=Number(this.spent(prev)[sel.value]||0);{const current=this.monthMap(selectedMonth)[sel.value];document.getElementById("bAmount").value=current!==undefined?formatBRLInput(current):"";document.getElementById("bAmount").oninput=function(){applyBRLMask(this)};}const ref=document.getElementById("v27BudgetReference");if(ref)ref.innerHTML='<strong>Referência:</strong> gasto em '+esc(monthName(prev))+' = <span class="privacy-value">'+money(last)+'</span>';});
       }
       document.getElementById("monthSelect")?.addEventListener("change",()=>setTimeout(()=>this.render(),60));document.addEventListener("click",e=>{if(e.target.closest(".month-chip,.tab[data-view='budget']"))setTimeout(()=>this.render(),80)});
       this.render();
@@ -3911,6 +3912,7 @@ Retorne SOMENTE o JSON solicitado nas regras do sistema.
         const sel=document.getElementById("bCategory"),amount=document.getElementById("bAmount"),cats=V271.allCategories();
         sel.innerHTML=cats.map(c=>'<option>'+esc(c)+'</option>').join("");if(cat&&cats.includes(cat))sel.value=cat;
         {const current=v.monthMap(selectedMonth)[sel.value];amount.value=current!==undefined?formatBRLInput(current):"";}
+        amount.oninput=function(){applyBRLMask(this)};
         let ref=document.getElementById("v27BudgetReference");if(!ref){ref=document.createElement("div");ref.id="v27BudgetReference";ref.className="v27-budget-reference";amount.closest(".field").after(ref)}
         const prev=v.monthOffset(selectedMonth,-1),last=Number(v.spent(prev)[sel.value]||0);ref.innerHTML='<strong>Referência:</strong> gasto em '+esc(monthName(prev))+' = <span class="privacy-value">'+money(last)+'</span>';
         document.getElementById("budgetBackdrop").classList.add("open");amount.focus();amount.select();if(typeof applyPrivacyState==="function")applyPrivacyState();
