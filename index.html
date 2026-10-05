@@ -2481,7 +2481,11 @@ Regras:
     if(!cat||!Number.isFinite(val)||val<0){toast("Informe um limite mensal válido.");return}
     state.budgets=state.budgets||{};
     if(!state.budgets[selectedMonth]||typeof state.budgets[selectedMonth]!=="object"||Array.isArray(state.budgets[selectedMonth])){
-      state.budgets[selectedMonth]={};
+      const legacy={};
+      Object.entries(state.budgets).forEach(([k,v])=>{
+        if(!/^\d{4}-\d{2}$/.test(k)&&typeof v==="number"&&Number.isFinite(v))legacy[k]=v;
+      });
+      state.budgets[selectedMonth]=legacy;
     }
     state.budgets[selectedMonth][cat]=val;
     localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
@@ -2492,13 +2496,13 @@ Regras:
           updatedAt:firebase.firestore.FieldValue.serverTimestamp()
         },{merge:true});
       }
-      renderBudget();
+      if(window.V27Budget&&typeof window.V27Budget.render==="function")window.V27Budget.render();else renderBudget();
       closeBudgetModal();
       toast("Orçamento atualizado: "+money(val));
     }catch(err){
       console.error("saveBudgetDirect",err);
       toast("Salvo neste dispositivo, mas houve erro ao sincronizar.");
-      renderBudget();
+      if(window.V27Budget&&typeof window.V27Budget.render==="function")window.V27Budget.render();else renderBudget();
       closeBudgetModal();
     }
   }
@@ -2507,7 +2511,7 @@ Regras:
   function openBudgetModal(cat){
     $("bCategory").innerHTML=categories.map(c=>`<option>${esc(c)}</option>`).join("");
     if(cat && categories.includes(cat)) $("bCategory").value=cat;
-    $("bAmount").value=state.budgets[$("bCategory").value]!==undefined ? formatBRLInput(state.budgets[$("bCategory").value]) : "";
+    {const map=(state.budgets[selectedMonth]&&typeof state.budgets[selectedMonth]==="object")?state.budgets[selectedMonth]:state.budgets;const current=map[$("bCategory").value];$("bAmount").value=current!==undefined?formatBRLInput(current):"";}
     $("budgetBackdrop").classList.add("open");
     $("bAmount").focus();
     $("bAmount").select();
@@ -3803,7 +3807,12 @@ Retorne SOMENTE o JSON solicitado nas regras do sistema.
     monthMap(ym,create=false){
       state.budgets=state.budgets||{};
       if(state.budgets[ym]&&typeof state.budgets[ym]==="object"&&!Array.isArray(state.budgets[ym]))return state.budgets[ym];
-      if(create){state.budgets[ym]={};return state.budgets[ym]} return {};
+      const legacy={};
+      Object.entries(state.budgets).forEach(([k,v])=>{
+        if(!/^\d{4}-\d{2}$/.test(k)&&typeof v==="number"&&Number.isFinite(v))legacy[k]=v;
+      });
+      if(create){state.budgets[ym]={...legacy};return state.budgets[ym]}
+      return legacy;
     },
     spent(ym){
       const out={};state.transactions.filter(t=>t.type==="expense"&&(t.month||(t.date||"").slice(0,7))===ym)
