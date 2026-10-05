@@ -3796,14 +3796,32 @@ Retorne SOMENTE o JSON solicitado nas regras do sistema.
     },
     open(cat){
       const sel=document.getElementById("bCategory"),amount=document.getElementById("bAmount");sel.innerHTML=categories.map(c=>'<option>'+esc(c)+'</option>').join("");if(cat&&categories.includes(cat))sel.value=cat;
-      amount.value=this.monthMap(selectedMonth)[sel.value]||"";
+      {const current=this.monthMap(selectedMonth)[sel.value];amount.value=current!==undefined?formatBRLInput(current):"";}
       let ref=document.getElementById("v27BudgetReference");if(!ref){ref=document.createElement("div");ref.id="v27BudgetReference";ref.className="v27-budget-reference";amount.closest(".field").after(ref)}
       const prev=this.monthOffset(selectedMonth,-1),last=Number(this.spent(prev)[sel.value]||0);ref.innerHTML='<strong>Referência:</strong> gasto em '+esc(monthName(prev))+' = <span class="privacy-value">'+money(last)+'</span>';
       document.getElementById("budgetBackdrop").classList.add("open");amount.focus();amount.select();if(typeof applyPrivacyState==="function")applyPrivacyState();
     },
-    saveBudget(e){
-      e.preventDefault();e.stopImmediatePropagation();const cat=document.getElementById("bCategory").value,val=Number(document.getElementById("bAmount").value)||0;
-      this.monthMap(selectedMonth,true)[cat]=val;closeBudgetModal();save();toast("Orçamento de "+monthName(selectedMonth)+" atualizado!");setTimeout(()=>this.render(),0);
+    async saveBudget(e){
+      e.preventDefault();e.stopImmediatePropagation();
+      const cat=document.getElementById("bCategory").value;
+      const val=parseBRLCents(document.getElementById("bAmount").value);
+      if(!cat||!Number.isFinite(val)||val<0){toast("Informe um limite mensal válido.");return}
+      this.monthMap(selectedMonth,true)[cat]=val;
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+      this.render();
+      try{
+        if(currentUser&&cloudReady){
+          await userRef().collection("settings").doc("main").set({
+            budgets:state.budgets,
+            updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+          },{merge:true});
+        }
+        closeBudgetModal();
+        toast("Orçamento de "+monthName(selectedMonth)+" atualizado!");
+      }catch(err){
+        console.error(err);
+        toast("Orçamento salvo neste dispositivo, mas houve erro ao sincronizar.");
+      }
     },
     copy(){
       const prev=this.monthOffset(selectedMonth,-1),before=this.spent(prev),map=this.monthMap(selectedMonth,true);categories.forEach(cat=>map[cat]=Number(before[cat]||0));
@@ -3813,7 +3831,7 @@ Retorne SOMENTE o JSON solicitado nas regras do sistema.
       const s=document.createElement("style");s.textContent=".v27-budget-header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;margin-bottom:14px;border:1px solid var(--border);border-radius:12px;background:var(--bg)}.v27-budget-header strong{display:block;font-size:13px}.v27-budget-header small{display:block;color:var(--muted);margin-top:4px;font-size:11px}.v27-budget-meta{font-size:11px;color:var(--muted);margin:-3px 0 8px}.v27-budget-reference{grid-column:1/-1;padding:10px 12px;border-radius:10px;background:var(--bg);border:1px solid var(--border);font-size:12px;color:var(--muted)}@media(max-width:650px){.v27-budget-header{align-items:stretch;flex-direction:column}.v27-budget-header .btn{width:100%}.v27-budget-row .progress-head{align-items:flex-start;flex-direction:column}}";document.head.appendChild(s);
       renderBudget=()=>this.render();openBudgetModal=(cat)=>this.open(cat);window.openBudgetModal=openBudgetModal;
       document.getElementById("budgetForm")?.addEventListener("submit",e=>this.saveBudget(e),true);
-      document.getElementById("bCategory")?.addEventListener("change",e=>{const sel=e.currentTarget,prev=this.monthOffset(selectedMonth,-1),last=Number(this.spent(prev)[sel.value]||0);document.getElementById("bAmount").value=this.monthMap(selectedMonth)[sel.value]||"";const ref=document.getElementById("v27BudgetReference");if(ref)ref.innerHTML='<strong>Referência:</strong> gasto em '+esc(monthName(prev))+' = <span class="privacy-value">'+money(last)+'</span>';});
+      document.getElementById("bCategory")?.addEventListener("change",e=>{const sel=e.currentTarget,prev=this.monthOffset(selectedMonth,-1),last=Number(this.spent(prev)[sel.value]||0);{const current=this.monthMap(selectedMonth)[sel.value];document.getElementById("bAmount").value=current!==undefined?formatBRLInput(current):"";}const ref=document.getElementById("v27BudgetReference");if(ref)ref.innerHTML='<strong>Referência:</strong> gasto em '+esc(monthName(prev))+' = <span class="privacy-value">'+money(last)+'</span>';});
       document.getElementById("monthSelect")?.addEventListener("change",()=>setTimeout(()=>this.render(),60));document.addEventListener("click",e=>{if(e.target.closest(".month-chip,.tab[data-view='budget']"))setTimeout(()=>this.render(),80)});
       this.render();
     }
@@ -3847,7 +3865,7 @@ Retorne SOMENTE o JSON solicitado nas regras do sistema.
       v.open=(cat)=>{
         const sel=document.getElementById("bCategory"),amount=document.getElementById("bAmount"),cats=V271.allCategories();
         sel.innerHTML=cats.map(c=>'<option>'+esc(c)+'</option>').join("");if(cat&&cats.includes(cat))sel.value=cat;
-        amount.value=v.monthMap(selectedMonth)[sel.value]||"";
+        {const current=v.monthMap(selectedMonth)[sel.value];amount.value=current!==undefined?formatBRLInput(current):"";}
         let ref=document.getElementById("v27BudgetReference");if(!ref){ref=document.createElement("div");ref.id="v27BudgetReference";ref.className="v27-budget-reference";amount.closest(".field").after(ref)}
         const prev=v.monthOffset(selectedMonth,-1),last=Number(v.spent(prev)[sel.value]||0);ref.innerHTML='<strong>Referência:</strong> gasto em '+esc(monthName(prev))+' = <span class="privacy-value">'+money(last)+'</span>';
         document.getElementById("budgetBackdrop").classList.add("open");amount.focus();amount.select();if(typeof applyPrivacyState==="function")applyPrivacyState();
