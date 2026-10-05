@@ -1147,7 +1147,7 @@
         <div class="table-wrap">
           <table>
             <thead>
-              <tr><th>Data</th><th>Responsável</th><th>Descrição</th><th>Categoria</th><th>Canal</th><th>Tipo</th><th>Valor</th><th></th></tr>
+              <tr><th>Data</th><th>Responsável</th><th>Descrição</th><th>Categoria</th><th>Canal</th><th>Tipo</th><th id="valueSortHeader" role="button" tabindex="0" aria-sort="none" title="Clique para ordenar por valor" style="cursor:pointer;user-select:none">Valor <span id="valueSortIcon">↕</span></th><th></th></tr>
             </thead>
             <tbody id="transactionTable"></tbody>
           </table>
@@ -2087,6 +2087,8 @@ Regras:
     $("recentList").innerHTML=html||`<div class="empty"><strong>Comece pelo primeiro lançamento</strong>Suas movimentações aparecerão aqui.</div>`;
   }
 
+  let transactionValueSort = null; // null = padrão; asc = menor→maior; desc = maior→menor
+
   function getFilteredTransactions(){
     let tx=[...state.transactions];
     const q=($( "searchInput")?.value||"").trim().toLowerCase();
@@ -2105,14 +2107,19 @@ Regras:
       const from=$( "fromDate")?.value||""; const to=$( "toDate")?.value||"";
       if(from) tx=tx.filter(t=>t.date && t.date>=from); if(to) tx=tx.filter(t=>t.date && t.date<=to);
     }
-    // Mais recente primeiro. A data do lançamento é a prioridade; no mesmo dia,
-    // o horário de criação fica apenas interno e serve como desempate.
+    if(transactionValueSort){
+      return tx.sort((a,b)=>{
+        const av=Number(a.amount)||0, bv=Number(b.amount)||0;
+        if(av!==bv) return transactionValueSort==="asc" ? av-bv : bv-av;
+        return String(b.date||"").localeCompare(String(a.date||""));
+      });
+    }
+    // Padrão: mais recente primeiro.
     return tx.sort((a,b)=>{
       const byDate=String(b.date||"").localeCompare(String(a.date||""));
       if(byDate) return byDate;
       const aCreated=Number(a.createdAt||0), bCreated=Number(b.createdAt||0);
       if(aCreated!==bCreated) return bCreated-aCreated;
-      // Legado: como novos lançamentos são adicionados ao fim do array, maior índice = mais recente.
       return state.transactions.indexOf(b)-state.transactions.indexOf(a);
     });
   }
@@ -2639,6 +2646,17 @@ Regras:
     closeWealthModal(); e.target.reset(); save(); toast("Patrimônio atualizado!");
   });
 
+
+  const valueSortHeader=$("valueSortHeader");
+  function toggleTransactionValueSort(){
+    transactionValueSort = transactionValueSort==="asc" ? "desc" : "asc";
+    valueSortHeader.setAttribute("aria-sort",transactionValueSort==="asc" ? "ascending" : "descending");
+    $("valueSortIcon").textContent=transactionValueSort==="asc" ? "↑" : "↓";
+    valueSortHeader.title=transactionValueSort==="asc" ? "Menor para maior — clique para inverter" : "Maior para menor — clique para inverter";
+    renderTransactions();
+  }
+  valueSortHeader?.addEventListener("click",toggleTransactionValueSort);
+  valueSortHeader?.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();toggleTransactionValueSort();}});
 
   // Filtros de lançamentos
   ["searchInput","periodPreset","responsibleFilter","typeFilter","fromDate","toDate"].forEach(id=>{
