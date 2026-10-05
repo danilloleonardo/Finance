@@ -1365,12 +1365,12 @@
         </div>
         <div class="field">
           <label>Limite mensal</label>
-          <input id="bAmount" class="privacy-entry-visible" type="text" inputmode="numeric" autocomplete="off" placeholder="R$ 0,00" required>
+          <input id="bAmount" class="privacy-entry-visible" type="text" inputmode="numeric" autocomplete="off" placeholder="R$ 0,00" oninput="applyBRLMask(this)" required>
         </div>
       </div>
       <div class="form-actions">
         <button type="button" class="btn" onclick="closeBudgetModal()">Cancelar</button>
-        <button type="button" id="budgetSaveBtn" class="btn btn-primary">Salvar</button>
+        <button type="button" id="budgetSaveBtn" class="btn btn-primary" onclick="saveBudgetDirect()">Salvar</button>
       </div>
     </form>
   </div>
@@ -2475,6 +2475,35 @@ Regras:
   function closeModal(){$("modalBackdrop").classList.remove("open"); editingTransactionId=null; $("ocrBox").style.display="";}
   function editTransaction(id){ openModal(id); }
   window.editTransaction = editTransaction;
+  async function saveBudgetDirect(){
+    const cat=$("bCategory")?.value||"";
+    const val=parseBRLCents($("bAmount")?.value||"");
+    if(!cat||!Number.isFinite(val)||val<0){toast("Informe um limite mensal válido.");return}
+    state.budgets=state.budgets||{};
+    if(!state.budgets[selectedMonth]||typeof state.budgets[selectedMonth]!=="object"||Array.isArray(state.budgets[selectedMonth])){
+      state.budgets[selectedMonth]={};
+    }
+    state.budgets[selectedMonth][cat]=val;
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+    try{
+      if(currentUser&&cloudReady){
+        await userRef().collection("settings").doc("main").set({
+          budgets:state.budgets,
+          updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+        },{merge:true});
+      }
+      renderBudget();
+      closeBudgetModal();
+      toast("Orçamento atualizado: "+money(val));
+    }catch(err){
+      console.error("saveBudgetDirect",err);
+      toast("Salvo neste dispositivo, mas houve erro ao sincronizar.");
+      renderBudget();
+      closeBudgetModal();
+    }
+  }
+  window.saveBudgetDirect=saveBudgetDirect;
+
   function openBudgetModal(cat){
     $("bCategory").innerHTML=categories.map(c=>`<option>${esc(c)}</option>`).join("");
     if(cat && categories.includes(cat)) $("bCategory").value=cat;
@@ -3887,36 +3916,7 @@ Retorne SOMENTE o JSON solicitado nas regras do sistema.
     init(){let n=0;const timer=setInterval(()=>{if(window.V27Budget){clearInterval(timer);this.apply()}else if(++n>50)clearInterval(timer)},40)}
   };
   window.V271=V271;V271.init();
-  /* FINANCAS_BUDGET_SAVE_FIX — fluxo único e explícito de salvamento */
-  function installBudgetSaveFix(){
-    const btn=document.getElementById("budgetSaveBtn");
-    if(!btn||btn.dataset.saveFix==="1")return;
-    btn.dataset.saveFix="1";
-    btn.onclick=async function(){
-      const cat=document.getElementById("bCategory")?.value||"";
-      const field=document.getElementById("bAmount");
-      const val=parseBRLCents(field?.value||"");
-      if(!cat||!Number.isFinite(val)||val<0){toast("Informe um limite mensal válido.");return}
-      state.budgets=state.budgets||{};
-      const monthly=window.V27Budget?.monthMap ? window.V27Budget.monthMap(selectedMonth,true) : (state.budgets[selectedMonth]||(state.budgets[selectedMonth]={}));
-      monthly[cat]=val;
-      localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
-      try{
-        if(currentUser&&cloudReady){
-          await userRef().collection("settings").doc("main").set({budgets:state.budgets,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
-        }
-        if(window.V27Budget?.render)window.V27Budget.render();else renderBudget();
-        closeBudgetModal();
-        toast("Orçamento atualizado: "+money(val));
-      }catch(err){
-        console.error("budget-save-fix",err);
-        toast("Erro ao sincronizar o orçamento. Tente novamente.");
-      }
-    };
-  }
-  installBudgetSaveFix();
-  setTimeout(installBudgetSaveFix,250);
-  /* /FINANCAS_BUDGET_SAVE_FIX */
+
 
   /* /FINANCAS_V271_ALL_BUDGET_CATEGORIES */
 })();
