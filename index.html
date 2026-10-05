@@ -2664,9 +2664,9 @@ Regras:
     if(el && id==="periodPreset") el.addEventListener("change",()=>{ $("customRange").style.display=el.value==="custom"?"flex":"none"; renderTransactions(); });
   });
 
-  // Privacidade dos valores: o app sempre inicia com os números ocultos.
+  // Privacidade dos valores: o app inicia com os valores visíveis.
   const privacyKey="financas-a-dois-hide-values";
-  let valuesHidden=true;
+  let valuesHidden=false;
 
   /*
     Alguns componentes são montados dinamicamente. Esta rotina identifica
@@ -2705,7 +2705,6 @@ Regras:
   function applyPrivacy(){
     markPrivacyValues();
     document.body.classList.toggle("values-hidden",valuesHidden);
-    localStorage.setItem(privacyKey,valuesHidden?"1":"0");
     $("privacyBtn").textContent=valuesHidden?"◎":"◉";
     $("privacyBtn").title=valuesHidden?"Mostrar valores":"Ocultar valores";
     $("privacyBtn").setAttribute("aria-label",valuesHidden?"Mostrar valores":"Ocultar valores");
