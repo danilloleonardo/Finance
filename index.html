@@ -1365,7 +1365,7 @@
         </div>
         <div class="field">
           <label>Limite mensal</label>
-          <input id="bAmount" type="number" min="0" step="0.01" required>
+          <input id="bAmount" class="privacy-entry-visible" type="text" inputmode="numeric" autocomplete="off" placeholder="R$ 0,00" required>
         </div>
       </div>
       <div class="form-actions">
@@ -2478,7 +2478,7 @@ Regras:
   function openBudgetModal(cat){
     $("bCategory").innerHTML=categories.map(c=>`<option>${esc(c)}</option>`).join("");
     if(cat && categories.includes(cat)) $("bCategory").value=cat;
-    $("bAmount").value=state.budgets[$("bCategory").value]||"";
+    $("bAmount").value=state.budgets[$("bCategory").value]!==undefined ? formatBRLInput(state.budgets[$("bCategory").value]) : "";
     $("budgetBackdrop").classList.add("open");
     $("bAmount").focus();
     $("bAmount").select();
@@ -2616,13 +2616,34 @@ Regras:
 
   });
 
-  $("budgetForm").addEventListener("submit",e=>{
+  $("budgetForm").addEventListener("submit",async e=>{
     e.preventDefault();
-    state.budgets[$("bCategory").value]=Number($("bAmount").value)||0;
-    closeBudgetModal(); save(); toast("Orçamento atualizado!");
+    const category=$("bCategory").value;
+    const amount=parseBRLCents($("bAmount").value);
+    if(!category || !Number.isFinite(amount) || amount<0){ toast("Informe um limite mensal válido."); return; }
+    state.budgets[category]=amount;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    render();
+    try{
+      if(currentUser && cloudReady){
+        await userRef().collection("settings").doc("main").set({
+          budgets:state.budgets,
+          updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+        },{merge:true});
+      }
+      closeBudgetModal();
+      toast("Orçamento atualizado!");
+    }catch(err){
+      console.error(err);
+      toast("Orçamento salvo neste dispositivo, mas houve erro ao sincronizar.");
+    }
   });
 
-  $("bCategory").addEventListener("change",()=>{$("bAmount").value=state.budgets[$("bCategory").value]||""});
+  $("bAmount")?.addEventListener("input",e=>applyBRLMask(e.target));
+  $("bCategory").addEventListener("change",()=>{
+    const value=state.budgets[$("bCategory").value];
+    $("bAmount").value=value!==undefined ? formatBRLInput(value) : "";
+  });
 
   $("goalForm").addEventListener("submit",e=>{
     e.preventDefault();
