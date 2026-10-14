@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#0C2A3A">
-  <title>Finanças a Dois — V2.7</title>
+  <title>Finanças a Dois — V3.4</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='b' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop stop-color='%230B6FD3'/%3E%3Cstop offset='1' stop-color='%23052655'/%3E%3C/linearGradient%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop stop-color='%23FFF0B5'/%3E%3Cstop offset='.5' stop-color='%23E9B84F'/%3E%3Cstop offset='1' stop-color='%23B77A18'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='108' fill='url(%23b)'/%3E%3Ctext x='256' y='342' text-anchor='middle' font-family='Georgia,serif' font-size='290' font-weight='700' fill='url(%23g)' letter-spacing='-55'%3EFD%3C/text%3E%3C/svg%3E">
   <meta name="description" content="Controle financeiro do casal: registre gastos, acompanhe orçamento, metas e patrimônio.">
 
@@ -856,6 +856,354 @@
     @media(max-width:900px){.import-row{grid-template-columns:32px 1fr 1fr}.import-field.merchant{grid-column:2/-1}.import-field.category{grid-column:2}.import-field.responsible{grid-column:3}.import-field.amount{grid-column:2/-1}}
     @media(max-width:600px){.import-row{grid-template-columns:28px 1fr;gap:10px}.import-field,.import-field.merchant,.import-field.category,.import-field.responsible,.import-field.amount{grid-column:2}.toolbar .actions{gap:6px}.toolbar .actions .btn{padding:9px 10px}}
 </style>
+<style id="v281-public-dashboard">
+    /* V3.4 — Dashboard enxuto para validação de produto final */
+    #dashboard{display:flex;flex-direction:column;gap:16px}
+    #dashboard>.cards{order:1;margin:0!important}
+    #dashboard>#cfoPanel{order:2;margin:0!important}
+    #dashboard>.grid{order:3;margin:0!important}
+    #dashboard>.card.section{order:4;margin:0!important}
+
+    /* Evita duplicidade: os KPIs principais já existem nos quatro cards superiores. */
+    #cfoPanel .cfo-grid{display:none!important}
+    #cfoPanel .cfo-body{padding:14px 18px!important}
+    #cfoPanel .cfo-hero{padding:16px 18px!important}
+    #cfoPanel .cfo-head h3{font-size:15px!important}
+    #cfoPanel .cfo-head p{margin-top:3px!important}
+    #cfoPanel .cfo-columns{display:block!important}
+    #cfoPanel .cfo-columns>.cfo-box:first-child{border:0!important;background:transparent!important;padding:0!important}
+    #cfoPanel .cfo-columns>.cfo-box:nth-child(2),
+    #cfoPanel .cfo-body>.cfo-box{display:none!important}
+    #cfoPanel .cfo-alert{padding:9px 0!important}
+    #cfoPanel .cfo-action{margin-top:10px!important}
+    #cfoPanel .cfo-action #cfoBudgetBtn{display:none!important}
+
+    #dashboard>.cards{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important}
+    #dashboard>.grid{grid-template-columns:1.15fr .85fr!important}
+    #dashboard .section{padding:17px!important}
+    #dashboard .metric{min-height:112px}
+    #dashboard .metric-value{font-size:25px!important}
+
+    @media(max-width:900px){
+      #dashboard>.cards{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+      #dashboard>.grid{grid-template-columns:1fr!important}
+    }
+    @media(max-width:560px){
+      #dashboard{gap:12px}
+      #dashboard>.cards{grid-template-columns:1fr 1fr!important;gap:8px!important}
+      #dashboard .metric{padding:14px!important;min-height:100px}
+      #dashboard .metric-value{font-size:20px!important}
+      #cfoPanel .cfo-hero,#cfoPanel .cfo-body{padding:14px!important}
+      #cfoPanel .cfo-head{gap:10px}
+      #cfoPanel .cfo-head button{font-size:10px;padding:8px 10px}
+    }
+  </style>
+<style id="v282-page-navigation">
+    /* V3.4 — navegação com sensação real de páginas */
+    .tabs{display:none!important}
+    body:not(.view-dashboard) main>.ai-assistant,
+    body:not(.view-dashboard) #dashboardMonths,
+    body:not(.view-dashboard) .welcome{display:none!important}
+    body:not(.view-dashboard) main{padding-top:26px!important}
+    body:not(.view-dashboard) .toolbar{margin-bottom:22px!important}
+    body:not(.view-dashboard) .toolbar h2{font-size:28px!important;margin-bottom:4px!important}
+    body:not(.view-dashboard) .toolbar #monthLabel + p{display:none!important}
+    body.view-dashboard .toolbar{margin-bottom:18px!important}
+    @media(max-width:760px){
+      body:not(.view-dashboard) main{padding-top:16px!important}
+      body:not(.view-dashboard) .toolbar h2{font-size:22px!important}
+    }
+  </style>
+<style id="v283-strict-page-router">
+    /* V3.4 — roteamento visual estrito: uma tela por vez */
+    body.view-dashboard main>.view{display:none!important}
+    body.view-dashboard main>#dashboard{display:block!important}
+    body.view-transactions main>.view{display:none!important}
+    body.view-transactions main>#transactions{display:block!important}
+    body.view-creditcard main>.view{display:none!important}
+    body.view-creditcard main>#creditcard{display:block!important}
+    body.view-budget main>.view{display:none!important}
+    body.view-budget main>#budget{display:block!important}
+    body.view-goals main>.view{display:none!important}
+    body.view-goals main>#goals{display:block!important}
+    body.view-wealth main>.view{display:none!important}
+    body.view-wealth main>#wealth{display:block!important}
+  </style>
+<style id="v29-dashboard-product">
+    /* V3.4 — Dashboard orientado às três perguntas essenciais */
+    body.view-dashboard #dashboard>.v29-summary-cards{
+      grid-template-columns:repeat(4,minmax(0,1fr))!important;
+      gap:12px!important;
+    }
+    body.view-dashboard .v29-secondary-metric{display:block!important}
+    body.view-dashboard .v29-primary-metric{display:block!important;min-height:112px}
+    body.view-dashboard #v29BudgetAvailable,
+    body.view-dashboard #v29BudgetAvailableSub,
+    body.view-dashboard #v29AttentionValue,
+    body.view-dashboard #v29AttentionSub{display:none!important}
+    body.view-dashboard .v29-summary-cards>.v29-primary-metric:nth-last-child(-n+2){display:none!important}
+    body.view-dashboard #v29AttentionValue{font-size:21px!important}
+    body.view-dashboard #dashboard>#cfoPanel{order:2}
+    body.view-dashboard #dashboard>.grid{order:3}
+    body.view-dashboard #dashboard>.card.section{order:4}
+    body.view-dashboard #cfoPanel .cfo-action #cfoNewTxBtn{display:none!important}
+    @media(max-width:900px){
+      body.view-dashboard #dashboard>.v29-summary-cards{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+      body.view-dashboard .v29-primary-metric{min-height:auto}
+    }
+    @media(max-width:520px){
+      body.view-dashboard #dashboard>.v29-summary-cards{grid-template-columns:1fr 1fr!important}
+    }
+  </style>
+<style id="v30-dashboard-top-and-receipt">
+  /* V3.4 — KPIs primeiro + comprovante como ação independente */
+  body.view-dashboard #dashboard>.v29-summary-cards{order:1!important}
+  body.view-dashboard #dashboard>#cfoPanel{order:2!important}
+  body.view-dashboard #dashboard>.grid{order:3!important}
+  body.view-dashboard #dashboard>.card.section{order:4!important}
+  body.view-dashboard #dashboard{padding-top:0!important}
+  body.view-dashboard #dashboard>.v29-summary-cards{margin-top:0!important}
+  @media(max-width:760px){
+    .toolbar .actions button[onclick="openCameraImport()"]{font-size:0}
+    .toolbar .actions button[onclick="openCameraImport()"]::after{content:"📷";font-size:15px}
+  }
+</style>
+<style id="v30-dashboard-accordion">
+  /* V3.4 — dashboard principal visível; análises sob demanda */
+  body.view-dashboard #dashboard>.v29-summary-cards{order:1!important}
+  body.view-dashboard #dashboard>.grid{order:2!important}
+  body.view-dashboard #v171Attention{order:3!important}
+  body.view-dashboard #v26Closing{order:4!important}
+  body.view-dashboard #cfoPanel{order:5!important}
+  body.view-dashboard #dashboard>.card.section:not(#v171Attention):not(#v26Closing){order:6}
+  .dash-collapsible{padding:0!important;overflow:hidden}
+  .dash-collapsible>.dash-collapse-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;cursor:pointer;user-select:none}
+  .dash-collapsible>.dash-collapse-head h3{margin:0;font-size:15px}
+  .dash-collapsible>.dash-collapse-head .dash-chevron{transition:transform .2s ease;font-size:18px;color:var(--muted)}
+  .dash-collapsible>.dash-collapse-body{display:none;padding:0 18px 18px}
+  .dash-collapsible.is-open>.dash-collapse-body{display:block}
+  .dash-collapsible.is-open>.dash-collapse-head .dash-chevron{transform:rotate(90deg)}
+  #cfoPanel.dash-collapsible .cfo-hero,#cfoPanel.dash-collapsible .cfo-body{display:none!important}
+  #cfoPanel.dash-collapsible.is-open .cfo-hero,#cfoPanel.dash-collapsible.is-open .cfo-body{display:block!important}
+</style>
+<style id="v31-v32-product">
+  /* V3.1 — orçamento visual */
+  .v31-budget-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:4px 0 18px}
+  .v31-budget-kpi{padding:14px;border:1px solid var(--border);border-radius:14px;background:var(--bg)}
+  .v31-budget-kpi small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.45px;font-weight:800;margin-bottom:6px}
+  .v31-budget-kpi strong{font-family:var(--font-display);font-size:20px}
+  .v31-budget-status{margin:0 0 14px;padding:11px 13px;border:1px solid var(--border);border-radius:12px;font-size:12px}
+  .v27-budget-row{padding:10px 0}
+  .v27-budget-row .bar{height:8px}
+  /* V3.2 — assistente discreto e acionável */
+  .ai-assistant{padding:0!important;overflow:hidden}
+  .ai-assistant>.section-title{margin:0!important;padding:14px 16px;cursor:pointer;align-items:center}
+  .ai-assistant>.section-title::after{content:"›";font-size:20px;margin-left:8px;transition:transform .2s}
+  .ai-assistant.ai-open>.section-title::after{transform:rotate(90deg)}
+  .ai-assistant:not(.ai-open)>:not(.section-title){display:none!important}
+  .ai-assistant.ai-open{padding-bottom:16px!important}
+  .ai-assistant.ai-open>.ai-assistant-sub,.ai-assistant.ai-open>.ai-row,.ai-assistant.ai-open>.ai-status,.ai-assistant.ai-open>.ai-answer,.ai-assistant.ai-open>.ai-preview,.ai-assistant.ai-open>.ai-examples{margin-left:16px;margin-right:16px}
+  .ai-assistant .section-title span{font-size:9px;opacity:.7}
+  @media(max-width:700px){
+    .v31-budget-summary{grid-template-columns:1fr}
+    .ai-assistant .section-title span{display:none}
+  }
+</style>
+<style id="v32-floating-assistant">
+  /* V3.2 refinement — assistente flutuante, arrastável e disponível em qualquer página */
+  .ai-assistant{display:none!important}
+  #v32AiFab{position:fixed;right:24px;bottom:24px;z-index:1200;width:58px;height:58px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:linear-gradient(145deg,var(--teal-600),var(--navy-900));color:#fff;box-shadow:0 14px 34px rgba(0,0,0,.28);font-size:24px;cursor:grab;touch-action:none;display:grid;place-items:center}
+  #v32AiFab:active{cursor:grabbing}
+  #v32AiFab.listening{box-shadow:0 0 0 8px rgba(0,200,160,.16),0 14px 34px rgba(0,0,0,.28)}
+  #v32AiPanel{position:fixed;right:24px;bottom:94px;z-index:1199;width:min(460px,calc(100vw - 32px));max-height:min(620px,calc(100vh - 130px));overflow:auto;background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:0 24px 60px rgba(0,0,0,.32);padding:16px;display:none}
+  #v32AiPanel.open{display:block}
+  #v32AiPanel .ai-assistant{display:block!important;margin:0!important;padding:0!important;background:transparent!important;color:var(--text)!important}
+  #v32AiPanel .ai-assistant::after{display:none}
+  #v32AiPanel .ai-assistant>:not(.section-title){display:block!important}
+  #v32AiPanel .ai-assistant .section-title{padding:0 0 12px!important;cursor:default}
+  #v32AiPanel .ai-assistant .section-title::after{display:none}
+  #v32AiPanel .ai-assistant .section-title h3,#v32AiPanel .ai-assistant .section-title span{color:var(--text)!important}
+  #v32AiPanel .ai-assistant-sub{color:var(--muted);margin:0 0 14px!important}
+  #v32AiPanel .ai-row{margin:0!important}
+  #v32AiPanel .ai-input{background:var(--bg)!important;color:var(--text)!important;border-color:var(--border)!important}
+  #v32AiPanel .ai-input::placeholder{color:var(--muted)}
+  #v32AiPanel .ai-status,#v32AiPanel .ai-answer,#v32AiPanel .ai-preview,#v32AiPanel .ai-examples{margin-left:0!important;margin-right:0!important}
+  #v32AiClose{position:absolute;right:12px;top:10px;border:0;background:transparent;color:var(--muted);font-size:18px;cursor:pointer}
+  @media(max-width:600px){
+    #v32AiFab{right:16px;bottom:18px;width:56px;height:56px}
+    #v32AiPanel{left:12px;right:12px;bottom:84px;width:auto;max-height:72vh}
+  }
+</style>
+<style id="v33-mobile-and-accordion">
+  /* V3.4 — cabeçalhos uniformes + experiência mobile */
+  body.view-dashboard .dash-collapsible>.dash-collapse-head,
+  body.view-dashboard #cfoPanel.dash-collapsible>.dash-collapse-head{
+    min-height:50px!important;height:50px!important;padding:0 18px!important;
+    display:flex!important;align-items:center!important;box-sizing:border-box!important
+  }
+  body.view-dashboard .dash-collapsible>.dash-collapse-head h3,
+  body.view-dashboard #cfoPanel.dash-collapsible>.dash-collapse-head h3{
+    font-size:14px!important;line-height:1.2!important;margin:0!important
+  }
+  body.view-dashboard .dash-collapsible{border-radius:14px!important}
+  @media(max-width:760px){
+    main{padding-left:14px!important;padding-right:14px!important}
+    .toolbar{gap:10px!important}
+    .toolbar .actions{display:grid!important;grid-template-columns:1fr 1fr!important;width:100%;gap:8px!important}
+    .toolbar .actions .btn{width:100%;min-height:44px;justify-content:center}
+    body.view-dashboard #dashboard>.v29-summary-cards{grid-template-columns:1fr 1fr!important;gap:8px!important}
+    body.view-dashboard #dashboard>.v29-summary-cards .metric{padding:13px!important;min-height:96px!important}
+    body.view-dashboard #dashboard>.v29-summary-cards .metric-value{font-size:19px!important}
+    body.view-dashboard #dashboard>.grid{gap:10px!important}
+    .month-chips{overflow-x:auto!important;flex-wrap:nowrap!important;scrollbar-width:none;padding-bottom:3px}
+    .month-chips::-webkit-scrollbar{display:none}
+    .month-chip{flex:0 0 auto;min-height:40px}
+    .dash-collapsible>.dash-collapse-head{min-height:48px!important;height:48px!important;padding:0 14px!important}
+    #v32AiFab{width:58px!important;height:58px!important;bottom:max(18px,env(safe-area-inset-bottom))!important}
+    #v32AiPanel{bottom:calc(86px + env(safe-area-inset-bottom))!important;max-height:70dvh!important}
+    #v32AiPanel .ai-row{display:grid!important;grid-template-columns:1fr 48px!important}
+    #v32AiPanel .ai-send{grid-column:1/-1;width:100%}
+    #v32AiPanel .ai-preview-grid{grid-template-columns:1fr 1fr!important}
+    .modal{max-height:88dvh!important}
+  }
+  @media(max-width:420px){
+    main{padding-left:10px!important;padding-right:10px!important}
+    .toolbar .actions{grid-template-columns:1fr!important}
+    body.view-dashboard #dashboard>.v29-summary-cards{grid-template-columns:1fr 1fr!important}
+    body.view-dashboard #dashboard>.v29-summary-cards .metric-label{font-size:9px!important}
+    body.view-dashboard #dashboard>.v29-summary-cards .metric-value{font-size:17px!important}
+  }
+</style>
+<style id="v34-public-readiness">
+  /* V3.4 — acabamento final para validação pública */
+  body.view-dashboard .dash-collapsible>.dash-collapse-head,
+  body.view-dashboard #cfoPanel.dash-collapsible>.dash-collapse-head{
+    height:52px!important;min-height:52px!important;max-height:52px!important;
+    padding:0 18px!important;margin:0!important;box-sizing:border-box!important;
+    display:flex!important;align-items:center!important;justify-content:space-between!important
+  }
+  body.view-dashboard .dash-collapsible>.dash-collapse-head h3,
+  body.view-dashboard #cfoPanel.dash-collapsible>.dash-collapse-head h3{
+    margin:0!important;padding:0!important;font-size:14px!important;line-height:1!important
+  }
+  body.view-dashboard .dash-collapsible:not(.is-open){min-height:52px!important;height:52px!important}
+  body.view-dashboard .dash-collapsible:not(.is-open)>.dash-collapse-body{display:none!important}
+  body.view-dashboard #cfoPanel.dash-collapsible:not(.is-open){min-height:52px!important;height:52px!important}
+  body.view-dashboard #v171Attention,
+  body.view-dashboard #v26Closing,
+  body.view-dashboard #cfoPanel{margin:0!important}
+  body.view-dashboard #dashboard{gap:10px!important}
+
+  /* Estados de foco visíveis para teclado/acessibilidade */
+  button:focus-visible,[role="button"]:focus-visible,input:focus-visible,select:focus-visible{
+    outline:2px solid var(--teal-500,#00c7a5)!important;outline-offset:2px!important
+  }
+  /* Evita conteúdo financeiro vazando horizontalmente em telas pequenas */
+  .view,.card,.section{min-width:0}
+  @media(max-width:760px){
+    body.view-dashboard .dash-collapsible>.dash-collapse-head,
+    body.view-dashboard #cfoPanel.dash-collapsible>.dash-collapse-head{
+      height:50px!important;min-height:50px!important;max-height:50px!important;padding:0 14px!important
+    }
+    body.view-dashboard .dash-collapsible:not(.is-open),
+    body.view-dashboard #cfoPanel.dash-collapsible:not(.is-open){height:50px!important;min-height:50px!important}
+    .privacy-value{max-width:100%;overflow-wrap:anywhere}
+  }
+</style>
+<style id="v34-accordion-alignment-fix">
+  /* V3.4 — alinhamento idêntico dos três cabeçalhos do Dashboard */
+  body.view-dashboard #v171Attention>.dash-collapse-head,
+  body.view-dashboard #v26Closing>.dash-collapse-head,
+  body.view-dashboard #cfoPanel>.dash-collapse-head{
+    position:relative!important;
+    height:52px!important;min-height:52px!important;max-height:52px!important;
+    padding:0 44px 0 20px!important;
+    margin:0!important;box-sizing:border-box!important;
+    display:flex!important;align-items:center!important;justify-content:flex-start!important;
+  }
+  body.view-dashboard #v171Attention>.dash-collapse-head h3,
+  body.view-dashboard #v26Closing>.dash-collapse-head h3,
+  body.view-dashboard #cfoPanel>.dash-collapse-head h3{
+    margin:0!important;padding:0!important;
+    font-size:14px!important;font-weight:700!important;line-height:20px!important;
+    display:block!important;
+  }
+  body.view-dashboard #v171Attention>.dash-collapse-head .dash-chevron,
+  body.view-dashboard #v26Closing>.dash-collapse-head .dash-chevron,
+  body.view-dashboard #cfoPanel>.dash-collapse-head .dash-chevron{
+    position:absolute!important;right:20px!important;top:50%!important;
+    transform:translateY(-50%)!important;
+    width:18px!important;height:20px!important;line-height:20px!important;
+    text-align:center!important;margin:0!important;padding:0!important;font-size:18px!important;
+  }
+  body.view-dashboard #v171Attention.is-open>.dash-collapse-head .dash-chevron,
+  body.view-dashboard #v26Closing.is-open>.dash-collapse-head .dash-chevron,
+  body.view-dashboard #cfoPanel.is-open>.dash-collapse-head .dash-chevron{
+    transform:translateY(-50%) rotate(90deg)!important;
+  }
+  @media(max-width:760px){
+    body.view-dashboard #v171Attention>.dash-collapse-head,
+    body.view-dashboard #v26Closing>.dash-collapse-head,
+    body.view-dashboard #cfoPanel>.dash-collapse-head{
+      height:50px!important;min-height:50px!important;max-height:50px!important;
+      padding:0 40px 0 16px!important;
+    }
+    body.view-dashboard #v171Attention>.dash-collapse-head .dash-chevron,
+    body.view-dashboard #v26Closing>.dash-collapse-head .dash-chevron,
+    body.view-dashboard #cfoPanel>.dash-collapse-head .dash-chevron{right:16px!important}
+  }
+</style>
+<style id="v35-dashboard-header-alignment-fix">
+/* Produção — alinhamento final dos três cabeçalhos do dashboard */
+body.view-dashboard #v171Attention.dash-collapsible>.dash-collapse-head,
+body.view-dashboard #v26Closing.dash-collapsible>.dash-collapse-head,
+body.view-dashboard #cfoPanel.dash-collapsible>.dash-collapse-head{
+  height:52px!important;min-height:52px!important;max-height:52px!important;
+  padding:0 18px!important;margin:0!important;box-sizing:border-box!important;
+  display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important
+}
+body.view-dashboard #v171Attention.dash-collapsible>.dash-collapse-head h3,
+body.view-dashboard #v26Closing.dash-collapsible>.dash-collapse-head h3,
+body.view-dashboard #cfoPanel.dash-collapsible>.dash-collapse-head h3{
+  margin:0!important;padding:0!important;font-size:14px!important;line-height:1.2!important;display:flex!important;align-items:center!important
+}
+body.view-dashboard #v171Attention .dash-collapse-chevron,
+body.view-dashboard #v26Closing .dash-collapse-chevron,
+body.view-dashboard #cfoPanel .dash-collapse-chevron{
+  flex:0 0 auto!important;margin-left:auto!important;align-self:center!important
+}
+@media(max-width:760px){
+ body.view-dashboard #v171Attention.dash-collapsible>.dash-collapse-head,
+ body.view-dashboard #v26Closing.dash-collapsible>.dash-collapse-head,
+ body.view-dashboard #cfoPanel.dash-collapsible>.dash-collapse-head{
+   height:50px!important;min-height:50px!important;max-height:50px!important;padding:0 14px!important
+ }
+}
+</style>
+<style id="v36-dashboard-accordion-padding-fix">
+/* Corrige o recuo extra herdado de .section em Atenção e Fechamento */
+body.view-dashboard #v171Attention.dash-collapsible,
+body.view-dashboard #v26Closing.dash-collapsible{
+  padding:0!important;
+}
+body.view-dashboard #v171Attention.dash-collapsible>.dash-collapse-body,
+body.view-dashboard #v26Closing.dash-collapsible>.dash-collapse-body{
+  padding:16px 18px 18px!important;
+  box-sizing:border-box!important;
+}
+body.view-dashboard #v171Attention.dash-collapsible>.dash-collapse-head,
+body.view-dashboard #v26Closing.dash-collapsible>.dash-collapse-head,
+body.view-dashboard #cfoPanel.dash-collapsible>.dash-collapse-head{
+  padding-left:18px!important;padding-right:44px!important;
+}
+@media(max-width:760px){
+ body.view-dashboard #v171Attention.dash-collapsible>.dash-collapse-body,
+ body.view-dashboard #v26Closing.dash-collapsible>.dash-collapse-body{padding:14px!important}
+ body.view-dashboard #v171Attention.dash-collapsible>.dash-collapse-head,
+ body.view-dashboard #v26Closing.dash-collapsible>.dash-collapse-head,
+ body.view-dashboard #cfoPanel.dash-collapsible>.dash-collapse-head{padding-left:14px!important;padding-right:40px!important}
+}
+</style>
 </head>
 
 <body>
@@ -976,7 +1324,7 @@
       <div class="actions">
         <button class="btn" onclick="exportCSV()">Exportar CSV</button>
         <button class="btn" type="button" onclick="openSmartImport()" title="Importar CSV, OFX ou PDF">📥 Importar</button>
-        <button class="btn" type="button" onclick="openCameraImport()" title="Tirar foto ou anexar print">📷</button>
+        <button class="btn" type="button" onclick="openCameraImport()" title="Importar comprovante por foto ou print">📷 Importar comprovante</button>
         <button class="btn btn-primary" onclick="openModal()">+ Novo lançamento</button>
         <input id="smartImportFile" type="file" accept=".csv,.ofx,.qfx,.pdf,text/csv,application/pdf" style="display:none">
         <input id="cameraImportFile" type="file" accept="image/*" style="display:none">
@@ -1073,26 +1421,36 @@
         </div>
       </div>
 
-      <div class="cards">
-        <div class="card metric">
+      <div class="cards v29-summary-cards">
+        <div class="card metric v29-secondary-metric">
           <div class="metric-label">Receitas</div>
           <div id="mIncome" class="metric-value privacy-value positive">R$ 0,00</div>
           <div class="metric-sub">Entradas no mês</div>
         </div>
-        <div class="card metric">
+        <div class="card metric v29-secondary-metric">
           <div class="metric-label">Despesas</div>
           <div id="mExpense" class="metric-value privacy-value negative">R$ 0,00</div>
           <div class="metric-sub">Saídas no mês</div>
         </div>
-        <div class="card metric">
-          <div class="metric-label">Saldo</div>
+        <div class="card metric v29-primary-metric">
+          <div class="metric-label">Quanto tenho no mês</div>
           <div id="mBalance" class="metric-value privacy-value">R$ 0,00</div>
           <div class="metric-sub">Receitas − despesas</div>
         </div>
-        <div class="card metric">
+        <div class="card metric v29-secondary-metric">
           <div class="metric-label">Taxa de economia</div>
           <div id="mRate" class="metric-value">0%</div>
           <div class="metric-sub">Quanto ficou no mês</div>
+        </div>
+        <div class="card metric v29-primary-metric">
+          <div class="metric-label">Quanto posso gastar</div>
+          <div id="v29BudgetAvailable" class="metric-value privacy-value">R$ 0,00</div>
+          <div id="v29BudgetAvailableSub" class="metric-sub">Disponível dentro do orçamento</div>
+        </div>
+        <div class="card metric v29-primary-metric">
+          <div class="metric-label">O que precisa de atenção</div>
+          <div id="v29AttentionValue" class="metric-value">Tudo certo</div>
+          <div id="v29AttentionSub" class="metric-sub">Nenhum alerta importante</div>
         </div>
       </div>
 
@@ -1197,7 +1555,7 @@
           <h3>Orçamento por categoria</h3>
           <button class="btn btn-primary btn-small" onclick="openBudgetModal()">Definir orçamento</button>
         </div>
-        <div id="budgetList"></div>
+        <div id="v31BudgetSummary" class="v31-budget-summary"></div><div id="budgetList"></div>
       </div>
     </section>
 
@@ -1268,9 +1626,7 @@
       <button class="close" onclick="closeModal()">✕</button>
     </div>
     <form id="transactionForm" class="entry-confirmation" novalidate>
-      <div class="ocr-box" id="ocrBox">
-        <label style="display:block;margin-bottom:7px">Lançamento por print</label>
-        <label class="ocr-drop" for="receiptImage" id="ocrDrop">📷 Toque aqui para escolher um print ou foto do comprovante<br><span style="font-size:11px">O sistema tenta identificar data, valor e descrição. Confira os campos antes de salvar.</span></label>
+      <div class="ocr-box" id="ocrBox" style="display:none">
         <input id="receiptImage" type="file" accept="image/*" style="display:none">
         <img id="ocrPreview" class="ocr-preview" alt="Prévia do comprovante">
         <div id="ocrStatus" class="ocr-status"></div>
@@ -3933,6 +4289,200 @@ Retorne SOMENTE o JSON solicitado nas regras do sistema.
 })();
 </script>
 
+<script id="v282-page-navigation-script">
+(function(){
+  const names={dashboard:"dashboard",transactions:"transactions",creditcard:"creditcard",budget:"budget",goals:"goals",wealth:"wealth"};
+  function setPageContext(view){
+    Object.values(names).forEach(v=>document.body.classList.remove("view-"+v));
+    document.body.classList.add("view-"+(names[view]||"dashboard"));
+  }
+  document.querySelectorAll(".tab[data-view]").forEach(tab=>{
+    tab.addEventListener("click",()=>setPageContext(tab.dataset.view));
+  });
+  document.querySelectorAll(".side-nav[data-view]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      setPageContext(btn.dataset.view);
+      requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:"auto"}));
+    });
+  });
+  setPageContext(document.querySelector(".tab.active")?.dataset.view||"dashboard");
+})();
+</script>
+<script id="v283-strict-page-router-script">
+(function(){
+  const titles={dashboard:"Visão geral",transactions:"Lançamentos",creditcard:"Cartão de crédito",budget:"Orçamento",goals:"Metas",wealth:"Patrimônio"};
+  function navigate(view){
+    if(!titles[view])view="dashboard";
+    ["dashboard","transactions","creditcard","budget","goals","wealth"].forEach(v=>{
+      document.body.classList.toggle("view-"+v,v===view);
+      document.getElementById(v)?.classList.toggle("active",v===view);
+    });
+    document.querySelectorAll(".tab[data-view]").forEach(x=>x.classList.toggle("active",x.dataset.view===view));
+    document.querySelectorAll(".side-nav[data-view]").forEach(x=>x.classList.toggle("active",x.dataset.view===view));
+    const title=document.getElementById("pageTitle"); if(title)title.textContent=titles[view];
+    if(view==="creditcard"&&typeof renderCreditCard==="function")renderCreditCard();
+    window.scrollTo({top:0,left:0,behavior:"auto"});
+  }
+  document.querySelectorAll(".side-nav[data-view]").forEach(btn=>{
+    btn.addEventListener("click",e=>{e.preventDefault();e.stopImmediatePropagation();navigate(btn.dataset.view)},true);
+  });
+  window.__financeNavigate=navigate;
+  const initial=document.querySelector(".side-nav.active[data-view]")?.dataset.view||"dashboard";
+  navigate(initial);
+})();
+</script>
+<script id="v29-dashboard-product-script">
+(function(){
+  function moneyV29(v){return new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(Number(v)||0)}
+  function refreshV29(){
+    try{
+      let budget=0,spent=0;
+      if(window.V27Budget){
+        const map=window.V27Budget.monthMap(selectedMonth)||{};
+        budget=Object.values(map).reduce((s,v)=>s+(Number(v)||0),0);
+        const used=window.V27Budget.spent(selectedMonth)||{};
+        spent=Object.values(used).reduce((s,v)=>s+(Number(v)||0),0);
+      }
+      const available=budget-spent;
+      const av=document.getElementById("v29BudgetAvailable");
+      const avs=document.getElementById("v29BudgetAvailableSub");
+      if(av){
+        av.textContent=budget>0?moneyV29(available):"—";
+        av.classList.toggle("negative",budget>0&&available<0);
+        av.classList.toggle("positive",budget>0&&available>=0);
+      }
+      if(avs)avs.textContent=budget>0?(available>=0?"Ainda disponível no orçamento":"Orçamento ultrapassado"):"Defina seus orçamentos por categoria";
+
+      const alerts=[...document.querySelectorAll("#cfoAlerts .cfo-alert")];
+      const critical=alerts.filter(x=>/acima|estour|ultrapass|atenção|limite/i.test(x.textContent||""));
+      const n=critical.length||alerts.length;
+      const val=document.getElementById("v29AttentionValue"),sub=document.getElementById("v29AttentionSub");
+      if(val){val.textContent=n?String(n)+" "+(n===1?"alerta":"alertas"):"Tudo certo";val.classList.toggle("negative",n>0);val.classList.toggle("positive",n===0)}
+      if(sub)sub.textContent=n?(n===1?"Há um ponto para revisar":"Há pontos para revisar"):"Nenhum alerta importante";
+    }catch(e){console.warn("V2.9 dashboard summary",e)}
+  }
+  const obs=new MutationObserver(()=>refreshV29());
+  const alerts=document.getElementById("cfoAlerts"); if(alerts)obs.observe(alerts,{childList:true,subtree:true,characterData:true});
+  document.getElementById("monthSelect")?.addEventListener("change",()=>setTimeout(refreshV29,180));
+  document.addEventListener("click",e=>{if(e.target.closest('[data-view="dashboard"],.month-chip'))setTimeout(refreshV29,180)});
+  setTimeout(refreshV29,350);setTimeout(refreshV29,1200);
+})();
+</script>
+<script id="v30-dashboard-accordion-script">
+(function(){
+  function makeHead(title){
+    const head=document.createElement("div");head.className="dash-collapse-head";head.setAttribute("role","button");head.tabIndex=0;
+    head.innerHTML='<h3>'+title+'</h3><span class="dash-chevron">›</span>';return head;
+  }
+  function wrapDynamic(el,title){
+    if(!el)return;
+    // V26 rewrites innerHTML on refresh, so rebuild the accordion whenever its head was removed.
+    if(!el.querySelector(":scope > .dash-collapse-head")){
+      const children=[...el.childNodes],body=document.createElement("div");body.className="dash-collapse-body";
+      children.forEach(n=>body.appendChild(n));
+      const head=makeHead(title);el.replaceChildren(head,body);el.classList.add("dash-collapsible");el.classList.remove("is-open");
+      const toggle=()=>el.classList.toggle("is-open");
+      head.addEventListener("click",toggle);head.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();toggle()}});
+    }
+  }
+  function prepare(){
+    wrapDynamic(document.getElementById("v171Attention"),"⚠️ Atenção este mês");
+    wrapDynamic(document.getElementById("v26Closing"),"Fechamento mensal e Leitura CFO");
+    const cfo=document.getElementById("cfoPanel");
+    if(cfo&&!cfo.querySelector(":scope > .dash-collapse-head")){
+      cfo.classList.add("dash-collapsible");cfo.classList.remove("is-open");
+      const head=makeHead("✨ Resumo inteligente");cfo.prepend(head);
+      const toggle=()=>cfo.classList.toggle("is-open");
+      head.addEventListener("click",toggle);head.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();toggle()}});
+    }
+  }
+  const dash=document.getElementById("dashboard");
+  if(dash)new MutationObserver(()=>queueMicrotask(prepare)).observe(dash,{childList:true,subtree:true});
+  setTimeout(prepare,100);setTimeout(prepare,500);setTimeout(prepare,1500);
+})();
+</script>
+<script id="v31-v32-product-script">
+(function(){
+  function budgetSummary(){
+    const host=document.getElementById("v31BudgetSummary");if(!host||!window.V27Budget)return;
+    const map=V27Budget.monthMap(selectedMonth)||{},used=V27Budget.currentSpent?V27Budget.currentSpent():V27Budget.spent?.(selectedMonth)||{};
+    const planned=Object.values(map).reduce((s,v)=>s+(Number(v)||0),0);
+    const spent=Object.values(used).reduce((s,v)=>s+(Number(v)||0),0);
+    const left=planned-spent,pct=planned?spent/planned*100:0;
+    host.innerHTML='<div class="v31-budget-kpi"><small>Orçamento do mês</small><strong class="privacy-value">'+money(planned)+'</strong></div>'+
+      '<div class="v31-budget-kpi"><small>Já utilizado</small><strong class="privacy-value">'+money(spent)+'</strong></div>'+
+      '<div class="v31-budget-kpi"><small>'+(left>=0?'Ainda disponível':'Acima do orçamento')+'</small><strong class="privacy-value '+(left<0?'negative':'positive')+'">'+money(Math.abs(left))+'</strong></div>'+
+      '<div class="v31-budget-status" style="grid-column:1/-1"><strong>'+Math.round(pct)+'% utilizado</strong> · '+(planned?(pct>100?'Seu orçamento mensal foi ultrapassado.':pct>=80?'Atenção: você está próximo do limite do mês.':'Você ainda está dentro do planejamento.'):'Defina limites por categoria para acompanhar o mês.')+'</div>';
+    applyPrivacyState?.();
+  }
+  function installBudget(){
+    if(!window.V27Budget||V27Budget.__v31)return;
+    V27Budget.__v31=true;
+    const old=V27Budget.render.bind(V27Budget);
+    V27Budget.render=function(){old();budgetSummary()};
+    budgetSummary();
+  }
+  function installAssistant(){
+    const box=document.querySelector(".ai-assistant");if(!box||box.dataset.v32==="1")return;
+    box.dataset.v32="1";
+    const head=box.querySelector(":scope > .section-title");if(!head)return;
+    head.setAttribute("role","button");head.tabIndex=0;head.title="Abrir ou fechar o Assistente financeiro";
+    const toggle=()=>box.classList.toggle("ai-open");
+    head.addEventListener("click",toggle);
+    head.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();toggle()}});
+    document.querySelectorAll(".ai-example").forEach(btn=>btn.addEventListener("click",()=>box.classList.add("ai-open")));
+  }
+  setTimeout(()=>{installBudget();installAssistant()},250);
+  setTimeout(()=>{installBudget();budgetSummary();installAssistant()},1200);
+  document.addEventListener("click",e=>{
+    if(e.target.closest('[data-view="budget"],.month-chip'))setTimeout(budgetSummary,180);
+  });
+  document.getElementById("monthSelect")?.addEventListener("change",()=>setTimeout(budgetSummary,180));
+})();
+</script>
+<script id="v32-floating-assistant-script">
+(function(){
+  function install(){
+    const assistant=document.querySelector("main > .ai-assistant")||document.querySelector(".ai-assistant");
+    if(!assistant||document.getElementById("v32AiFab"))return;
+    const panel=document.createElement("div");panel.id="v32AiPanel";
+    const close=document.createElement("button");close.id="v32AiClose";close.type="button";close.setAttribute("aria-label","Fechar assistente");close.textContent="✕";
+    panel.append(close);assistant.parentNode.insertBefore(panel,assistant);panel.appendChild(assistant);
+    const fab=document.createElement("button");fab.id="v32AiFab";fab.type="button";fab.title="Assistente financeiro";fab.setAttribute("aria-label","Abrir Assistente financeiro");fab.textContent="✨";document.body.appendChild(fab);
+    close.onclick=()=>panel.classList.remove("open");
+
+    let sx=0,sy=0,ox=0,oy=0,moved=false,drag=false;
+    const down=e=>{drag=true;moved=false;const p=e.touches?e.touches[0]:e;sx=p.clientX;sy=p.clientY;const r=fab.getBoundingClientRect();ox=r.left;oy=r.top;fab.setPointerCapture?.(e.pointerId)};
+    const move=e=>{if(!drag)return;const p=e.touches?e.touches[0]:e,dx=p.clientX-sx,dy=p.clientY-sy;if(Math.abs(dx)+Math.abs(dy)>6)moved=true;if(!moved)return;const x=Math.max(8,Math.min(innerWidth-fab.offsetWidth-8,ox+dx)),y=Math.max(8,Math.min(innerHeight-fab.offsetHeight-8,oy+dy));fab.style.left=x+"px";fab.style.top=y+"px";fab.style.right="auto";fab.style.bottom="auto"};
+    const up=()=>{if(!drag)return;drag=false;if(!moved)panel.classList.toggle("open")};
+    fab.addEventListener("pointerdown",down);window.addEventListener("pointermove",move);window.addEventListener("pointerup",up);
+
+    const mic=document.getElementById("aiMic");
+    if(mic)new MutationObserver(()=>fab.classList.toggle("listening",mic.classList.contains("listening"))).observe(mic,{attributes:true,attributeFilter:["class"]});
+  }
+  setTimeout(install,100);setTimeout(install,700);
+})();
+</script>
+<script id="v34-public-readiness-script">
+(function(){
+  function hardenUI(){
+    document.querySelectorAll(".dash-collapse-head").forEach(h=>{
+      h.setAttribute("aria-expanded",h.parentElement?.classList.contains("is-open")?"true":"false");
+      if(h.dataset.v34)return;h.dataset.v34="1";
+      h.addEventListener("click",()=>requestAnimationFrame(()=>h.setAttribute("aria-expanded",h.parentElement?.classList.contains("is-open")?"true":"false")));
+      h.addEventListener("keydown",()=>requestAnimationFrame(()=>h.setAttribute("aria-expanded",h.parentElement?.classList.contains("is-open")?"true":"false")));
+    });
+    const fab=document.getElementById("v32AiFab");
+    const panel=document.getElementById("v32AiPanel");
+    if(fab&&panel&&!fab.dataset.v34){fab.dataset.v34="1";fab.setAttribute("aria-controls","v32AiPanel");fab.setAttribute("aria-expanded","false");
+      new MutationObserver(()=>fab.setAttribute("aria-expanded",panel.classList.contains("open")?"true":"false")).observe(panel,{attributes:true,attributeFilter:["class"]});
+    }
+  }
+  const root=document.getElementById("dashboard");
+  if(root)new MutationObserver(()=>queueMicrotask(hardenUI)).observe(root,{childList:true,subtree:true});
+  setTimeout(hardenUI,200);setTimeout(hardenUI,1200);
+})();
+</script>
 </body>
 </html>
 
