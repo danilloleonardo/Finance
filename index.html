@@ -2981,6 +2981,36 @@ Regras:
       newTxs=[tx];
     }
 
+    /* V3.5 — proteção contra possível lançamento duplicado.
+       Não bloqueia definitivamente: avisa e permite confirmar o salvamento. */
+    if(!isEditing){
+      const normalizeDupText=v=>String(v||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+      const candidate=newTxs[0];
+      const duplicates=(state.transactions||[]).filter(t=>
+        t.id!==editingTransactionId &&
+        t.date===candidate.date &&
+        round2(t.amount)===round2(candidate.amount) &&
+        t.type===candidate.type
+      );
+      if(duplicates.length){
+        const strongest=duplicates.slice().sort((a,b)=>{
+          const score=t=>
+            (normalizeDupText(t.description)===normalizeDupText(candidate.description)?4:0)+
+            (normalizeDupText(t.channel)===normalizeDupText(candidate.channel)&&normalizeDupText(candidate.channel)?2:0)+
+            (t.category===candidate.category?1:0)+
+            (t.responsible===candidate.responsible?1:0);
+          return score(b)-score(a);
+        })[0];
+        const sameDesc=normalizeDupText(strongest.description)===normalizeDupText(candidate.description);
+        const detail=[strongest.description||"Sem descrição", strongest.category||"", strongest.responsible||""].filter(Boolean).join(" · ");
+        const warning="⚠️ Possível lançamento duplicado. Já existe "+(strongest.type==="expense"?"uma despesa":strongest.type==="income"?"uma receita":"uma transferência")+" de "+money(strongest.amount)+" em "+formatDate(strongest.date)+(sameDesc?" com a mesma descrição":"")+": "+detail+".\n\nDeseja salvar este lançamento mesmo assim?";
+        if(!window.confirm(warning)){
+          showTransactionFeedback("Possível duplicidade encontrada. O lançamento não foi salvo; confira o registro existente.");
+          return;
+        }
+      }
+    }
+
     if(removedId){
       state.transactions = state.transactions.filter(t=>t.id!==removedId);
       newTxs.forEach(tx=>state.transactions.push(tx));
