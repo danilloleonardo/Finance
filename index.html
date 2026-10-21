@@ -4602,7 +4602,48 @@ Retorne SOMENTE o JSON solicitado nas regras do sistema.
 }
 </style>
 
-</body>
+
+<style id="v2021-ai-panel-cleanup">
+/* V2.0.21 — limpeza visual do painel IA + remoção definitiva do payer legado. */
+#tPayer,
+.field:has(#tPayer),
+#transactionForm #tPayer,
+#transactionForm .field:has(#tPayer){
+  display:none!important;
+}
+#v32AiPanel{
+  border:0!important;
+  outline:0!important;
+  box-shadow:0 18px 46px rgba(0,0,0,.28)!important;
+}
+#v32AiPanel .ai-assistant{
+  border:0!important;
+  outline:0!important;
+  box-shadow:none!important;
+}
+@media(max-width:600px){
+  #v32AiPanel{
+    left:10px!important;
+    right:10px!important;
+    width:auto!important;
+    padding:14px!important;
+    border-radius:16px!important;
+  }
+}
+</style>
+<script id="v2021-payer-cleanup-script">
+(function(){
+  function removeLegacyPayer(){
+    const payer=document.getElementById("tPayer");
+    if(!payer)return;
+    const field=payer.closest(".field");
+    if(field)field.remove(); else payer.remove();
+  }
+  removeLegacyPayer();
+  new MutationObserver(removeLegacyPayer).observe(document.body,{childList:true,subtree:true});
+})();
+</script>
+\n</body>
 </html>
 
 <style id="v2012-card-privacy-fix">#tCardClosing,#tCardDue{filter:none!important;opacity:1!important;color:var(--text)!important;-webkit-text-security:none!important}#tCardFields{filter:none!important}#savedCardsList .cc-purchase-meta strong{color:var(--text)}</style>
