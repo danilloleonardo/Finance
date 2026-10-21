@@ -4484,11 +4484,21 @@ Retorne SOMENTE o JSON solicitado nas regras do sistema.
 })();
 </script>
 <style id="v34-mobile-value-nowrap-fix">
-/* Produção: impede quebra de linha dos valores na tabela de lançamentos no mobile. */
-#transactions .table-wrap table th:nth-last-child(2),
-#transactions .table-wrap table td:nth-last-child(2){
-  white-space:nowrap;
-  word-break:keep-all;
+/* Produção: mantém os valores dos lançamentos inteiros no mobile.
+   Override específico da regra V3.4 .privacy-value{overflow-wrap:anywhere}. */
+#transactions .table-wrap table th:nth-child(7),
+#transactions .table-wrap table td:nth-child(7),
+#transactions #transactionTable td:nth-child(7).privacy-value,
+#transactions #transactionTable td:nth-child(7).privacy-value strong{
+  white-space:nowrap!important;
+  overflow-wrap:normal!important;
+  word-break:normal!important;
+  hyphens:none!important;
+}
+#transactions .table-wrap table th:nth-child(7),
+#transactions .table-wrap table td:nth-child(7){
+  min-width:112px!important;
+  width:112px!important;
 }
 </style>
 </body>
