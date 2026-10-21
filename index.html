@@ -2780,6 +2780,9 @@ Regras:
   }
 
   function openModal(id){
+    /* Responsável é o único campo de autoria/pagamento do lançamento. */
+    const legacyPayer=document.getElementById("tPayer");
+    if(legacyPayer){ const legacyField=legacyPayer.closest(".field"); if(legacyField) legacyField.remove(); }
     editingTransactionId = id || null;
     const tx = editingTransactionId ? state.transactions.find(t=>t.id===editingTransactionId) : null;
     $("modalBackdrop").classList.add("open");
@@ -4515,6 +4518,11 @@ Retorne SOMENTE o JSON solicitado nas regras do sistema.
   setTimeout(hardenUI,200);setTimeout(hardenUI,1200);
 })();
 </script>
+<style id="responsible-only-transaction-form">
+/* Fallback defensivo: extensões/cache legado não devem exibir Quem pagou? */
+#transactionForm #tPayer,
+#transactionForm .field:has(#tPayer){display:none!important}
+</style>
 <style id="v34-mobile-value-nowrap-fix">
 /* Produção: mantém os valores dos lançamentos inteiros no mobile.
    Override específico da regra V3.4 .privacy-value{overflow-wrap:anywhere}. */
