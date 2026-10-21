@@ -4483,6 +4483,14 @@ Retorne SOMENTE o JSON solicitado nas regras do sistema.
   setTimeout(hardenUI,200);setTimeout(hardenUI,1200);
 })();
 </script>
+<style id="v34-mobile-value-nowrap-fix">
+/* Produção: impede quebra de linha dos valores na tabela de lançamentos no mobile. */
+#transactions .table-wrap table th:nth-last-child(2),
+#transactions .table-wrap table td:nth-last-child(2){
+  white-space:nowrap;
+  word-break:keep-all;
+}
+</style>
 </body>
 </html>
 
