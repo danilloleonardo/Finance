@@ -1277,6 +1277,15 @@ body.view-dashboard #cfoPanel.dash-collapsible>.dash-collapse-head{
     <button class="side-nav side-settings" id="sideThemeQuick" type="button"><span class="side-icon">☀</span><span>Alternar tema</span></button>
     <button class="side-nav side-settings" id="sideLogoutQuick" type="button"><span class="side-icon">↪</span><span>Sair</span></button>
   </aside>
+  <nav class="mobile-bottom-nav" id="mobileBottomNav" aria-label="Navegação mobile">
+    <button type="button" class="mobile-nav-item active" data-view="dashboard" aria-current="page"><span class="mobile-nav-icon">⌂</span><span>Início</span></button>
+    <button type="button" class="mobile-nav-item" data-view="transactions"><span class="mobile-nav-icon">↕</span><span>Lançamentos</span></button>
+    <button type="button" class="mobile-nav-item" data-view="creditcard"><span class="mobile-nav-icon">▤</span><span>Fatura</span></button>
+    <button type="button" class="mobile-nav-item" data-view="cards"><span class="mobile-nav-icon">▣</span><span>Cartões</span></button>
+    <button type="button" class="mobile-nav-item" data-view="budget"><span class="mobile-nav-icon">◉</span><span>Orçamento</span></button>
+    <button type="button" class="mobile-nav-item" data-view="goals"><span class="mobile-nav-icon">◎</span><span>Metas</span></button>
+    <button type="button" class="mobile-nav-item" data-view="wealth"><span class="mobile-nav-icon">◆</span><span>Patrimônio</span></button>
+  </nav>
   <header>
     <div class="header-inner">
       <button type="button" class="brand" id="brandMenuBtn" aria-haspopup="true" aria-expanded="false" aria-controls="sideDrawer">
@@ -1745,7 +1754,7 @@ body.view-dashboard #cfoPanel.dash-collapsible>.dash-collapse-head{
         </div>
         <div class="field">
           <label>Limite mensal</label>
-          <input id="bAmount" class="privacy-entry-visible" type="text" inputmode="numeric" autocomplete="off" placeholder="R$ 0,00" oninput="applyBRLMask(this)" required>
+          <input id="bAmount" class="privacy-entry-visible" type="text" inputmode="numeric" autocomplete="off" placeholder="R$ 0,00" required>
         </div>
       </div>
       <div class="form-actions">
@@ -3348,9 +3357,9 @@ Regras:
     if(el && id==="periodPreset") el.addEventListener("change",()=>{ $("customRange").style.display=el.value==="custom"?"flex":"none"; renderTransactions(); });
   });
 
-  // Privacidade dos valores: por segurança, inicia sempre ocultos ao entrar no aplicativo.
+  // Preferência solicitada: iniciar com valores visíveis; o botão de olho continua permitindo ocultá-los.
   const privacyKey="financas-a-dois-hide-values";
-  let valuesHidden=true;
+  let valuesHidden=false;
 
   /*
     Alguns componentes são montados dinamicamente. Esta rotina identifica
@@ -5234,6 +5243,33 @@ header{background:#071A2D!important}
 .cfo-hero{background:linear-gradient(145deg,#102B46,#0B1E34)!important}
 .ai-assistant{background:linear-gradient(145deg,#103B61,#0D2945)!important}
 #firebaseStatus,.toast{background:#0A2036!important}
+/* V3.8 — navegação inferior mobile, identidade azul da produção */
+.mobile-bottom-nav{display:none}
+@media(max-width:900px){
+  .mobile-bottom-nav{
+    position:fixed;z-index:9998;left:0;right:0;bottom:0;
+    display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:0;
+    padding:7px 3px calc(7px + env(safe-area-inset-bottom));
+    background:rgba(7,20,39,.97);border-top:1px solid rgba(255,255,255,.13);
+    box-shadow:0 -8px 28px rgba(0,0,0,.24);backdrop-filter:blur(18px);
+  }
+  .mobile-nav-item{
+    min-width:0;min-height:48px;padding:5px 1px 3px;border:0;border-radius:10px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    background:transparent;color:rgba(255,255,255,.68);font:600 9px/1.15 system-ui,-apple-system,sans-serif;
+    white-space:normal;overflow-wrap:anywhere;cursor:pointer;
+  }
+  .mobile-nav-icon{font-size:18px;line-height:1.05}
+  .mobile-nav-item.active{color:#fff;background:rgba(46,128,205,.24)}
+  .mobile-nav-item.active .mobile-nav-icon{color:#78bdff}
+  .tabs{display:none!important}
+  .view{padding-bottom:calc(78px + env(safe-area-inset-bottom))}
+}
+@media(max-width:380px){
+  .mobile-nav-item{font-size:8px;letter-spacing:-.15px}
+  .mobile-nav-icon{font-size:17px}
+}
+
 </style>
 
 
@@ -5294,22 +5330,28 @@ header{background:#071A2D!important}
     const amount=document.getElementById("bAmount");
     if(amount&&!amount.dataset.centMask){
       amount.dataset.centMask="1";
+      amount.removeAttribute("oninput");
       amount.addEventListener("input",event=>{
-        const digits=String(event.currentTarget.value||"").replace(/\D/g,"");
-        event.currentTarget.value=digits?money(Number(digits)/100):"";
+        const field=event.currentTarget;
+        const digits=String(field.value||"").replace(/\D/g,"");
+        field.value=digits?money(Number(digits)/100):"";
       },true);
     }
 
     if(form.dataset.v35Controller==="1")return true;
     form.dataset.v35Controller="1";
-    if(button){button.removeAttribute("onclick");button.type="submit";button.disabled=false;}
-    form.addEventListener("submit",async event=>{
-      event.preventDefault();event.stopImmediatePropagation();
+    if(button){button.removeAttribute("onclick");button.type="button";button.disabled=false;}
+    const submitBudget=async event=>{
+      if(event){event.preventDefault();event.stopImmediatePropagation();}
       if(form.dataset.v35Saving==="1")return;
       form.dataset.v35Saving="1";
       if(button){button.disabled=true;button.textContent="Salvando…";}
-      try{await api.save();renderSmartBudget();}finally{form.dataset.v35Saving="0";if(button){button.disabled=false;button.textContent="Salvar";}}
-    },true);
+      try{await api.save();renderSmartBudget();}
+      catch(err){console.error("Falha ao salvar orçamento",err);toast("Não foi possível salvar o orçamento. Tente novamente.");}
+      finally{form.dataset.v35Saving="0";if(button){button.disabled=false;button.textContent="Salvar";}}
+    };
+    if(button)button.addEventListener("click",submitBudget);
+    form.addEventListener("submit",submitBudget,true);
     return true;
   }
 
